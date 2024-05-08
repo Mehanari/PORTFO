@@ -3,13 +3,13 @@ import {getFirestore} from "firebase/firestore";
 import {getAuth} from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCrBwNN6rEaGifpgyqLtihX6lt1_2l-mNY",
-    authDomain: "portfo-test-36022.firebaseapp.com",
-    databaseURL: "https://portfo-test-36022-default-rtdb.firebaseio.com",
-    projectId: "portfo-test-36022",
-    storageBucket: "portfo-test-36022.appspot.com",
-    messagingSenderId: "997122448036",
-    appId: "1:997122448036:web:f3fd9623668651c0722431"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    databaseURL: process.env.NEXT_PUBLIC_DATABASE_URL,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
