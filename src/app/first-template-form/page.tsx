@@ -1,72 +1,105 @@
 "use client"
 
 import {useState} from "react";
-
-interface Row {
+import {PortfolioData} from "@/model/types";
+import {savePortfolioDataForUser} from "@/functions/databaseAccess";
+import {useAuthState} from "react-firebase-hooks/auth";
+import {auth} from "@/firebase/firebaseConfig";
+interface LinkRow {
     id: number;
+    link: string;
 }
-
-interface ProjectData {
+interface ProjectRow {
     photo: File | null;
     name: string;
     link: string;
     photoPath: string;
 }
 
-interface FirstTemplateData{
-    photo: File | null;
-    username: string;
-    fullname: string;
-    location: string;
-    role: string;
-    bio: string;
-    links: string[];
-    projects: ProjectData[];
-}
 
 export default function FirstTemplateForm(){
-    const [linksRows, setLinksRows] = useState<Row[]>([]);
-    const [photo, setPhoto] = useState<File>();
+    const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
+    const [photo, setPhoto] = useState<File | null>(null);
     const [photoPath, setPhotoPath] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [fullname, setFullname] = useState<string>("");
     const [location, setLocation] = useState<string>("");
     const [role, setRole] = useState<string>("");
     const [bio, setBio] = useState<string>("");
-    const [links, setLinks] = useState<string[]>([]);
-    const [projects, setProjects] = useState<ProjectData[]>([]);
+    const [projects, setProjects] = useState<ProjectRow[]>([]);
+    const [user, loading, error] = useAuthState(auth);
+
+
+    const handleSave = async () => {
+        const data: PortfolioData = {
+            photo,
+            username,
+            fullName: fullname,
+            location,
+            role,
+            bio,
+            links: linksRows.map((row) => row.link),
+            projects: projects.map((project) => ({
+                photo: project.photo,
+                name: project.name,
+                link: project.link,
+            })),
+        }
+        if (user){
+            await savePortfolioDataForUser(user.uid, data);
+        }
+    };
 
     const handleAddLink = () => {
-        setLinksRows([...linksRows, {id: linksRows.length}]);
+        setLinksRows([...linksRows, {id: linksRows.length, link: ""}]);
     }
 
     const onLinkChange = (index: number, value: string) => {
-        setLinks(links.map((link, i) => i === index ? value : link));
-    }
+        setLinksRows(linksRows.map((row) => row.id === index ? {...row, link: value} : row));
+    };
 
     const handleDeleteLink = (id: number) => {
         setLinksRows(linksRows.filter((row) => row.id !== id));
-        setLinks(links.filter((link, index) => index !== id));
-    }
+    };
 
     const handleAddProject = () => {
         setProjects([...projects, {photo: null, name: "", link: "", photoPath: ""}]);
-    }
+    };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
         setProjects(projects.map((project, i) => i === index ? {...project, photo, photoPath} : project));
-    }
+    };
 
     const handleEditProjectName = (index: number, name: string) => {
         setProjects(projects.map((project, i) => i === index ? {...project, name} : project));
-    }
+    };
 
     const handleEditProjectLink = (index: number, link: string) => {
         setProjects(projects.map((project, i) => i === index ? {...project, link} : project));
-    }
+    };
 
     const handleDeleteProject = (index: number) => {
         setProjects(projects.filter((project, i) => i !== index));
+    };
+
+    if (loading) {
+        return (
+            <main className="flex justify-center items-center h-screen">
+                <div className="bg-blue-100 text-blue-700 p-4 rounded shadow-md">
+                    <h1>Loading...</h1>
+                </div>
+            </main>
+        );
+    }
+
+    if(!user){
+        return (
+            <main className="flex justify-center items-center h-screen">
+                <div className="bg-red-100 text-red-700 p-4 rounded shadow-md">
+                    <h1>Not authorized</h1>
+                </div>
+            </main>
+        );
     }
 
     return (
@@ -136,10 +169,10 @@ export default function FirstTemplateForm(){
                 <div key={row.id}>
                     <input
                         className="border-2"
-                        type="text"
+                        type="url"
                         id="links"
                         name="links"
-                        value={links[row.id]}
+                        value={linksRows[row.id].link}
                         onChange={({target}) => onLinkChange(row.id, target.value)}
                     /><br/>
                     <button onClick={() => handleDeleteLink(row.id)}>Delete</button>
@@ -190,7 +223,8 @@ export default function FirstTemplateForm(){
                     <button onClick={() => handleDeleteProject(index)}>Delete</button>
                 </div>
             ))}
-            <button onClick={handleAddProject}>Add Project</button>
+            <button onClick={handleAddProject}>Add Project</button><br/>
+            <button onClick={handleSave}>Save</button>
         </div>
     );
 }
