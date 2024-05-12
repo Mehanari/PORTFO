@@ -3,6 +3,12 @@ import {getStorage, ref, uploadBytes} from "@firebase/storage";
 import {db} from "@/firebase/firebaseConfig";
 import {addDoc, collection} from "@firebase/firestore";
 import {getFileHash} from "@/functions/cryptographyUtilities";
+import {
+    IMAGES_DIRECTORY_NAME,
+    LINKS_COLLECTION_NAME,
+    PORTFOLIOS_COLLECTION_NAME,
+    PROJECTS_COLLECTION_NAME
+} from "@/constants";
 
 async function savePortfolioDataForUser(userId: string, data: PortfolioData): Promise<string | undefined> {
     try{
@@ -10,7 +16,7 @@ async function savePortfolioDataForUser(userId: string, data: PortfolioData): Pr
         if (data.photo) {
             photoPath = await addImage(data.photo);
         }
-        const docRef = await addDoc(collection(db, "portfolios"), {
+        const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME), {
             userId: userId,
             photoPath: photoPath,
             username: data.username,
@@ -25,7 +31,6 @@ async function savePortfolioDataForUser(userId: string, data: PortfolioData): Pr
         console.error('Error saving template data for user with id: ' + userId +'\nError: ' + error);
         return;
     }
-    return;
 }
 
 async function saveLinksListForDocument(docId: string, links: string[]): Promise<void> {
@@ -40,7 +45,7 @@ async function saveLinksListForDocument(docId: string, links: string[]): Promise
 
 async function saveLinkForDocument(docId: string, link: string): Promise<void> {
     try {
-        await addDoc(collection(db, "portfolios", docId, "links"), {
+        await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME, docId, LINKS_COLLECTION_NAME), {
             link: link,
         });
     } catch (error) {
@@ -64,7 +69,7 @@ async function saveProjectForDocument(docId: string, project: ProjectData): Prom
         if (project.photo) {
             photoPath = await addImage(project.photo);
         }
-        await addDoc(collection(db, "portfolios", docId, "projects"), {
+        await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME, docId, PROJECTS_COLLECTION_NAME), {
             name: project.name,
             link: project.link,
             photoPath: photoPath,
@@ -79,7 +84,7 @@ async function addImage(image: File): Promise<string> {
         const storage = getStorage();
         const hash = await getFileHash(image);
         const fileType = image.name.split(".").slice(-1);
-        const path = `image/${hash}.${fileType}`;
+        const path = `${IMAGES_DIRECTORY_NAME}/${hash}.${fileType}`;
         const storageRef = ref(storage, path);
         await uploadBytes(storageRef, image);
         return path;

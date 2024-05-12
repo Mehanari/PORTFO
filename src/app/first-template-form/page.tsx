@@ -5,11 +5,13 @@ import {PortfolioData} from "@/model/types";
 import {savePortfolioDataForUser} from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
-interface LinkRow {
+
+type LinkRow = {
     id: number;
     link: string;
 }
-interface ProjectRow {
+type ProjectRow = {
+    id: number;
     photo: File | null;
     name: string;
     link: string;
@@ -63,7 +65,7 @@ export default function FirstTemplateForm(){
     };
 
     const handleAddProject = () => {
-        setProjects([...projects, {photo: null, name: "", link: "", photoPath: ""}]);
+        setProjects([...projects, {id: projects.length, photo: null, name: "", link: "", photoPath: ""}]);
     };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
@@ -182,8 +184,8 @@ export default function FirstTemplateForm(){
             <button onClick={handleAddLink}>Add Link</button>
             <br/>
             <label htmlFor="projects">My works:</label><br/>
-            {projects.map((project, index) => (
-                <div key={index}>
+            {projects.map((project) => (
+                <div key={project.id}>
                     <label htmlFor="project-photo">Project photo:</label><br/>
                     <input
                         className="border-2"
@@ -193,7 +195,7 @@ export default function FirstTemplateForm(){
                         onChange={({target}) => {
                             if (target.files) {
                                 const file = target.files[0];
-                                handleEditProjectPhoto(index, file, URL.createObjectURL(file));
+                                handleEditProjectPhoto(project.id, file, URL.createObjectURL(file));
                             }
                         }}/><br/>
                     <div
@@ -211,7 +213,7 @@ export default function FirstTemplateForm(){
                         id="project-name"
                         name="project-name"
                         value={project.name}
-                        onChange={({target}) => handleEditProjectName(index, target.value)}/><br/>
+                        onChange={({target}) => handleEditProjectName(project.id, target.value)}/><br/>
                     <label htmlFor="project-link">Project link:</label><br/>
                     <input
                         className="border-2"
@@ -219,8 +221,8 @@ export default function FirstTemplateForm(){
                         id="project-link"
                         name="project-link"
                         value={project.link}
-                        onChange={({target}) => handleEditProjectLink(index, target.value)}/><br/>
-                    <button onClick={() => handleDeleteProject(index)}>Delete</button>
+                        onChange={({target}) => handleEditProjectLink(project.id, target.value)}/><br/>
+                    <button onClick={() => handleDeleteProject(project.id)}>Delete</button>
                 </div>
             ))}
             <button onClick={handleAddProject}>Add Project</button><br/>
