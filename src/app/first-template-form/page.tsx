@@ -5,6 +5,7 @@ import {PortfolioData} from "@/model/types";
 import {savePortfolioDataForUser} from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
+import {PortfolioStatus} from "@/portfolioStatuses";
 
 type LinkRow = {
     id: number;
@@ -34,6 +35,9 @@ export default function FirstTemplateForm(){
 
     const handleSave = async () => {
         const data: PortfolioData = {
+            name: "New Portfolio",
+            link: "",
+            status: PortfolioStatus.DRAFT,
             photo,
             username,
             fullName: fullname,

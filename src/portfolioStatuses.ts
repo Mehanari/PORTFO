@@ -3,3 +3,5 @@ enum PortfolioStatus {
     PUBLISHED = 2,
     PENDING_CHANGES = 3,
 }
+
+export { PortfolioStatus };

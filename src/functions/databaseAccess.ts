@@ -18,6 +18,9 @@ async function savePortfolioDataForUser(userId: string, data: PortfolioData): Pr
         }
         const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME), {
             userId: userId,
+            name: data.name,
+            status: data.status,
+            link: data.link,
             photoPath: photoPath,
             username: data.username,
             fullName: data.fullName,
