@@ -50,7 +50,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
 
   if (!protfolioData) {
     return (
-      <main className="flex justify-center items-center h-screen">
+      <main className="flex justify-center items-center h-screen ">
         <div className="bg-blue-100 text-blue-700 p-4 rounded shadow-md">
           <h1>Loading portfolio data...</h1>
         </div>
@@ -59,48 +59,51 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
   }
 
   return (
-    <div>
-      <img src={protfolioData.photoPath} alt=""/>
-      <p>Username:</p>
-      <div className="">
-        <span>{protfolioData.username}</span>
-      </div>
-      <p>Full name:</p>
-      <div className="">
-        <span>{protfolioData.fullName}</span>
-      </div>
-      <p>Location:</p>
-      <div className="">
-        <span>{protfolioData.location}</span>
-      </div>
-      <p>Role:</p>
-      <div className="">
-        <span>{protfolioData.role}</span>
-      </div>
-      <p>Bio:</p>
-      <div className="">
-        <span>{protfolioData.bio}</span>
-      </div>
-      <p>Links:</p>
-      {protfolioData.links.map((row, index) => (
-        <div key={index}>
-          <a href={row} target="_blank" rel="noreferrer">{row}</a>
+    <div className="bg-rose-50 relative ">
+        <div className="gap-1 ml-20 ">
+            <div className="w-56 h-56 justify-center items-start inline-flex">
+                <img className="w-56 h-56 justify-center mt-16 items-center gap-2.5 relative rounded-full border border-zinc-600" src={protfolioData.photoPath} alt=""/>
+            </div>
+            <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md font-normal mt-6">Username:</p>
+            <div className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex mt-2">
+            <span className="w-20 h-5 text-center text-black text-sm font-normall">{protfolioData.username}</span>
+            </div>
+            <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md font-normal mt-2">Full name:</p>
+            <div className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex mt-2">
+                <span className="w-20 h-5 text-center text-black text-sm font-normal">{protfolioData.fullName}</span>
+            </div>
+            <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md font-normal mt-2">Location:</p>
+            <div className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex mt-2">
+                <span className="w-20 h-5 text-center text-black text-sm font-normal">{protfolioData.location}</span>
+            </div>
+            <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md font-normal mt-2">Role:</p>
+            <div className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex mt-2">
+                <span className="text-center text-black text-sm font-normal">{protfolioData.role}</span>
+            </div>
+            <p className="w-56 grow shrink basis-0 text-start text-zinc-600 text-md font-normal mt-2">Bio:</p>
+            <div className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex">
+                <span className="text-center text-black text-sm font-normal">{protfolioData.bio}</span>
+            </div>
+            <p className="w-56 grow shrink basis-0 text-start text-zinc-600 text-md font-normal mt-2 mb-2">Links:</p>
+            {protfolioData.links.map((row, index) => (
+                <div className="text-black text-sm font-normal" key={index}>
+                    <a href={row} target="_blank" rel="noreferrer">{row}</a>
+                </div>
+            ))}
         </div>
-      ))}
-      <p>My works:</p><br/>
-      {protfolioData.projects.map((project, index) => (
-        <div key={index}>
-          <p>Project photo:</p>
-          <div
-            className="w-40 aspect-video rounded flex items-center justify-center border-2 border-dashed cursor-pointer">
-            <img src={project.photoPath} alt=""/>
-          </div>
-          <p>Project name:</p>
-          <p>{project.name}</p>
-          <p>Project link:</p>
-          <a href={project.link} target="_blank" rel="noreferrer">{project.link}</a>
-        </div>
-      ))}
+        <p className="w-72 h-10 left-[846px] top-[100px] absolute text-center text-zinc-600 text-5xl font-bold">My works:</p><br/>
+        {protfolioData.projects.map((project, index) => (
+            <div key={index}>
+                <p>Project photo:</p>
+                <div className="w-40 aspect-video rounded flex items-center justify-center border-2 border-dashed cursor-pointer">
+                    <img src={project.photoPath} alt=""/>
+                </div>
+                <p>Project name:</p>
+                <p>{project.name}</p>
+                <p>Project link:</p>
+                <a href={project.link} target="_blank" rel="noreferrer">{project.link}</a>
+            </div>
+        ))}
     </div>
   )
 
