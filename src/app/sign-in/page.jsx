@@ -7,7 +7,7 @@ import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import Image from "next/image";
 
 
-export default function SignUp() {
+export default function SignIn() {
   const router = useRouter();
 
   const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
@@ -37,7 +37,7 @@ export default function SignUp() {
     <div className="z-10 w-2/3 bg-white p-8 h-screen flex justify-center items-start">
       <div className="flex flex-col justify-center items-center w-full">
         <Image src="/Logo.jpg" alt="" width={200} height={50} />
-        <h1 className="font-semibold text-5xl mt-20 mb-12">Sign up</h1>
+        <h1 className="font-semibold text-5xl mt-20 mb-12">Sign in</h1>
         <button 
           onClick={() => signInWithGoogle()} 
           className="bg-white hover:bg-gray-300 text-gray font-bold py-3 px-12 rounded-full border border-black p-3 flex items-center">
