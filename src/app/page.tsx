@@ -6,15 +6,9 @@ import { useRouter } from 'next/navigation';
 import EmblaCarousel from './components/EmblaCarousel';
 import { OPTIONS, SLIDES } from './index';
 
-function sendToSignUp(router: ReturnType<typeof useRouter>) {
-  router.push('/signUp');
+function sendToSignIn(router: ReturnType<typeof useRouter>) {
+  router.push('/sign-in');
 }
-
-//TO DO pushing to the signIn page
-
-// function sendToSignIn(router: ReturnType<typeof useRouter>) {
-//   router.push('/signIn');
-// }
 
 export default function Home() {
   const router = useRouter();
@@ -28,20 +22,14 @@ export default function Home() {
             </div>
             <div className="flex space-x-4">
               <button
-                onClick={() => sendToSignUp(router)}
-                className="flex items-center font-semibold"
-              >
-                Sign Up
-              </button>
-              <button
-                // onClick={() => sendToSignIn(router)}
+                onClick={() => sendToSignIn(router)}
                 className="flex items-center font-semibold"
               >
                 Sign In
               </button>
               <button className="bg-orange-400 hover:bg-orange-300 text-white font-semibold py-2 px-6 rounded-full flex items-center shadow-md">
                 Create Portfolio
-              </button>
+              </button> {/*TODO Send to the page with available portfolios templates*/} 
             </div>
           </div>
         </nav>
@@ -57,7 +45,7 @@ export default function Home() {
             </p>
             <button className="bg-black hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-full flex items-center shadow-md mt-4">
               Create Portfolio
-            </button>
+            </button> {/*TODO Send to the page with available portfolios templates*/} 
           </div>
         </div>
         <div className="lg:w-2/3 pr-14 pl-14">
@@ -79,7 +67,7 @@ export default function Home() {
               </a>
             </span>
             <Image src="/arrow.png" alt="Arrow" width={10} height={10} className="m-2" />
-          </div>
+          </div> {/*TODO Send to the page with available portfolios templates*/} 
         </div>
       </section>
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
@@ -170,7 +158,7 @@ export default function Home() {
               <span>
                 <a href="#" className="font-bold text-1xl text-black underline hover:text-gray-600">
                   Get answer
-                </a>
+                </a> {/*TODO Send to the details of the company*/} 
               </span>
               <Image src="/arrow.png" alt="Arrow" width={10} height={10} className="m-2" />
             </div>
@@ -183,7 +171,7 @@ export default function Home() {
               <span>
                 <a href="#" className="font-bold text-1xl text-black underline hover:text-gray-600">
                   Get answer
-                </a>
+                </a> {/*TODO Send to the details of the company*/} 
               </span>
               <Image src="/arrow.png" alt="Arrow" width={10} height={10} className="m-2" />
             </div>
@@ -196,7 +184,7 @@ export default function Home() {
               <span>
                 <a href="#" className="font-bold text-1xl text-black underline hover:text-gray-600">
                   Get answer
-                </a>
+                </a> {/*TODO Send to the details of the company*/} 
               </span>
               <Image src="/arrow.png" alt="Arrow" width={10} height={10} className="m-2" />
             </div>
