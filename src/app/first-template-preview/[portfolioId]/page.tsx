@@ -89,23 +89,25 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
               <p className="w-56 grow shrink basis-0 text-start text-zinc-600 text-md font-normal mt-2">Bio:</p>
               <div
                   className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex">
-                  <span className="text-center text-black text-sm font-medium">{protfolioData.bio}</span>
+                  <span className="text-center text-black text-sm font-medium px-4">{protfolioData.bio}</span>
               </div>
               <p className="w-56 grow shrink basis-0 text-start text-zinc-600 text-md font-normal mt-2 mb-2">Links:</p>
               {protfolioData.links.map((row, index) => (
-                  <div className="text-balance text-black text-sm font-normal" key={index}>
+                  <div className="text-balance text-black text-sm font-normal hover:text-orange-500" key={index}>
                       <a href={row} target="_blank" rel="noreferrer">{row}</a>
                   </div>
               ))}
           </div>
-          <div className="absolute left-[560px] top-[40px] shrink-0 mt-8 mr-7 max-w-full h-px border border-solid bg-stone-500 border-stone-500 w-[825px] max-md:mr-2.5"
+          <div className="absolute left-[560px] top-[40px] shrink-0 mt-8 mr-7 max-w-full h-px border border-solid
+          bg-stone-500 border-stone-500 w-[825px] max-md:mr-1.5"
           ></div>
           <p className=" w-72 h-10 left-[846px] top-[80px] absolute text-center text-zinc-600 text-5xl font-bold">My
               works</p><br/>
-          <div className="absolute left-[560px] top-[104px]  flex justify-center items-center   gap-8 pb-8">
+          <div className="absolute left-[560px] top-[104px] flex justify-center items-center gap-8 pb-8 self-stretch ">
               {protfolioData.projects.map((project, index) => (
                   <div
-                      className="max-w-64 max-h-72 rounded-[50px] shadow border border-zinc-600 mt-16 flex flex-col justify-center items-center px-8 pt-6 pb-14 max-md:px-5 max-md:mt-8"
+                      className="max-w-64 max-h-72 rounded-[50px] shadow border border-zinc-600 mt-16 flex flex-col
+                      justify-center items-center px-16 pt-6 pb-14 max-md:px-5 max-md:mt-8 hover:shadow-xl transition-shadow duration-300"
                       key={index}>
                       <p className="hidden">Project photo:</p>
                       <div className=" relative w-32 items-center justify-center ">
@@ -113,14 +115,16 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
                     max-w-full aspect-square" src={project.photoPath} alt=""/>
                       </div>
                       <p className="hidden">Project name:</p>
-                      <p className="text-balance text-center text-black text-2xl font-medium mt-4 ">{project.name}</p>
+                      <p className="self-stretch text-balance text-center text-black text-2xl font-medium mt-4 ">{project.name}</p>
                       <p className="hidden">Project link:</p>
-                      <a className=" flex justify-center text-balance text-center text-black text-xs font-normal underline leading-tight mt-4 "
-                         href={project.link} target="_blank" rel="noreferrer">{project.link}</a>
+                      <div className="w-full ">
+                          <a className="block break-words px-4 justify-center text-center text-black text-base font-medium
+                           underline leading-tight mt-4 hover:text-orange-500"
+                             href={project.link} target="_blank" rel="noreferrer">See more</a>
+                      </div>
                   </div>
               ))}
           </div>
-
       </div>
   )
 
