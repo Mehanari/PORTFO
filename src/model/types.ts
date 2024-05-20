@@ -1,3 +1,5 @@
+import {PortfolioStatus} from "@/portfolioStatuses";
+
 export interface ProjectData {
     photo: File | null;
     name: string;
@@ -5,6 +7,9 @@ export interface ProjectData {
 }
 
 export interface PortfolioData {
+    name: string;
+    status: PortfolioStatus.DRAFT;
+    link: string;
     photo: File | null;
     username: string;
     fullName: string;

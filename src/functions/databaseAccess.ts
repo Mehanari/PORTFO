@@ -43,14 +43,17 @@ export async function getPortfolioDataForUser(portfolioId: string): Promise<Port
   }
 }
 
-export async function savePortfolioDataForUser(userId: string, data: PortfolioData): Promise<string | undefined> {
-  try {
-    let photoPath: string = "";
+async function savePortfolioDataForUser(userId: string, data: PortfolioData): Promise<string | undefined> {
+  try{
+    let photoPath : string = "";
     if (data.photo) {
       photoPath = await addImage(data.photo);
     }
     const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME), {
       userId: userId,
+      name: data.name,
+      status: data.status,
+      link: data.link,
       photoPath: photoPath,
       username: data.username,
       fullName: data.fullName,
@@ -61,7 +64,7 @@ export async function savePortfolioDataForUser(userId: string, data: PortfolioDa
     await saveLinksListForDocument(docRef.id, data.links);
     await saveProjectsListForDocument(docRef.id, data.projects);
   } catch (error) {
-    console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+    console.error('Error saving template data for user with id: ' + userId +'\nError: ' + error);
     return;
   }
 }
