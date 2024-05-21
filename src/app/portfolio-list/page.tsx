@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { db, auth } from '../../firebase/firebaseConfig.js';
 import { getDocs, collection, doc, updateDoc, query, where } from 'firebase/firestore';
+import { getStatusName } from '@/functions/statusNameUtilities';
+import { PORTFOLIOS_COLLECTION_NAME } from '@/constants';
 
 interface Portfolio {
   id: string;
@@ -23,7 +25,7 @@ const Header = () => {
   return (
     <div className="header flex justify-between items-center p-4">
       <div className="text-xl font-bold cursor-pointer" onClick={handleHomeClick}>
-        Home
+        PORTFO
       </div>
     </div>
   );
@@ -43,7 +45,7 @@ const Footer = () => {
   return (
     <div className="footer flex justify-between items-center p-4 ]mt-4">
       <button onClick={handleHomeClick} className="text-lg font-medium  px-4 py-2 rounded">
-        Home
+        Back
       </button>
       <button onClick={handleNewPageClick} className="text-lg font-mediumpx-4 py-2 rounded">
         New
@@ -65,12 +67,12 @@ const PortfolioList = () => {
       if (user) {
         console.log("User is authenticated: ", user);
         try {
-          const snapshot = await getDocs(query(collection(db, "portfolios"), where('userId', '==', user.uid)));
+          const snapshot = await getDocs(query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', user.uid)));
           const portfolioData = snapshot.docs.map((doc) => ({
             id: doc.id,
             name: doc.data().name,
             imageUrl: doc.data().photoPath,
-            status: "temp",
+            status: getStatusName(doc.data().status),
             link: doc.data().link,
           }));
           setPortfolios(portfolioData);
@@ -119,6 +121,7 @@ const PortfolioList = () => {
     }
     setEditingId(null);
   };
+
 
   return (
     <div className="flex flex-col min-h-screen">
