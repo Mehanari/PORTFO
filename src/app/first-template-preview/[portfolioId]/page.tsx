@@ -60,7 +60,10 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
 
   return (
       <div className="bg-rose-50 relative font-sans ">
-          <div className="gap-1 ml-20 ">
+          <div className="w-[48px] h-[48px]" >
+              <img className="fixed w-[48px] h-[48px] top-4 left-4 grayscale-0 hover:brightness-50 sepia-1 saturate-0 hue-rotate-50" alt="arrow back" src="/arrow-back.png"/>
+          </div>
+          <div className="gap-1 ml-20">
               <div className="w-56 h-56 justify-center items-start inline-flex">
                   <img
                       className="w-56 h-56 justify-center mt-16 items-center gap-2.5 relative rounded-full border border-zinc-600"
@@ -127,5 +130,4 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
           </div>
       </div>
   )
-
 }
