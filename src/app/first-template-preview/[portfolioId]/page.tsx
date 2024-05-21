@@ -2,7 +2,7 @@
 import {useState, useEffect} from "react";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
-import {PortfolioDataPreview} from "@/model/types";
+import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
 import {getPortfolioDataForUser} from "@/functions/databaseAccess";
 
 
@@ -18,7 +18,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
         setPortfolioData(data);
       });
     }
-  }, [user]);
+  }, [params.portfolioId, user]);
 
   if (loading) {
     return <div>Loading...</div>
@@ -90,11 +90,10 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
       <p>My works:</p><br/>
       {protfolioData.projects.map((project, index) => (
         <div key={index}>
-          <img src={project.photoPath} alt={project.name}/>
           <p>Project photo:</p>
           <div
             className="w-40 aspect-video rounded flex items-center justify-center border-2 border-dashed cursor-pointer">
-            <img src={project.photoPath} alt=""/>
+            <img src={project.photoPath} alt={project.name}/>
           </div>
           <p>Project name:</p>
           <p>{project.name}</p>

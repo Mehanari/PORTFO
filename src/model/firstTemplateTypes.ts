@@ -28,6 +28,9 @@ export type ProjectDataPreview = {
 }
 
 export type PortfolioDataPreview = {
+    name: string;
+    status: PortfolioStatus.DRAFT;
+    link: string;
     photoPath: string;
     username: string;
     fullName: string;

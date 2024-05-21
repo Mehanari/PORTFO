@@ -1,11 +1,10 @@
-import {PortfolioData, PortfolioDataPreview, ProjectData, ProjectDataPreview} from "@/model/types";
+import {PortfolioData as FirstTemplateData, ProjectData as FirstTemplateProjectData, PortfolioDataPreview as FirstTemplateDataPreview,
+  ProjectDataPreview as FirstTemplateProjectPreview} from "@/model/firstTemplateTypes";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
 import {
   PortfolioData as SecondTemplateData,
   ProjectData as SecondTemplateProjectData
 } from "@/model/secondTemplateTypes";
-import {PortfolioData as FirstTemplateData, ProjectData as FirstTemplateProjectData} from "@/model/firstTemplateTypes";
-import {getStorage, ref, uploadBytes} from "@firebase/storage";
 import {db} from "@/firebase/firebaseConfig";
 import {addDoc, collection, doc, getDoc, query, getDocs} from "@firebase/firestore";
 import {getFileHash} from "@/functions/cryptographyUtilities";
@@ -61,27 +60,40 @@ export async function saveFirstTemplateDataForUser(userId: string, data: FirstTe
   }
 }
 
-export async function getPortfolioDataForUser(portfolioId: string): Promise<PortfolioDataPreview | undefined> {
+export async function getPortfolioDataForUser(portfolioId: string): Promise<FirstTemplateDataPreview | undefined> {
   try {
     const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
       if (data) {
-        const links = await getLinksListForDocument(docSnap.id);
-        const projects = await getProjectsListForDocument(docSnap.id);
         const imageLink = await getImageUrlByPath(data.photoPath);
         if (!imageLink) {
           throw new Error("Could not get image link for path: " + data.photoPath);
         }
+        const projects: FirstTemplateProjectPreview[] = [];
+        for (const project of data.projects) {
+          const imageUrl = await getImageUrlByPath(project.filePath);
+          if (!imageUrl) {
+            throw new Error("Could not get image link for path: " + project.filePath);
+          }
+          projects.push({
+            name: project.name,
+            link: project.link,
+            photoPath: imageUrl,
+          });
+        }
         return {
+          name: data.name,
+          status: data.status,
+          link: data.link,
           photoPath: imageLink,
           username: data.username,
           fullName: data.fullName,
           location: data.location,
           role: data.role,
           bio: data.bio,
-          links: links,
+          links: data.links || [],
           projects: projects,
         };
       }
@@ -93,33 +105,7 @@ export async function getPortfolioDataForUser(portfolioId: string): Promise<Port
   }
 }
 
-async function savePortfolioDataForUser(userId: string, data: PortfolioData): Promise<string | undefined> {
-  try {
-    let photoPath: string = "";
-    if (data.photo) {
-      photoPath = await addImage(data.photo);
-    }
-    const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME), {
-      userId: userId,
-      name: data.name,
-      status: data.status,
-      link: data.link,
-      photoPath: photoPath,
-      username: data.username,
-      fullName: data.fullName,
-      location: data.location,
-      role: data.role,
-      bio: data.bio,
-    });
-    await saveLinksListForDocument(docRef.id, data.links);
-    await saveProjectsListForDocument(docRef.id, data.projects);
-  } catch (error) {
-    console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
-    return;
-  }
-}
-
-async function saveSecondTemplateDataForUser(userId: string, data: SecondTemplateData): Promise<string | undefined> {
+export async function saveSecondTemplateDataForUser(userId: string, data: SecondTemplateData): Promise<string | undefined> {
   try {
     type FirebaseProjectData = {
       filePath: string;
