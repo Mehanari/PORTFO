@@ -1,15 +1,65 @@
 import {PortfolioData, PortfolioDataPreview, ProjectData, ProjectDataPreview} from "@/model/types";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
+import {
+  PortfolioData as SecondTemplateData,
+  ProjectData as SecondTemplateProjectData
+} from "@/model/secondTemplateTypes";
+import {PortfolioData as FirstTemplateData, ProjectData as FirstTemplateProjectData} from "@/model/firstTemplateTypes";
+import {getStorage, ref, uploadBytes} from "@firebase/storage";
 import {db} from "@/firebase/firebaseConfig";
 import {addDoc, collection, doc, getDoc, query, getDocs} from "@firebase/firestore";
 import {getFileHash} from "@/functions/cryptographyUtilities";
 import {
   IMAGES_DIRECTORY_NAME,
-  LINKS_COLLECTION_NAME,
   PORTFOLIOS_COLLECTION_NAME,
-  PROJECTS_COLLECTION_NAME
 } from "@/constants";
+import {TemplateType} from "@/templatesTypes";
 
+
+export async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
+  try {
+    type FirebaseProjectData = {
+      filePath: string;
+      name: string;
+      link: string;
+    }
+    let photoPath: string = "";
+    if (data.photo) {
+      photoPath = await addImage(data.photo);
+    }
+    let firebaseProjects: FirebaseProjectData[] = [];
+    for (const project of data.projects) {
+      let projectPhotoPath: string = "";
+      if (project.photo) {
+        projectPhotoPath = await addImage(project.photo);
+      }
+      firebaseProjects.push({
+        filePath: projectPhotoPath,
+        name: project.name,
+        link: project.link,
+      });
+    }
+    const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
+      {
+        templateType: TemplateType.FIRST_TEMPLATE,
+        userId: userId,
+        name: data.name,
+        status: data.status,
+        link: data.link,
+        photoPath: photoPath,
+        username: data.username,
+        fullName: data.fullName,
+        location: data.location,
+        role: data.role,
+        projects: firebaseProjects,
+        bio: data.bio,
+      });
+    return docRef.id;
+  } catch (error) {
+    console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+    return;
+  }
+}
 
 export async function getPortfolioDataForUser(portfolioId: string): Promise<PortfolioDataPreview | undefined> {
   try {
@@ -44,8 +94,8 @@ export async function getPortfolioDataForUser(portfolioId: string): Promise<Port
 }
 
 async function savePortfolioDataForUser(userId: string, data: PortfolioData): Promise<string | undefined> {
-  try{
-    let photoPath : string = "";
+  try {
+    let photoPath: string = "";
     if (data.photo) {
       photoPath = await addImage(data.photo);
     }
@@ -64,54 +114,55 @@ async function savePortfolioDataForUser(userId: string, data: PortfolioData): Pr
     await saveLinksListForDocument(docRef.id, data.links);
     await saveProjectsListForDocument(docRef.id, data.projects);
   } catch (error) {
-    console.error('Error saving template data for user with id: ' + userId +'\nError: ' + error);
+    console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
     return;
   }
 }
 
-async function saveLinksListForDocument(docId: string, links: string[]): Promise<void> {
+async function saveSecondTemplateDataForUser(userId: string, data: SecondTemplateData): Promise<string | undefined> {
   try {
-    for (const link of links) {
-      await saveLinkForDocument(docId, link);
+    type FirebaseProjectData = {
+      filePath: string;
+      name: string;
+      description: string;
+      link: string;
     }
-  } catch (error) {
-    console.error('Error saving links for document with id: ' + docId + '\nError: ' + error);
-  }
-}
-
-async function saveLinkForDocument(docId: string, link: string): Promise<void> {
-  try {
-    await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME, docId, LINKS_COLLECTION_NAME), {
-      link: link,
-    });
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function saveProjectsListForDocument(id: string, projects: ProjectData[]) {
-  try {
-    for (const project of projects) {
-      await saveProjectForDocument(id, project);
-    }
-  } catch (error) {
-    console.error('Error saving projects for document with id: ' + id + '\nError: ' + error);
-  }
-}
-
-async function saveProjectForDocument(docId: string, project: ProjectData): Promise<void> {
-  try {
     let photoPath: string = "";
-    if (project.photo) {
-      photoPath = await addImage(project.photo);
+    if (data.photo) {
+      photoPath = await addImage(data.photo);
     }
-    await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME, docId, PROJECTS_COLLECTION_NAME), {
-      name: project.name,
-      link: project.link,
-      photoPath: photoPath,
-    });
+    let firebaseProjects: FirebaseProjectData[] = [];
+    for (const project of data.projects) {
+      let projectPhotoPath: string = "";
+      if (project.photo) {
+        projectPhotoPath = await addImage(project.photo);
+      }
+      firebaseProjects.push({
+        filePath: projectPhotoPath,
+        name: project.name,
+        description: project.description,
+        link: project.link,
+      });
+    }
+    const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
+      {
+        templateType: TemplateType.SECOND_TEMPLATE,
+        userId: userId,
+        name: data.name,
+        status: data.status,
+        link: data.link,
+        photoPath: photoPath,
+        phoneNumber: data.phoneNumber,
+        fullName: data.fullName,
+        location: data.location,
+        role: data.role,
+        projects: firebaseProjects,
+        bio: data.bio,
+      });
+    return docRef.id;
   } catch (error) {
-    throw error;
+    console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+    return;
   }
 }
 
@@ -128,49 +179,6 @@ async function addImage(image: File): Promise<string> {
     throw error;
   }
 }
-
-async function getLinksListForDocument(docId: string): Promise<string[]> {
-  try {
-    const links: string[] = [];
-    const querySnapshot = await getDocs(query(collection(db, PORTFOLIOS_COLLECTION_NAME, docId, LINKS_COLLECTION_NAME)));
-    querySnapshot.forEach((doc) => {
-      links.push(doc.data().link);
-    });
-    return links;
-  } catch (error) {
-    console.error('Error getting links for document with id: ' + docId + '\nError: ' + error);
-    return [];
-  }
-}
-
-
-async function getProjectsListForDocument(docId: string): Promise<ProjectDataPreview[]> {
-  try {
-    const projects: ProjectDataPreview[] = [];
-    const querySnapshot = await getDocs(query(collection(db, PORTFOLIOS_COLLECTION_NAME, docId, PROJECTS_COLLECTION_NAME)));
-    for (const doc of querySnapshot.docs) {
-      const imageLink = await getImageUrlByPath(doc.data().photoPath) || "";
-      projects.push({
-        photoPath: imageLink,
-        name: doc.data().name,
-        link: doc.data().link,
-      });
-    }
-    // querySnapshot.forEach((doc) => {
-    //   const imageLink = await getImageUrlByPath(doc.data().photoPath);
-    //   projects.push({
-    //     photoPath: doc.data().photoPath,
-    //     name: doc.data().name,
-    //     link: doc.data().link,
-    //   });
-    // });
-    return projects;
-  } catch (error) {
-    console.error('Error getting projects for document with id: ' + docId + '\nError: ' + error);
-    return [];
-  }
-}
-
 
 async function getImageUrlByPath(path: string): Promise<string | undefined> {
   const storage = getStorage();

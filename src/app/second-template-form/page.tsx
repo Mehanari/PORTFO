@@ -1,8 +1,7 @@
 "use client"
-
 import {useState} from "react";
-import {PortfolioData} from "@/model/firstTemplateTypes";
-import {saveFirstTemplateDataForUser} from "@/functions/databaseAccess";
+import {PortfolioData} from "@/model/secondTemplateTypes";
+import {saveSecondTemplateDataForUser} from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioStatus} from "@/portfolioStatuses";
@@ -14,22 +13,24 @@ type LinkRow = {
 type ProjectRow = {
     id: number;
     photo: File | null;
-    name: string;
-    link: string;
     photoPath: string;
+    name: string;
+    description: string;
+    link: string;
 }
 
 
 export default function FirstTemplateForm(){
-    const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPath, setPhotoPath] = useState<string>("");
-    const [username, setUsername] = useState<string>("");
     const [fullname, setFullname] = useState<string>("");
+    const [profession, setProfession] = useState<string>("");
+    const [aboutMe, setAboutMe] = useState<string>("");
+    const [phoneNumber, setPhoneNumber] = useState<string>("");
     const [location, setLocation] = useState<string>("");
-    const [role, setRole] = useState<string>("");
-    const [bio, setBio] = useState<string>("");
+    const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [projects, setProjects] = useState<ProjectRow[]>([]);
+
     const [user, loading, error] = useAuthState(auth);
 
 
@@ -39,20 +40,21 @@ export default function FirstTemplateForm(){
             link: "",
             status: PortfolioStatus.DRAFT,
             photo,
-            username,
+            phoneNumber: phoneNumber,
             fullName: fullname,
             location,
-            role,
-            bio,
+            role: profession,
+            bio: aboutMe,
             links: linksRows.map((row) => row.link),
             projects: projects.map((project) => ({
                 photo: project.photo,
                 name: project.name,
+                description: project.description,
                 link: project.link,
             })),
         }
         if (user){
-            await saveFirstTemplateDataForUser(user.uid, data);
+            await saveSecondTemplateDataForUser(user.uid, data);
         }
     };
 
@@ -69,7 +71,7 @@ export default function FirstTemplateForm(){
     };
 
     const handleAddProject = () => {
-        setProjects([...projects, {id: projects.length, photo: null, name: "", link: "", photoPath: ""}]);
+        setProjects([...projects, {id: projects.length, photo: null, name: "", description: "", link: "", photoPath: ""}]);
     };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
@@ -79,6 +81,10 @@ export default function FirstTemplateForm(){
     const handleEditProjectName = (index: number, name: string) => {
         setProjects(projects.map((project, i) => i === index ? {...project, name} : project));
     };
+
+    const handleEditProjectDescription = (index: number, description: string) => {
+        setProjects(projects.map((project, i) => i === index ? {...project, description} : project));
+    }
 
     const handleEditProjectLink = (index: number, link: string) => {
         setProjects(projects.map((project, i) => i === index ? {...project, link} : project));
@@ -131,22 +137,37 @@ export default function FirstTemplateForm(){
                     <span>Select Image</span>
                 )}
             </div>
-            <label htmlFor="username">Username:</label><br/>
+            <label htmlFor="fullName">Full name:</label><br/>
             <input
                 className="border-2"
                 type="text"
-                id="username"
-                name="username"
-                value={username}
-                onChange={({target}) => setUsername(target.value)}/><br/>
-            <label htmlFor="fullname">Full name:</label><br/>
-            <input
-                className="border-2"
-                type="text"
-                id="fullname"
-                name="fullname"
+                id="fullName"
+                name="fullName"
                 value={fullname}
                 onChange={({target}) => setFullname(target.value)}/><br/>
+            <label htmlFor="profession">Profession:</label><br/>
+            <input
+                className="border-2"
+                type="text"
+                id="profession"
+                name="profession"
+                value={profession}
+                onChange={({target}) => setProfession(target.value)}/><br/>
+            <label htmlFor="bio">About me:</label><br/>
+            <textarea
+                className="border-2"
+                id="aboutMe"
+                name="aboutMe"
+                value={aboutMe}
+                onChange={({target}) => setAboutMe(target.value)}></textarea><br/>
+            <label htmlFor="role">Contact me:</label><br/>
+            <input
+                className="border-2"
+                type="text"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={phoneNumber}
+                onChange={({target}) => setPhoneNumber(target.value)}/><br/>
             <label htmlFor="location">Location:</label><br/>
             <input
                 className="border-2"
@@ -155,21 +176,6 @@ export default function FirstTemplateForm(){
                 name="location"
                 value={location}
                 onChange={({target}) => setLocation(target.value)}/><br/>
-            <label htmlFor="role">Role:</label><br/>
-            <input
-                className="border-2"
-                type="text"
-                id="role"
-                name="role"
-                value={role}
-                onChange={({target}) => setRole(target.value)}/><br/>
-            <label htmlFor="bio">Bio:</label><br/>
-            <textarea
-                className="border-2"
-                id="bio"
-                name="bio"
-                value={bio}
-                onChange={({target}) => setBio(target.value)}></textarea><br/>
             <label htmlFor="links">Links:</label><br/>
             {linksRows.map((row) => (
                 <div key={row.id}>
@@ -187,7 +193,7 @@ export default function FirstTemplateForm(){
             ))}
             <button onClick={handleAddLink}>Add Link</button>
             <br/>
-            <label htmlFor="projects">My works:</label><br/>
+            <label htmlFor="projects">Projects:</label><br/>
             {projects.map((project) => (
                 <div key={project.id}>
                     <label htmlFor="project-photo">Project photo:</label><br/>
@@ -204,7 +210,7 @@ export default function FirstTemplateForm(){
                         }}/><br/>
                     <div
                         className="w-40 aspect-video rounded flex items-center justify-center border-2 border-dashed cursor-pointer">
-                        { project.photoPath ? (
+                        {project.photoPath ? (
                             <img src={project.photoPath} alt=""/>
                         ) : (
                             <span>Select Image</span>
@@ -218,6 +224,14 @@ export default function FirstTemplateForm(){
                         name="project-name"
                         value={project.name}
                         onChange={({target}) => handleEditProjectName(project.id, target.value)}/><br/>
+                    <label htmlFor="project-name">Description:</label><br/>
+                    <input
+                        className="border-2"
+                        type="text"
+                        id="description"
+                        name="description"
+                        value={project.description}
+                        onChange={({target}) => handleEditProjectDescription(project.id, target.value)}/><br/>
                     <label htmlFor="project-link">Project link:</label><br/>
                     <input
                         className="border-2"
@@ -229,7 +243,8 @@ export default function FirstTemplateForm(){
                     <button onClick={() => handleDeleteProject(project.id)}>Delete</button>
                 </div>
             ))}
-            <button onClick={handleAddProject}>Add Project</button><br/>
+            <button onClick={handleAddProject}>Add Project</button>
+            <br/>
             <button onClick={handleSave}>Save</button>
         </div>
     );
