@@ -61,7 +61,11 @@ export default function FirstTemplateForm(){
     };
 
     const handleAddLink = () => {
-        setLinksRows([...linksRows, {id: linksRows.length, link: ""}]);
+        let linkId = 1;
+        if (linksRows.length > 0) {
+            linkId = linksRows[linksRows.length - 1].id + 1;
+        }
+        setLinksRows([...linksRows, {id: linkId, link: ""}]);
     }
 
     const onLinkChange = (index: number, value: string) => {
@@ -73,23 +77,27 @@ export default function FirstTemplateForm(){
     };
 
     const handleAddProject = () => {
-        setProjects([...projects, {id: projects.length, photo: null, name: "", link: "", photoPath: ""}]);
+        let projectId = 1;
+        if (projects.length > 0) {
+            projectId = projects[projects.length - 1].id + 1;
+        }
+        setProjects([...projects, {id: projectId, photo: null, name: "", link: "", photoPath: ""}]);
     };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
-        setProjects(projects.map((project, i) => i === index ? {...project, photo, photoPath} : project));
+        setProjects(projects.map((project) => project.id === index ? {...project, photo, photoPath} : project));
     };
 
     const handleEditProjectName = (index: number, name: string) => {
-        setProjects(projects.map((project, i) => i === index ? {...project, name} : project));
+        setProjects(projects.map((project) => project.id === index ? {...project, name} : project));
     };
 
     const handleEditProjectLink = (index: number, link: string) => {
-        setProjects(projects.map((project, i) => i === index ? {...project, link} : project));
+        setProjects(projects.map((project) => project.id === index ? {...project, link} : project));
     };
 
     const handleDeleteProject = (index: number) => {
-        setProjects(projects.filter((project, i) => i !== index));
+        setProjects(projects.filter((project) => project.id !== index));
     };
 
 
@@ -243,7 +251,7 @@ export default function FirstTemplateForm(){
                                     type="url"
                                     id="links"
                                     name="links"
-                                    value={linksRows[row.id].link}
+                                    value={row.link}
                                     onChange={({target}) => onLinkChange(row.id, target.value)}
                                 /><br/>
                                 <button onClick={() => handleDeleteLink(row.id)} className="text-gray font-semibold underline">Delete</button>
@@ -308,7 +316,6 @@ export default function FirstTemplateForm(){
                     <button onClick={handleAddProject} className="bg-gray-200 hover:bg-gray-300 text-gray font-semibold py-2 px-6 rounded-full flex items-center">Add Project</button><br/>
                 </div>
             </div>
-            <button onClick={handleSave}>Save</button>
         </div>
     );
 }
