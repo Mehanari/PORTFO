@@ -98,3 +98,8 @@
     border-radius: 50%;
     margin: 8px;
   }
+
+  .font-cursive {
+    font-family: 'Calibri', cursive;
+    color: #4b4a4a;
+  }
