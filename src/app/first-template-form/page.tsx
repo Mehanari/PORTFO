@@ -200,7 +200,7 @@ export default function FirstTemplateForm(){
                     </div>
                     <label htmlFor="username" className="pt-8 font-semibold">Username</label>
                     <input
-                        className="border-2 rounded-2xl w-1/2 border-gray-500"
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center"
                         type="text"
                         id="username"
                         name="username"
@@ -208,7 +208,7 @@ export default function FirstTemplateForm(){
                         onChange={({target}) => setUsername(target.value)}/>
                     <label htmlFor="fullname" className="pt-2 font-semibold">Full name</label>
                     <input
-                        className="border-2 rounded-2xl w-1/2 border-gray-500"
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center"
                         type="text"
                         id="fullname"
                         name="fullname"
@@ -216,7 +216,7 @@ export default function FirstTemplateForm(){
                         onChange={({target}) => setFullname(target.value)}/>
                     <label htmlFor="location" className="pt-2 font-semibold">Location</label>
                     <input
-                        className="border-2 rounded-2xl w-1/2 border-gray-500"
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center"
                         type="text"
                         id="location"
                         name="location"
@@ -224,7 +224,7 @@ export default function FirstTemplateForm(){
                         onChange={({target}) => setLocation(target.value)}/>
                     <label htmlFor="role" className="pt-2 font-semibold">Role</label>
                     <input
-                        className="border-2 rounded-2xl w-1/2 border-gray-500"
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center"
                         type="text"
                         id="role"
                         name="role"
@@ -235,7 +235,7 @@ export default function FirstTemplateForm(){
                     <div className="flex flex-col w-1/2">
                         <label htmlFor="bio" className="pt-8 font-semibold">Bio</label>
                         <textarea
-                            className="border-2 rounded-2xl w-full border-gray-500"
+                            className="border-2 rounded-2xl w-full border-gray-500 text-center"
                             id="bio"
                             name="bio"
                             value={bio}
@@ -247,13 +247,13 @@ export default function FirstTemplateForm(){
                         <div key={row.id}>
                             <div className="flex flex-col justify-center items-center">
                                 <input
-                                    className="border-2 rounded-2xl w-full border-gray-500"
+                                    className="border-2 rounded-2xl w-full border-gray-500 text-center"
                                     type="url"
                                     id="links"
                                     name="links"
                                     value={row.link}
                                     onChange={({target}) => onLinkChange(row.id, target.value)}
-                                /><br/>
+                                />
                                 <button onClick={() => handleDeleteLink(row.id)} className="text-gray font-semibold underline">Delete</button>
                                 <br/>
                             </div>
@@ -294,7 +294,7 @@ export default function FirstTemplateForm(){
                                 </div>
                                 <label htmlFor="project-name" className="pt-2 font-semibold">Project name</label>
                                 <input
-                                    className="border-2 rounded-2xl w-full border-gray-500"
+                                    className="border-2 rounded-2xl w-full border-gray-500 text-center"
                                     type="text"
                                     id="project-name"
                                     name="project-name"
@@ -302,7 +302,7 @@ export default function FirstTemplateForm(){
                                     onChange={({target}) => handleEditProjectName(project.id, target.value)}/>
                                 <label htmlFor="project-link" className="pt-2 font-semibold">Project link</label>
                                 <input
-                                    className="border-2 rounded-2xl w-full border-gray-500"
+                                    className="border-2 rounded-2xl w-full border-gray-500 text-center"
                                     type="text"
                                     id="project-link"
                                     name="project-link"
