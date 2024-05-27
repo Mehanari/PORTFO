@@ -275,7 +275,7 @@ export default function FirstTemplateForm(){
                                 <input
                                     className="hidden"
                                     type="file"
-                                    id="project-photo"
+                                    id={"project-"+project.id+"-photo"}
                                     name="project-photo"
                                     onChange={({target}) => {
                                         if (target.files) {
@@ -285,7 +285,7 @@ export default function FirstTemplateForm(){
                                     }}/>
                                 <div
                                     className="w-40 h-40 bg-white rounded-full flex items-center justify-center border-2 cursor-pointer border-gray-500"
-                                    onClick={() => document.getElementById('project-photo')?.click()}>
+                                    onClick={() => document.getElementById("project-"+project.id+"-photo")?.click()}>
                                     { project.photoPath ? (
                                         <img src={project.photoPath} alt="" className="w-full h-full rounded-full object-cover"/>
                                     ) : (
