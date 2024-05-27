@@ -2,10 +2,11 @@
 
 import {useState} from "react";
 import {PortfolioData} from "@/model/firstTemplateTypes";
-import {saveFirstTemplateDataForUser} from "@/functions/databaseAccess";
+import {saveFirstTemplateDataForUser, updateFirstTemplateDataForUser} from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioStatus} from "@/portfolioStatuses";
+import {validateFirstTemplateData} from "@/functions/validation";
 
 type LinkRow = {
     id: number;
@@ -31,6 +32,7 @@ export default function FirstTemplateForm(){
     const [bio, setBio] = useState<string>("");
     const [projects, setProjects] = useState<ProjectRow[]>([]);
     const [user, loading, error] = useAuthState(auth);
+    const [docId, setDocId] = useState<string | undefined>();
 
 
     const handleSave = async () => {
@@ -52,7 +54,19 @@ export default function FirstTemplateForm(){
             })),
         }
         if (user){
-            await saveFirstTemplateDataForUser(user.uid, data);
+            const validationResults = validateFirstTemplateData(data);
+            if (validationResults.isValid){
+                if (docId){
+                    await updateFirstTemplateDataForUser(user.uid, data, docId);
+                }
+                else {
+                    const savedDocId = await saveFirstTemplateDataForUser(user.uid, data);
+                    setDocId(savedDocId);
+                }
+            }
+            else {
+                alert(validationResults.message);
+            }
         }
     };
 

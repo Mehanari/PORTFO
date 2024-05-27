@@ -13,54 +13,107 @@ import {
   PORTFOLIOS_COLLECTION_NAME,
 } from "@/constants";
 import {TemplateType} from "@/templatesTypes";
-import {PortfolioStatus} from "@/portfolioStatuses";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
+import {validateFirstTemplateData} from "@/functions/validation";
 
 
-export async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
-  try {
-    type FirebaseProjectData = {
-      filePath: string;
-      name: string;
-      link: string;
+async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
+    const validationResults = validateFirstTemplateData(data);
+    if (!validationResults.isValid) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
+        return;
     }
-    let photoPath: string = "";
-    if (data.photo) {
-      photoPath = await addImage(data.photo);
-    }
-    let firebaseProjects: FirebaseProjectData[] = [];
-    for (const project of data.projects) {
-      let projectPhotoPath: string = "";
-      if (project.photo) {
-        projectPhotoPath = await addImage(project.photo);
+    try {
+      type FirebaseProjectData = {
+        filePath: string;
+        name: string;
+        link: string
       }
-      firebaseProjects.push({
-        filePath: projectPhotoPath,
-        name: project.name,
-        link: project.link,
-      });
+      let photoPath: string = "";
+      if (data.photo) {
+        photoPath = await addImage(data.photo);
+      }
+      let firebaseProjects: FirebaseProjectData[] = [];
+      for (const project of data.projects) {
+        let projectPhotoPath: string = "";
+        if (project.photo) {
+          projectPhotoPath = await addImage(project.photo);
+        }
+        firebaseProjects.push({
+          filePath: projectPhotoPath,
+          name: project.name,
+          link: project.link,
+        });
+      }
+      const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
+        {
+          templateType: TemplateType.FIRST_TEMPLATE,
+          userId: userId,
+          name: data.name,
+          status: data.status,
+          link: data.link,
+          photoPath: photoPath,
+          username: data.username,
+          fullName: data.fullName,
+          location: data.location,
+          role: data.role,
+          projects: firebaseProjects,
+          bio: data.bio,
+        });
+      return docRef.id;
+    } catch (error) {
+      console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+      return;
     }
-    const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
-      {
-        templateType: TemplateType.FIRST_TEMPLATE,
-        userId: userId,
-        name: data.name,
-        status: data.status,
-        link: data.link,
-        photoPath: photoPath,
-        username: data.username,
-        fullName: data.fullName,
-        location: data.location,
-        role: data.role,
-        projects: firebaseProjects,
-        bio: data.bio,
-      });
-    return docRef.id;
-  } catch (error) {
-    console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
-    return;
-  }
+}
+
+export async function updateFirstTemplateDataForUser(userId: string, data: FirstTemplateData, portfolioId: string): Promise<string | undefined> {
+    const validationResults = validateFirstTemplateData(data);
+    if (!validationResults.isValid) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
+        return;
+    }
+    try {
+        type FirebaseProjectData = {
+            filePath: string;
+            name: string;
+            link: string;
+        }
+        let photoPath: string = "";
+        if (data.photo) {
+            photoPath = await addImage(data.photo);
+        }
+        let firebaseProjects: FirebaseProjectData[] = [];
+        for (const project of data.projects) {
+            let projectPhotoPath: string = "";
+            if (project.photo) {
+                projectPhotoPath = await addImage(project.photo);
+            }
+            firebaseProjects.push({
+                filePath: projectPhotoPath,
+                name: project.name,
+                link: project.link,
+            });
+        }
+        const docRef = doc(collection(db, PORTFOLIOS_COLLECTION_NAME), portfolioId);
+        await updateDoc(docRef,{
+            templateType: TemplateType.FIRST_TEMPLATE,
+            userId: userId,
+            name: data.name,
+            status: data.status,
+            link: data.link,
+            photoPath: photoPath,
+            username: data.username,
+            fullName: data.fullName,
+            location: data.location,
+            role: data.role,
+            projects: firebaseProjects,
+            bio: data.bio,
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+        return;
+    }
 }
 
 export async function getFirstTemplatePortfolioData(portfolioId: string): Promise<FirstTemplateDataPreview | undefined> {
