@@ -166,8 +166,9 @@ export async function publishPortfolio(portfolioId: string): Promise<string> {
       } else if (templateType === TemplateType.SECOND_TEMPLATE) {
         pageName = "second-template-published";
       }
-      await updateDoc(docRef, {status: PortfolioStatus.PUBLISHED});
-      return "/" + pageName + "/" + docId;
+      const link = "/" + pageName + "/" + docId;
+      await updateDoc(docRef, {status: PortfolioStatus.PUBLISHED, link: link});
+      return link;
     }
     catch(error){
         console.error('Error publishing portfolio with id: ' + portfolioId + '\nError: ' + error);
