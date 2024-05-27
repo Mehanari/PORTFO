@@ -9,9 +9,15 @@ import {
     PORTFOLIOS_COLLECTION_NAME,
 } from "@/constants";
 import {TemplateType} from "@/templatesTypes";
+import {validateFirstTemplateData} from "@/functions/validation";
 
 
 async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
+    const validationResults = validateFirstTemplateData(data);
+    if (!validationResults.isValid) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
+        return;
+    }
     try {
         type FirebaseProjectData = {
             filePath: string;
@@ -57,6 +63,11 @@ async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateD
 }
 
 export async function updateFirstTemplateDataForUser(userId: string, data: FirstTemplateData, portfolioId: string): Promise<string | undefined> {
+    const validationResults = validateFirstTemplateData(data);
+    if (!validationResults.isValid) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
+        return;
+    }
     try {
         type FirebaseProjectData = {
             filePath: string;
