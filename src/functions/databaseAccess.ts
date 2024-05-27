@@ -14,9 +14,10 @@ import {
 } from "@/constants";
 import {TemplateType} from "@/templatesTypes";
 import {validateFirstTemplateData} from "@/functions/validation";
+import {PortfolioStatus} from "@/portfolioStatuses";
 
 
-async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
+export async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
     const validationResults = validateFirstTemplateData(data);
     if (!validationResults.isValid) {
         console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
