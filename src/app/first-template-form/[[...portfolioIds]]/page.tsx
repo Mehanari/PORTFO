@@ -1,12 +1,16 @@
 "use client"
-
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {PortfolioData} from "@/model/firstTemplateTypes";
-import {saveFirstTemplateDataForUser, updateFirstTemplateDataForUser} from "@/functions/databaseAccess";
+import {
+    getFirstTemplatePortfolioData,
+    saveFirstTemplateDataForUser,
+    updateFirstTemplateDataForUser
+} from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioStatus} from "@/portfolioStatuses";
 import {validateFirstTemplateData} from "@/functions/validation";
+import {useRouter} from "next/navigation";
 
 type LinkRow = {
     id: number;
@@ -21,7 +25,7 @@ type ProjectRow = {
 }
 
 
-export default function FirstTemplateForm(){
+export default function FirstTemplateForm({ params }: { params: { portfolioIds: string[] } }){
     const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPath, setPhotoPath] = useState<string>("");
@@ -33,7 +37,35 @@ export default function FirstTemplateForm(){
     const [projects, setProjects] = useState<ProjectRow[]>([]);
     const [user, loading, error] = useAuthState(auth);
     const [docId, setDocId] = useState<string | undefined>();
+    const [dataIsLoading, setDataIsLoading] = useState(false);
+    const router = useRouter();
 
+    useEffect(() => {
+        if (params.portfolioIds){
+            setDocId(params.portfolioIds[0]);
+            setDataIsLoading(true);
+            getFirstTemplatePortfolioData(params.portfolioIds[0]).then((data) =>
+            {
+                if (data){
+                    setPhotoPath(data.photoPath);
+                    setUsername(data.username);
+                    setFullname(data.fullName);
+                    setLocation(data.location);
+                    setRole(data.role);
+                    setBio(data.bio);
+                    setLinksRows(data.links.map((link, index) => ({id: index, link})));
+                    setProjects(data.projects.map((project, index) => ({
+                        id: index,
+                        photo: null,
+                        name: project.name,
+                        link: project.link,
+                        photoPath: project.photoPath,
+                    })));
+                }
+                setDataIsLoading(false);
+            });
+        }
+    }, [params]);
 
     const handleSave = async () => {
         const data: PortfolioData = {
@@ -61,7 +93,9 @@ export default function FirstTemplateForm(){
                 }
                 else {
                     const savedDocId = await saveFirstTemplateDataForUser(user.uid, data);
-                    setDocId(savedDocId);
+                    if (!docId){
+                        router.push(`/first-template-form/${savedDocId}`);
+                    }
                 }
             }
             else {
@@ -69,6 +103,12 @@ export default function FirstTemplateForm(){
             }
         }
     };
+
+    const handlePreview = () => {
+        if (docId){
+            router.push(`/first-template-preview/${docId}`)
+        }
+    }
 
     const handleAddLink = () => {
         setLinksRows([...linksRows, {id: linksRows.length, link: ""}]);
@@ -102,7 +142,7 @@ export default function FirstTemplateForm(){
         setProjects(projects.filter((project, i) => i !== index));
     };
 
-    if (loading) {
+    if (loading || dataIsLoading) {
         return (
             <main className="flex justify-center items-center h-screen">
                 <div className="bg-blue-100 text-blue-700 p-4 rounded shadow-md">
@@ -245,6 +285,7 @@ export default function FirstTemplateForm(){
             ))}
             <button onClick={handleAddProject}>Add Project</button><br/>
             <button onClick={handleSave}>Save</button>
+            <button onClick={handlePreview}>Preview</button>
         </div>
     );
 }

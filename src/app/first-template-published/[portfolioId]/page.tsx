@@ -1,14 +1,14 @@
 "use client"
 import {useState, useEffect} from "react";
 import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
-import {getPortfolioDataForUser} from "@/functions/databaseAccess";
+import {getFirstTemplatePortfolioData} from "@/functions/databaseAccess";
 
 
 export default function FirstTemplatePreview({ params }: { params: { portfolioId: string } }) {
     const [protfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
 
     useEffect(() => {
-        getPortfolioDataForUser(params.portfolioId).then((data) => {
+        getFirstTemplatePortfolioData(params.portfolioId).then((data) => {
             setPortfolioData(data);
         });
     }, [params.portfolioId]);

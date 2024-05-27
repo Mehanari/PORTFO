@@ -4,12 +4,13 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
 import {getFirstTemplatePortfolioData} from "@/functions/databaseAccess";
-import PublishButton from "@/app/components/PublishButton";
+import {useRouter} from "next/navigation";
 
 
 export default function FirstTemplatePreview({ params }: { params: { portfolioId: string } }) {
   const [user, loading, error] = useAuthState(auth);
   const [protfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -18,6 +19,10 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
       });
     }
   }, [params.portfolioId, user]);
+
+  const handleBackToEditor = () => {
+    router.push('/first-template-form/' + params.portfolioId);
+  }
 
   if (loading) {
     return <div>Loading...</div>
@@ -124,7 +129,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
                   </div>
               ))}
           </div>
-          <PublishButton portfolioId={params.portfolioId} openPublishedPortfolio={true}></PublishButton>
+          <button onClick={handleBackToEditor}>Back to editor</button>
       </div>
   )
 
