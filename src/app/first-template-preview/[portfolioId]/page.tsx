@@ -3,7 +3,7 @@ import {useState, useEffect} from "react";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
-import {getPortfolioDataForUser} from "@/functions/databaseAccess";
+import {getFirstTemplatePortfolioData} from "@/functions/databaseAccess";
 import PublishButton from "@/app/components/PublishButton";
 
 
@@ -12,10 +12,8 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
   const [protfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
 
   useEffect(() => {
-    console.log(user)
     if (user) {
-      console.log("HELLO")
-      getPortfolioDataForUser(params.portfolioId).then((data) => {
+      getFirstTemplatePortfolioData(params.portfolioId).then((data) => {
         setPortfolioData(data);
       });
     }

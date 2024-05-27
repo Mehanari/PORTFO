@@ -63,7 +63,7 @@ export async function saveFirstTemplateDataForUser(userId: string, data: FirstTe
   }
 }
 
-export async function getPortfolioDataForUser(portfolioId: string): Promise<FirstTemplateDataPreview | undefined> {
+export async function getFirstTemplatePortfolioData(portfolioId: string): Promise<FirstTemplateDataPreview | undefined> {
   try {
     const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
     const docSnap = await getDoc(docRef);
