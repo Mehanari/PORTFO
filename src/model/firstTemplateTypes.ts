@@ -1,12 +1,12 @@
 import {PortfolioStatus} from "@/portfolioStatuses";
 
-interface ProjectData {
+export interface ProjectData {
     photo: File | null;
     name: string;
     link: string;
 }
 
-interface PortfolioData {
+export interface PortfolioData {
     name: string;
     status: PortfolioStatus.DRAFT;
     link: string;
@@ -20,5 +20,23 @@ interface PortfolioData {
     projects: ProjectData[];
 }
 
-//GeneralData
-export type {PortfolioData, ProjectData}
+
+export type ProjectDataPreview = {
+    photoPath: string;
+    name: string;
+    link: string;
+}
+
+export type PortfolioDataPreview = {
+    name: string;
+    status: PortfolioStatus.DRAFT;
+    link: string;
+    photoPath: string;
+    username: string;
+    fullName: string;
+    location: string;
+    role: string;
+    bio: string;
+    links: string[];
+    projects: ProjectDataPreview[];
+}
