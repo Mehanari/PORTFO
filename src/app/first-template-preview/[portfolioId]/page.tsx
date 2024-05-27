@@ -3,7 +3,7 @@ import {useState, useEffect} from "react";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
-import {getPortfolioDataForUser} from "@/functions/databaseAccess";
+import {getFirstTemplatePortfolioData} from "@/functions/databaseAccess";
 
 
 export default function FirstTemplatePreview({ params }: { params: { portfolioId: string } }) {
@@ -14,7 +14,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
     console.log(user)
     if (user) {
       console.log("HELLO")
-      getPortfolioDataForUser(params.portfolioId).then((data) => {
+      getFirstTemplatePortfolioData(params.portfolioId).then((data) => {
         setPortfolioData(data);
       });
     }
