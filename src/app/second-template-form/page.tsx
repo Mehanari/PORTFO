@@ -71,11 +71,11 @@ export default function FirstTemplateForm(){
     };
 
     const handleAddProject = () => {
-        setProjects([...projects, {id: projects.length, photo: null, name: "", description: "", link: "", photoPath: ""}]);
+        setProjects([...projects, {id: projects.length, photo: null, name: "", description: "", link: "", url: ""}]);
     };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
-        setProjects(projects.map((project, i) => i === index ? {...project, photo, photoPath} : project));
+        setProjects(projects.map((project, i) => i === index ? {...project, photo, photoPath: url} : project));
     };
 
     const handleEditProjectName = (index: number, name: string) => {

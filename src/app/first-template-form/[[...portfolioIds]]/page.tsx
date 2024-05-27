@@ -2,7 +2,8 @@
 import {useEffect, useState} from "react";
 import {PortfolioData} from "@/model/firstTemplateTypes";
 import {
-    getFirstTemplatePortfolioData,
+    downloadFile,
+    getFirstTemplatePortfolioData, publishPortfolio,
     saveFirstTemplateDataForUser,
     updateFirstTemplateDataForUser
 } from "@/functions/databaseAccess";
@@ -25,10 +26,6 @@ type ProjectRow = {
     photoPath: string;
 }
 
-// const getDefaultBackgroundColor = () => {
-//     return "bg-white";
-// };
-
 export default function FirstTemplateForm({ params }: { params: { portfolioIds: string[] } }){
     const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
@@ -47,26 +44,41 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
     useEffect(() => {
         if (params.portfolioIds){
             setDocId(params.portfolioIds[0]);
-            setDataIsLoading(true);
             getFirstTemplatePortfolioData(params.portfolioIds[0]).then((data) =>
             {
                 if (data){
-                    setPhotoPath(data.photoPath);
+                    setPhotoPath(data.photoUrl);
                     setUsername(data.username);
                     setFullname(data.fullName);
                     setLocation(data.location);
                     setRole(data.role);
                     setBio(data.bio);
                     setLinksRows(data.links.map((link, index) => ({id: index, link})));
-                    setProjects(data.projects.map((project, index) => ({
+                    const projectsPhotosUrls = data.projects.map((project) => ({
+                        url: project.photoUrl
+                    }));
+                    let projectsPhotos: File[];
+                    for (let path of projectsPhotosUrls){
+                        downloadFile(path.url).then((file) =>{
+                            if (file){
+                                projectsPhotos.push(file);
+                            }
+                        })
+                    }
+                    const loadedProjects = data.projects.map((project, index) => ({
                         id: index,
-                        photo: null,
+                        photoPath: project.photoUrl,
+                        photo: projectsPhotos[index],
                         name: project.name,
-                        link: project.link,
-                        photoPath: project.photoPath,
-                    })));
+                        link: project.link
+                    }));
+                    setProjects(loadedProjects);
+                    downloadFile(data.photoUrl).then((file) =>{
+                        if (file){
+                            setPhoto(file);
+                        }
+                    })
                 }
-                setDataIsLoading(false);
             });
         }
     }, [params]);
@@ -139,7 +151,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
     };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
-        setProjects(projects.map((project) => project.id === index ? {...project, photo, photoPath} : project));
+        setProjects(projects.map((project) => project.id === index ? {...project, photo, photoPath: photoPath} : project));
     };
 
     const handleEditProjectName = (index: number, name: string) => {
@@ -153,6 +165,15 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
     const handleDeleteProject = (index: number) => {
         setProjects(projects.filter((project) => project.id !== index));
     };
+
+    const handlePublish = async () => {
+        if (docId){
+            const publishedPageLink = await publishPortfolio(docId);
+            if (publishedPageLink){
+                router.push(publishedPageLink);
+            }
+        }
+    }
     
     if (loading || dataIsLoading) {
         return (
@@ -174,6 +195,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
         );
     }
 
+
     return (
         // <div className={`font-cursive ${backgroundColor}`}>
         <div className="font-cursive bg-white">
@@ -192,10 +214,10 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                     <button className="mr-4"> {/*onClick={toggleMenu}}*/} {/*TODO change template color*/}
                         <Image src="/ColorPalette.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
-                    <button className="mr-4"> {/*TODO show preview*/}
+                    <button onClick={handlePreview} className="mr-4">
                         <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
-                    <button className="mr-4"> {/*TODO publish portfolio*/}
+                    <button onClick={handlePublish} className="mr-4">
                         <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
                     <button
