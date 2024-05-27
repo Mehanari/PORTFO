@@ -6,13 +6,16 @@ import {
   ProjectData as SecondTemplateProjectData
 } from "@/model/secondTemplateTypes";
 import {db} from "@/firebase/firebaseConfig";
-import {addDoc, collection, doc, getDoc, query, getDocs} from "@firebase/firestore";
+import {addDoc, collection, doc, getDoc, query, getDocs, updateDoc} from "@firebase/firestore";
 import {getFileHash} from "@/functions/cryptographyUtilities";
 import {
   IMAGES_DIRECTORY_NAME,
   PORTFOLIOS_COLLECTION_NAME,
 } from "@/constants";
 import {TemplateType} from "@/templatesTypes";
+import {PortfolioStatus} from "@/portfolioStatuses";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
 
 
 export async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
@@ -150,6 +153,26 @@ export async function saveSecondTemplateDataForUser(userId: string, data: Second
     console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
     return;
   }
+}
+
+export async function publishPortfolio(portfolioId: string): Promise<string> {
+    try {
+      const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
+      const templateType = (await getDoc(docRef)).data()?.templateType;
+      const docId = docRef.id;
+      let pageName = "";
+      if (templateType === TemplateType.FIRST_TEMPLATE) {
+        pageName = "first-template-published";
+      } else if (templateType === TemplateType.SECOND_TEMPLATE) {
+        pageName = "second-template-published";
+      }
+      await updateDoc(docRef, {status: PortfolioStatus.PUBLISHED});
+      return "/" + pageName + "/" + docId;
+    }
+    catch(error){
+        console.error('Error publishing portfolio with id: ' + portfolioId + '\nError: ' + error);
+        return "";
+    }
 }
 
 async function addImage(image: File): Promise<string> {
