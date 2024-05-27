@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
-import { db, auth } from '../../firebase/firebaseConfig.js';
-import { getDocs, collection, doc, updateDoc, query, where } from 'firebase/firestore';
-import { getStatusName } from '@/functions/statusNameUtilities';
-import { PORTFOLIOS_COLLECTION_NAME } from '@/constants';
+import { auth } from '../../firebase/firebaseConfig.js';
+import { fetchPortfolios, deletePortfolio, editPortfolioName } from '@/functions/databaseAccess';
+import PortfolioDeletePopUp from '../components/PortfolioDeletePopUp';
 
 interface Portfolio {
   id: string;
@@ -13,6 +12,7 @@ interface Portfolio {
   imageUrl: string;
   status: string;
   link: string;
+  templateType: number;
 }
 
 const Header = () => {
@@ -54,11 +54,14 @@ const Footer = () => {
   );
 };
 
+
 const PortfolioList = () => {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -67,14 +70,7 @@ const PortfolioList = () => {
       if (user) {
         console.log("User is authenticated: ", user);
         try {
-          const snapshot = await getDocs(query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', user.uid)));
-          const portfolioData = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            name: doc.data().name,
-            imageUrl: doc.data().photoPath,
-            status: getStatusName(doc.data().status),
-            link: doc.data().link,
-          }));
+          const portfolioData = await fetchPortfolios(user.uid);
           setPortfolios(portfolioData);
         } catch (error) {
           console.error("Error fetching portfolios: ", error);
@@ -102,13 +98,30 @@ const PortfolioList = () => {
     setEditingName(e.target.value);
   };
 
+  const handleEditClick = (portfolio: Portfolio) => {
+    let editPageName = '';
+
+    
+    switch (portfolio.templateType) {
+      case 0:
+        editPageName = 'first-template-form';
+        break;
+      case 1:
+        editPageName = 'second-template-form';
+        break;
+      default:
+        console.log('Portfolio with following Id not found');
+    }
+
+    const editPageUrl = `/${editPageName}/${portfolio.id}`;
+    router.push(editPageUrl);
+  };
+
   const handleBlur = async () => {
     if (editingId) {
       try {
-        const portfolioRef = doc(db, "portfolios", editingId);
-        await updateDoc(portfolioRef, {
-          name: editingName
-        });
+
+        editPortfolioName(editingName, editingId);
 
         setPortfolios((prevPortfolios) =>
           prevPortfolios.map((portfolio) =>
@@ -122,6 +135,31 @@ const PortfolioList = () => {
     setEditingId(null);
   };
 
+  const handleDeleteClick = (id: string) => {
+    setSelectedPortfolioId(id);
+    setShowModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedPortfolioId) {
+      try {
+        deletePortfolio(selectedPortfolioId);
+
+        setPortfolios((prevPortfolios) =>
+          prevPortfolios.filter((portfolio) => portfolio.id !== selectedPortfolioId)
+        );
+      } catch (error) {
+        console.error('Error deleting portfolio: ', error);
+      }
+      setShowModal(false);
+      setSelectedPortfolioId(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowModal(false);
+    setSelectedPortfolioId(null);
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -131,9 +169,6 @@ const PortfolioList = () => {
           {portfolios.map((portfolio) => (
             <div key={portfolio.id} className="flex flex-col mb-4">
               <div className="portfolio-item p-4 border border-gray-200">
-                <div className="portfolio-image">
-                  {/* <img src={portfolio.imageUrl} alt={portfolio.name} className="w-full h-48 object-cover" /> */}
-                </div>
                 <div className="portfolio-details flex items-center space-x-4">
                   {editingId === portfolio.id ? (
                     <input
@@ -158,10 +193,10 @@ const PortfolioList = () => {
                     </a>
                   </p>
                   <div className="flex space-x-2">
-                    <button className="px-4 py-2">
+                    <button onClick={() => handleEditClick(portfolio)} className="px-4 py-2">
                       Edit
                     </button>
-                    <button className="px-4 py-2">
+                    <button onClick={() => handleDeleteClick(portfolio.id)} className="px-4 py-2">
                       Delete
                     </button>
                   </div>
@@ -173,6 +208,13 @@ const PortfolioList = () => {
         </div>
       </div>
       <Footer />
+      {showModal && (
+        <PortfolioDeletePopUp
+          message="Are you sure you want to delete this portfolio?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };

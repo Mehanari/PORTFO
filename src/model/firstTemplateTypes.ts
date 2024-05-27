@@ -20,5 +20,7 @@ interface PortfolioData {
     projects: ProjectData[];
 }
 
+
+
 //GeneralData
 export type {PortfolioData, ProjectData}
