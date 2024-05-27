@@ -4,6 +4,7 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
 import {getPortfolioDataForUser} from "@/functions/databaseAccess";
+import PublishButton from "@/app/components/PublishButton";
 
 
 export default function FirstTemplatePreview({ params }: { params: { portfolioId: string } }) {
@@ -125,6 +126,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
                   </div>
               ))}
           </div>
+          <PublishButton portfolioId={params.portfolioId} openPublishedPortfolio={true}></PublishButton>
       </div>
   )
 
