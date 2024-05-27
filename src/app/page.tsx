@@ -5,13 +5,22 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import EmblaCarousel from './components/EmblaCarousel';
 import { OPTIONS, SLIDES } from './index';
+import {auth} from "../firebase/firebaseConfig";
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-function sendToSignIn(router: ReturnType<typeof useRouter>) {
-  router.push('/sign-in');
-}
 
 export default function Home() {
+  const [user, loading] = useAuthState(auth);
   const router = useRouter();
+  if (loading) {
+    return (
+      <main className="flex justify-center items-center h-screen">
+          <div className="bg-blue-100 text-blue-700 p-4 rounded shadow-md">
+              <h1>Loading...</h1>
+          </div>
+      </main>
+    );
+  }
   return (
     <div className="flex flex-col bg-orange-200 justify-center min-h-screen">
       <header>
@@ -21,12 +30,26 @@ export default function Home() {
               <Image src="/LogoCut.png" alt="Logo" width={160} height={60} />
             </div>
             <div className="flex space-x-4">
-              <button
-                onClick={() => sendToSignIn(router)}
-                className="flex items-center font-semibold"
-              >
-                Sign In
-              </button>
+              {user ? (
+                <div className='flex flex-row space-x-4'>
+                  <span className="flex items-center font-semibold">
+                    {user.displayName || user.email}
+                  </span>
+                  <button
+                    onClick={() => router.push('/sign-out')}
+                    className="flex items-center font-semibold"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => router.push('/sign-in')}
+                  className="flex items-center font-semibold"
+                >
+                  Sign In
+                </button>
+              )}
               <button className="bg-orange-400 hover:bg-orange-300 text-white font-semibold py-2 px-6 rounded-full flex items-center shadow-md">
                 Create Portfolio
               </button> {/*TODO Send to the page with available portfolios templates*/} 
