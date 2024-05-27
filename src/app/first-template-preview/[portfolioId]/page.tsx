@@ -11,9 +11,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
   const [protfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
 
   useEffect(() => {
-    console.log(user)
     if (user) {
-      console.log("HELLO")
       getFirstTemplatePortfolioData(params.portfolioId).then((data) => {
         setPortfolioData(data);
       });
