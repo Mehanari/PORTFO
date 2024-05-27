@@ -103,3 +103,29 @@
     font-family: 'Calibri', cursive;
     color: #4b4a4a;
   }
+
+  .circle {
+    width: 240px;
+    height: 240px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid grey;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .circle {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .circle {
+        width: 120px;
+        height: 120px;
+    }
+}

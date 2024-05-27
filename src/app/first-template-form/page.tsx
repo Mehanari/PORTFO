@@ -167,6 +167,9 @@ export default function FirstTemplateForm(){
                     <button className="mr-4"> {/*TODO show preview*/}
                         <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
+                    <button className="mr-4"> {/*TODO publish portfolio*/}
+                        <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2" />
+                    </button>
                     <button
                         onClick={handleSave}> {/*TODO save changes*/}
                         <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2" />
@@ -190,7 +193,7 @@ export default function FirstTemplateForm(){
                             }
                         }}/><br/>
                     <div
-                        className="w-60 h-60 bg-white rounded-full flex items-center justify-center border-2 cursor-pointer border-gray-500"
+                        className="circle"
                         onClick={() => document.getElementById('photo')?.click()}>
                         {photoPath ? (
                             <img src={photoPath} alt="" className="w-full h-full rounded-full object-cover"/>
@@ -265,7 +268,7 @@ export default function FirstTemplateForm(){
 
 
                 <div className="flex flex-col w-2/3 pr-20 pt-20 items-center">
-                    <label htmlFor="projects" className="text-5xl">
+                    <label htmlFor="projects" className="flex text-5xl justify-center">
                         MY WORKS
                     </label><br/>
                     <div className="flex flex-row flex-wrap justify-center">
