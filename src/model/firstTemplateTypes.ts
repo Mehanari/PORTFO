@@ -40,3 +40,5 @@ export type PortfolioDataPreview = {
     links: string[];
     projects: ProjectDataPreview[];
 }
+
+export type {PortfolioData, ProjectData}

@@ -1,17 +1,15 @@
-import {
-    PortfolioData as FirstTemplateData,
-    PortfolioDataPreview as FirstTemplateDataPreview,
-    ProjectDataPreview as FirstTemplateProjectPreview
-} from "@/model/firstTemplateTypes";
-import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
-import {PortfolioData as SecondTemplateData} from "@/model/secondTemplateTypes";
-import {db} from "@/firebase/firebaseConfig";
-import {addDoc, collection, doc, getDoc, updateDoc} from "@firebase/firestore";
+import {PortfolioData as SecondTemplateData, ProjectData as SecondTemplateProjectData} from "@/model/secondTemplateTypes";
+import {PortfolioData as FirstTemplateData, ProjectData as FirstTemplateProjectData} from "@/model/firstTemplateTypes";
 import {getFileHash} from "@/functions/cryptographyUtilities";
+import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
+import {db} from "@/firebase/firebaseConfig";
 import {IMAGES_DIRECTORY_NAME, PORTFOLIOS_COLLECTION_NAME,} from "@/constants";
 import {TemplateType} from "@/templatesTypes";
 import {validateFirstTemplateData} from "@/functions/validation";
 import {PortfolioStatus} from "@/portfolioStatuses";
+import { PortfolioListItemData } from "@/model/portflolioTypes";
+import { addDoc, getDocs, getDoc, collection, doc, deleteDoc, updateDoc, query, where } from '@firebase/firestore';
+import { getStatusName } from '@/functions/statusNameUtilities';
 
 
 export async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
@@ -244,6 +242,50 @@ export async function downloadImage(url: string) : Promise<File | undefined> {
     }
 }
 
+async function fetchPortfolios(userId: string): Promise<PortfolioListItemData[]> {
+    try {
+      const snapshot = await getDocs(
+        query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', userId))
+      );
+      const portfolioData: PortfolioListItemData[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        imageUrl: doc.data().photoPath,
+        status: getStatusName(doc.data().status),
+        link: doc.data().link,
+        templateType: doc.data().templateType,
+      }));
+      return portfolioData;
+    } catch (error) {
+      console.error('Error fetching portfolios: ', error);
+      return [];
+    }
+  }
+
+
+  async function deletePortfolio(portfolioId: string): Promise<string | undefined>{
+    try {
+        const portfolioRef = doc(db, "portfolios", portfolioId);
+        await deleteDoc(portfolioRef);
+    } catch (error) {
+        console.error('Error deleting portfolio: ', error);
+        return "hui";
+    }
+  }
+
+  async function editPortfolioName(portfolioName: string, portfolioId: string): Promise<string | undefined>{
+    try {
+        const portfolioRef = doc(db, "portfolios", portfolioId);
+        await updateDoc(portfolioRef, {
+          name: portfolioName
+        });
+    } catch (error) {
+        console.error('Error updating portfolio name: ', error);
+        return;
+    }
+  }
+
+
 async function addImage(image: File): Promise<string> {
   try {
     const storage = getStorage();
@@ -258,6 +300,7 @@ async function addImage(image: File): Promise<string> {
   }
 }
 
+
 async function getImageUrlByPath(path: string): Promise<string | undefined> {
   const storage = getStorage();
   const storageRef = ref(storage, path);
@@ -267,3 +310,5 @@ async function getImageUrlByPath(path: string): Promise<string | undefined> {
     console.log("Could not download an image for path: " + path + "\nError: " + error);
   }
 }
+
+export {saveFirstTemplateDataForUser, saveSecondTemplateDataForUser, fetchPortfolios, deletePortfolio, editPortfolioName};
