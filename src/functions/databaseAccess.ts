@@ -227,11 +227,16 @@ export async function publishPortfolio(portfolioId: string): Promise<string> {
     }
 }
 
-export async function downloadFile(url: string) : Promise<File | undefined> {
+
+export async function downloadImage(url: string) : Promise<File | undefined> {
     try{
-        const response = await fetch(url, { mode: 'no-cors'});
+        const extension = url.split("?")[0].split(".").at(-1);
+        const fileName = url.split("%")[1].split(".")[0];
+        const response = await fetch(url);
         const blob = await response.blob();
-        return new File([blob], "file", {type: blob.type});
+        if (extension){
+            return new File([blob], fileName + "." + extension, {type: "image/" + extension});
+        }
     }
     catch(error){
         console.error('Error loading file with path: ' + url + '\nError: ' + error);

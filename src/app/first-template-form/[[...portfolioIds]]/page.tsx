@@ -2,7 +2,7 @@
 import {useEffect, useState} from "react";
 import {PortfolioData} from "@/model/firstTemplateTypes";
 import {
-    downloadFile,
+    downloadImage,
     getFirstTemplatePortfolioData, publishPortfolio,
     saveFirstTemplateDataForUser,
     updateFirstTemplateDataForUser
@@ -44,7 +44,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
     useEffect(() => {
         if (params.portfolioIds){
             setDocId(params.portfolioIds[0]);
-            getFirstTemplatePortfolioData(params.portfolioIds[0]).then((data) =>
+            getFirstTemplatePortfolioData(params.portfolioIds[0]).then( async (data) =>
             {
                 if (data){
                     setPhotoPath(data.photoUrl);
@@ -54,30 +54,26 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                     setRole(data.role);
                     setBio(data.bio);
                     setLinksRows(data.links.map((link, index) => ({id: index, link})));
-                    const projectsPhotosUrls = data.projects.map((project) => ({
-                        url: project.photoUrl
-                    }));
-                    let projectsPhotos: File[];
-                    for (let path of projectsPhotosUrls){
-                        downloadFile(path.url).then((file) =>{
-                            if (file){
-                                projectsPhotos.push(file);
-                            }
-                        })
+                    const projectsPhotosUrls = data.projects.map((proj) => ({url: proj.photoUrl}));
+                    const projectPhotos : File[] = [];
+                    for(const link of projectsPhotosUrls){
+                        const file = await downloadImage(link.url);
+                        if (file){
+                            projectPhotos.push(file);
+                        }
                     }
                     const loadedProjects = data.projects.map((project, index) => ({
                         id: index,
                         photoPath: project.photoUrl,
-                        photo: projectsPhotos[index],
+                        photo: projectPhotos[index],
                         name: project.name,
                         link: project.link
                     }));
                     setProjects(loadedProjects);
-                    downloadFile(data.photoUrl).then((file) =>{
-                        if (file){
-                            setPhoto(file);
-                        }
-                    })
+                    const photo = await downloadImage(data.photoUrl);
+                    if (photo){
+                        setPhoto(photo);
+                    }
                 }
             });
         }
