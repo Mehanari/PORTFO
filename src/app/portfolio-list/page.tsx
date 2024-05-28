@@ -187,14 +187,16 @@ const PortfolioList = () => {
                       {portfolio.name}
                     </h3>
                   )}
-                  <p className="text-gray-600 w-1/4">
-                    <a href={portfolio.link} className="text-indigo-600 hover:text-indigo-800">
-                      {portfolio.link}
-                    </a>
-                  </p>
-                  <div className="flex space-x-2">
-                    <button onClick={() => handleEditClick(portfolio)} className="px-4 py-2">
-                      Edit
+                  <p className="flex items-center text-gray-600 w-1/4">
+                    {  portfolio.link ? (
+                      <a className="block break-words px-4 justify-center text-center text-black text-base font-medium underline leading-tight hover:text-orange-500"
+                      href={portfolio.link} target="_blank" rel="noreferrer">Link</a>
+                    ) : <span></span>
+                    }
+                </p>
+                <div className="flex space-x-2">
+                  <button onClick={() => handleEditClick(portfolio)} className="px-4 py-2">
+                  Edit
                     </button>
                     <button onClick={() => handleDeleteClick(portfolio.id)} className="px-4 py-2">
                       Delete

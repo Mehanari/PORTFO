@@ -114,9 +114,15 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
                    
                     <label htmlFor="links" className="pt-6 pb-2 font-semibold">Links</label>
                     {protfolioData.links.map((row, index) => (
-                      <div className="block flex-col justify-center items-center text-wrapblock w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3" key={index}>
-                        <a href={row} target="_blank" rel="noreferrer" className="break-all hover:text-orange-500">{row}</a>
-                      </div>
+                        <div
+                            className="block flex-col justify-center items-center text-wrapblock w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3"
+                            key={index}>
+                            <div>
+                                <a href={row} target="_blank" rel="noreferrer"
+                                   className="break-all hover:text-orange-500">{row}</a>
+                            </div>
+                            <br/>
+                        </div>
                     ))}
                     <br/>
                 </div>
@@ -126,8 +132,8 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
                         MY WORKS
                     </label><br/>
                     <div className="flex flex-row flex-wrap justify-center">
-                    {protfolioData.projects.map((project, index) => (
-                      <div
+                        {protfolioData.projects.map((project, index) => (
+                            <div
                         className="flex flex-col justify-center items-center border-2 border-gray-500 rounded-3xl m-5 p-8 sm:p-10 md:p-12 lg:p-24 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
                         key={index}>
                         <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center border-2 cursor-pointer border-gray-500">
