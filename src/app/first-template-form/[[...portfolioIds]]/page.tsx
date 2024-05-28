@@ -5,7 +5,7 @@ import {
     downloadImage,
     getFirstTemplatePortfolioData, publishPortfolio,
     saveFirstTemplateDataForUser,
-    updateFirstTemplateDataForUser
+    updateFirstTemplateDataForUser, userHasPortfolios
 } from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
@@ -170,6 +170,17 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
             }
         }
     }
+
+    const handleExit = async () => {
+        if (user){
+            if (await userHasPortfolios(user.uid)){
+                router.push("/portfolio-list");
+            }
+            else {
+                router.push("/choose-template");
+            }
+        }
+    }
     
     if (loading || dataIsLoading) {
         return (
@@ -204,7 +215,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                 </div>)} */}
             <div className="flex flex-row pl-20 pr-20">
                 <div className="flex justify-end items-center w-2/3 h-20 ml-auto border-b-2 border-gray-500">
-                    <button className="mr-4"> {/*TODO send to the previous page*/}
+                    <button onClick={handleExit} className="mr-4">
                         <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
                     <button className="mr-4"> {/*onClick={toggleMenu}}*/} {/*TODO change template color*/}

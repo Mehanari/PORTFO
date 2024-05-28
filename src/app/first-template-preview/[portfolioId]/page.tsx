@@ -114,7 +114,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
                    
                     <label htmlFor="links" className="pt-6 pb-2 font-semibold">Links</label>
                     {protfolioData.links.map((row, index) => (
-                      <div className="flex flex-col justify-center items-center" key={index}>
+                      <div className="flex flex-col justify-center items-center text-wrap" key={index}>
                         <a href={row} target="_blank" rel="noreferrer" className="hover:text-orange-500">{row}</a>
                       </div>
                     ))}

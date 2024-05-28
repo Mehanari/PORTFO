@@ -23,14 +23,14 @@ export default function ChooseTemplateForm() {
       </div>
       <div className="flex flex-row max-w-screen justify-center space-x-32 items-center min-h-96">
         <div className="flex flex-col">
-          <img src="/card 2.png" alt="First Template" onClick={() => setTemplate("first")}
-               className={`${template == "first" ? "opacity-100" : "opacity-60"} hover:opacity-100 hover:cursor-pointer`}
-               width={template == "first" ? 260 : 240}/>
-        </div>
-        <div className="flex flex-col">
-          <img src="/card 3.png" alt="Second Template" onClick={() => setTemplate("second")}
+          <img src="/card 2.png" alt="Second Template" onClick={() => setTemplate("second")}
                className={`${template == "second" ? "opacity-100" : "opacity-60"} hover:opacity-100 hover:cursor-pointer`}
                width={template == "second" ? 260 : 240}/>
+        </div>
+        <div className="flex flex-col">
+          <img src="/card 3.png" alt="First Template" onClick={() => setTemplate("first")}
+               className={`${template == "first" ? "opacity-100" : "opacity-60"} hover:opacity-100 hover:cursor-pointer`}
+               width={template == "first" ? 260 : 240}/>
         </div>
       </div>
       <div className="flex min-w-screen justify-center">

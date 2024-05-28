@@ -39,7 +39,7 @@ const Footer = () => {
   };
 
   const handleNewPageClick = () => {
-    router.push('/new');
+    router.push('/choose-template');
   };
 
   return (

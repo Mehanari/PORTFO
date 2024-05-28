@@ -5,13 +5,38 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import EmblaCarousel from './components/EmblaCarousel';
 import { OPTIONS, SLIDES } from './index';
-import {auth} from "../firebase/firebaseConfig";
+import {auth} from "@/firebase/firebaseConfig";
 import { useAuthState } from 'react-firebase-hooks/auth';
+import {userHasPortfolios} from "@/functions/databaseAccess";
 
 
 export default function Home() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
+
+  const handleCreatePortfolioClick = async () => {
+    if (user){
+      if (await userHasPortfolios(user.uid)){
+        router.push('/portfolio-list');
+      }
+      else{
+        router.push('/choose-template');
+      }
+    }
+    else{
+        router.push('/sign-in');
+    }
+  }
+
+  const handleStartCreatingClick = () => {
+    if (user){
+      router.push('/choose-template');
+    }
+    else{
+      router.push('/sign-in');
+    }
+  }
+
   if (loading) {
     return (
       <main className="flex justify-center items-center h-screen">
@@ -50,7 +75,7 @@ export default function Home() {
                   Sign In
                 </button>
               )}
-              <button className="bg-orange-400 hover:bg-orange-300 text-white font-semibold py-2 px-6 rounded-full flex items-center shadow-md">
+              <button onClick={handleCreatePortfolioClick} className="bg-orange-400 hover:bg-orange-300 text-white font-semibold py-2 px-6 rounded-full flex items-center shadow-md">
                 Create Portfolio
               </button> {/*TODO Send to the page with available portfolios templates*/} 
             </div>
@@ -164,7 +189,7 @@ export default function Home() {
               <span className="font-bold">03. </span>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             </p>
-            <button className="bg-black hover:bg-gray-800 text-white font-semibold py-4 px-6 lg:px-10 text-sm rounded-full flex shadow-md mt-4 lg:text-lg">
+            <button onClick={handleStartCreatingClick} className="bg-black hover:bg-gray-800 text-white font-semibold py-4 px-6 lg:px-10 text-sm rounded-full flex shadow-md mt-4 lg:text-lg">
               Start Creating
             </button>
           </div>

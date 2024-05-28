@@ -19,6 +19,17 @@ import { PortfolioListItemData } from "@/model/portflolioTypes";
 import { addDoc, getDocs, getDoc, collection, doc, deleteDoc, updateDoc, query, where } from '@firebase/firestore';
 import { getStatusName } from '@/functions/statusNameUtilities';
 
+export async function userHasPortfolios(userId: string): Promise<boolean>{
+    try {
+        const snapshot = await getDocs(
+          query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', userId))
+        );
+        return snapshot.docs.length > 0;
+      } catch (error) {
+        console.error('Error fetching portfolios: ', error);
+        return false;
+      }
+}
 
 export async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
     const validationResults = validateFirstTemplateData(data);
@@ -50,18 +61,19 @@ export async function saveFirstTemplateDataForUser(userId: string, data: FirstTe
       }
       const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
         {
-          templateType: TemplateType.FIRST_TEMPLATE,
-          userId: userId,
-          name: data.name,
-          status: data.status,
-          link: data.link,
-          photoPath: photoPath,
-          username: data.username,
-          fullName: data.fullName,
-          location: data.location,
-          role: data.role,
-          projects: firebaseProjects,
-          bio: data.bio,
+            templateType: TemplateType.FIRST_TEMPLATE,
+            userId: userId,
+            name: data.name,
+            status: data.status,
+            link: data.link,
+            photoPath: photoPath,
+            username: data.username,
+            fullName: data.fullName,
+            location: data.location,
+            role: data.role,
+            projects: firebaseProjects,
+            bio: data.bio,
+            links: data.links,
         });
       return docRef.id;
     } catch (error) {
@@ -100,11 +112,6 @@ export async function updateFirstTemplateDataForUser(userId: string, data: First
         }
         const docRef = doc(collection(db, PORTFOLIOS_COLLECTION_NAME), portfolioId);
         await updateDoc(docRef,{
-            templateType: TemplateType.FIRST_TEMPLATE,
-            userId: userId,
-            name: data.name,
-            status: data.status,
-            link: data.link,
             photoPath: photoPath,
             username: data.username,
             fullName: data.fullName,
@@ -112,6 +119,7 @@ export async function updateFirstTemplateDataForUser(userId: string, data: First
             role: data.role,
             projects: firebaseProjects,
             bio: data.bio,
+            links: data.links,
         });
         return docRef.id;
     } catch (error) {
@@ -143,6 +151,7 @@ export async function getFirstTemplatePortfolioData(portfolioId: string): Promis
             photoUrl: imageUrl,
           });
         }
+        console.log(data.links);
         return {
           name: data.name,
           status: data.status,
