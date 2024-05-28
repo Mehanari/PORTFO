@@ -4,12 +4,13 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
 import {getFirstTemplatePortfolioData} from "@/functions/databaseAccess";
-import PublishButton from "@/app/components/PublishButton";
+import {useRouter} from "next/navigation";
 
 
 export default function FirstTemplatePreview({ params }: { params: { portfolioId: string } }) {
   const [user, loading, error] = useAuthState(auth);
   const [protfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -18,6 +19,10 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
       });
     }
   }, [params.portfolioId, user]);
+
+  const handleBackToEditor = () => {
+    router.push('/first-template-form/' + params.portfolioId);
+  }
 
   if (loading) {
     return <div>Loading...</div>
@@ -63,7 +68,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
               <div className="w-56 h-56 justify-center items-start inline-flex">
                   <img
                       className="w-56 h-56 justify-center mt-16 items-center gap-2.5 relative rounded-full border border-zinc-600"
-                      src={protfolioData.photoPath} alt=""/>
+                      src={protfolioData.photoUrl} alt=""/>
               </div>
               <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md mt-6 font-[Plus_Jakarta_Sans]">Username:</p>
               <div
@@ -111,7 +116,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
                       <p className="hidden">Project photo:</p>
                       <div className=" relative w-32 items-center justify-center ">
                           <img className="w-32 h-32 mt-4 flex justify-center rounded-full border border-zinc-600 self-center
-                    max-w-full aspect-square" src={project.photoPath} alt=""/>
+                    max-w-full aspect-square" src={project.photoUrl} alt=""/>
                       </div>
                       <p className="hidden">Project name:</p>
                       <p className="self-stretch text-balance text-center text-black text-2xl font-medium mt-4 ">{project.name}</p>
@@ -124,7 +129,7 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
                   </div>
               ))}
           </div>
-          <PublishButton portfolioId={params.portfolioId} openPublishedPortfolio={true}></PublishButton>
+          <button onClick={handleBackToEditor}>Back to editor</button>
       </div>
   )
 

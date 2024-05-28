@@ -22,7 +22,7 @@ export interface PortfolioData {
 
 
 export type ProjectDataPreview = {
-    photoPath: string;
+    photoUrl: string;
     name: string;
     link: string;
 }
@@ -31,7 +31,7 @@ export type PortfolioDataPreview = {
     name: string;
     status: PortfolioStatus.DRAFT;
     link: string;
-    photoPath: string;
+    photoUrl: string;
     username: string;
     fullName: string;
     location: string;

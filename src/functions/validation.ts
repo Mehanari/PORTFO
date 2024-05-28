@@ -81,6 +81,12 @@ export function firstTemplateProjectDataIsValid(project: FirstTemplateProjectDat
             message: "Cannot save project data. Project link is not a valid URL!"
         }
     }
+    if (!project.photo) {
+        return {
+            isValid: false,
+            message: "Cannot save project data. Project photo is required!"
+        }
+    }
     return {
         isValid: true,
         message: ""

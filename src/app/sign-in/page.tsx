@@ -20,10 +20,13 @@ export default function SignIn() {
     );
   }
   if (loading) {
-    return( 
-      <div className="flex flex-col justify-center items-center w-full h-full">
-        <p className="font-semibold text-5xl mt-20 mb-12">Loading...</p>
-      </div>);
+    return (
+      <main className="flex justify-center items-center h-screen">
+          <div className="bg-blue-100 text-blue-700 p-4 rounded shadow-md">
+              <h1>Loading...</h1>
+          </div>
+      </main>
+    );
   }
   if (user) {
     //TO DO push to the next page

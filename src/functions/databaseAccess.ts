@@ -1,17 +1,14 @@
-import {PortfolioData as FirstTemplateData, ProjectData as FirstTemplateProjectData, PortfolioDataPreview as FirstTemplateDataPreview,
-  ProjectDataPreview as FirstTemplateProjectPreview} from "@/model/firstTemplateTypes";
+import {
+    PortfolioData as FirstTemplateData,
+    PortfolioDataPreview as FirstTemplateDataPreview,
+    ProjectDataPreview as FirstTemplateProjectPreview
+} from "@/model/firstTemplateTypes";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
-import {
-  PortfolioData as SecondTemplateData,
-  ProjectData as SecondTemplateProjectData
-} from "@/model/secondTemplateTypes";
+import {PortfolioData as SecondTemplateData} from "@/model/secondTemplateTypes";
 import {db} from "@/firebase/firebaseConfig";
-import {addDoc, collection, doc, getDoc, query, getDocs, updateDoc} from "@firebase/firestore";
+import {addDoc, collection, doc, getDoc, updateDoc} from "@firebase/firestore";
 import {getFileHash} from "@/functions/cryptographyUtilities";
-import {
-  IMAGES_DIRECTORY_NAME,
-  PORTFOLIOS_COLLECTION_NAME,
-} from "@/constants";
+import {IMAGES_DIRECTORY_NAME, PORTFOLIOS_COLLECTION_NAME,} from "@/constants";
 import {TemplateType} from "@/templatesTypes";
 import {validateFirstTemplateData} from "@/functions/validation";
 import {PortfolioStatus} from "@/portfolioStatuses";
@@ -137,14 +134,14 @@ export async function getFirstTemplatePortfolioData(portfolioId: string): Promis
           projects.push({
             name: project.name,
             link: project.link,
-            photoPath: imageUrl,
+            photoUrl: imageUrl,
           });
         }
         return {
           name: data.name,
           status: data.status,
           link: data.link,
-          photoPath: imageLink,
+          photoUrl: imageLink,
           username: data.username,
           fullName: data.fullName,
           location: data.location,
@@ -227,6 +224,23 @@ export async function publishPortfolio(portfolioId: string): Promise<string> {
     catch(error){
         console.error('Error publishing portfolio with id: ' + portfolioId + '\nError: ' + error);
         return "";
+    }
+}
+
+
+export async function downloadImage(url: string) : Promise<File | undefined> {
+    try{
+        const extension = url.split("?")[0].split(".").at(-1);
+        const fileName = url.split("%")[1].split(".")[0];
+        const response = await fetch(url);
+        const blob = await response.blob();
+        if (extension){
+            return new File([blob], fileName + "." + extension, {type: "image/" + extension});
+        }
+    }
+    catch(error){
+        console.error('Error loading file with path: ' + url + '\nError: ' + error);
+        return;
     }
 }
 
