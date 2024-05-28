@@ -91,7 +91,7 @@ export default function Home() {
             <p className="text-gray-700 lg:text-base">
               Discover the benefits of creating, customizing, and enhancing an online portfolio for work opportunities.
             </p>
-            <button className="bg-black hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-full flex items-center shadow-md mt-4">
+            <button onClick={handleCreatePortfolioClick} className="bg-black hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-full flex items-center shadow-md mt-4">
               Create Portfolio
             </button> {/*TODO Send to the page with available portfolios templates*/} 
           </div>
