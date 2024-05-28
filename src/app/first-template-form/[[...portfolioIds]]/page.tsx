@@ -260,7 +260,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                     </div>
                     <label htmlFor="username" className="pt-8 font-semibold">Username</label>
                     <input
-                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center"
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center break-words"
                         type="text"
                         id="username"
                         name="username"
@@ -268,7 +268,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                         onChange={({target}) => setUsername(target.value)}/>
                     <label htmlFor="fullname" className="pt-2 font-semibold">Full name</label>
                     <input
-                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center"
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center break-words"
                         type="text"
                         id="fullname"
                         name="fullname"
@@ -276,7 +276,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                         onChange={({target}) => setFullname(target.value)}/>
                     <label htmlFor="location" className="pt-2 font-semibold">Location</label>
                     <input
-                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center"
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center break-words"
                         type="text"
                         id="location"
                         name="location"
@@ -284,7 +284,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                         onChange={({target}) => setLocation(target.value)}/>
                     <label htmlFor="role" className="pt-2 font-semibold">Role</label>
                     <input
-                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center"
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center break-words"
                         type="text"
                         id="role"
                         name="role"
@@ -295,7 +295,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                     <div className="flex flex-col w-1/2">
                         <label htmlFor="bio" className="pt-8 font-semibold">Bio</label>
                         <textarea
-                            className="border-2 rounded-2xl w-full border-gray-500 text-center"
+                            className="border-2 rounded-2xl w-full border-gray-500 text-center break-words"
                             id="bio"
                             name="bio"
                             value={bio}
@@ -307,7 +307,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                         <div key={row.id}>
                             <div className="flex flex-col justify-center items-center">
                                 <input
-                                    className="border-2 rounded-2xl w-full border-gray-500 text-center"
+                                    className="border-2 rounded-2xl w-full border-gray-500 text-center break-words"
                                     type="url"
                                     id="links"
                                     name="links"
@@ -322,52 +322,57 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                     <button onClick={handleAddLink} className="bg-gray-200 hover:bg-gray-300 text-gray font-semibold py-2 px-6 rounded-full flex items-center">Add Link</button>
                     <br/>
                 </div>
-                <div className="flex flex-col w-2/3 pr-20 pt-20 items-center">
+                <div className="flex flex-col w-2/3 mr-5 pt-20 items-center">
                     <label htmlFor="projects" className="flex text-5xl justify-center font-extrabold">
                         MY WORKS
                     </label><br/>
                     <div className="flex flex-row flex-wrap justify-center">
-                        {projects.map((project) => (
-                            <div key={project.id} className="flex flex-col justify-center items-center border-2 border-gray-500 rounded-3xl m-5 pl-32 pr-32 pt-4 pb-4">
-                                <label htmlFor="project-photo"></label>
-                                <input
-                                    className="hidden"
-                                    type="file"
-                                    id={"project-"+project.id+"-photo"}
-                                    name="project-photo"
-                                    onChange={({target}) => {
-                                        if (target.files) {
-                                            const file = target.files[0];
-                                            handleEditProjectPhoto(project.id, file, URL.createObjectURL(file));
-                                        }
-                                    }}/>
-                                <div
-                                    className="w-40 h-40 bg-white rounded-full flex items-center justify-center border-2 cursor-pointer border-gray-500"
-                                    onClick={() => document.getElementById("project-"+project.id+"-photo")?.click()}>
-                                    { project.photoPath ? (
-                                        <img src={project.photoPath} alt="" className="w-full h-full rounded-full object-cover"/>
-                                    ) : (
-                                        <span><img src="/Vector.png" alt="" style={{height: "30px"}}/></span>
-                                    )}
-                                </div>
-                                <label htmlFor="project-name" className="pt-2 font-semibold">Project name</label>
-                                <input
-                                    className="border-2 rounded-2xl w-full border-gray-500 text-center"
-                                    type="text"
-                                    id="project-name"
-                                    name="project-name"
-                                    value={project.name}
-                                    onChange={({target}) => handleEditProjectName(project.id, target.value)}/>
-                                <label htmlFor="project-link" className="pt-2 font-semibold">Project link</label>
-                                <input
-                                    className="border-2 rounded-2xl w-full border-gray-500 text-center"
-                                    type="text"
-                                    id="project-link"
-                                    name="project-link"
-                                    value={project.link}
-                                    onChange={({target}) => handleEditProjectLink(project.id, target.value)}/>
-                                <button onClick={() => handleDeleteProject(project.id)} className="bg-gray-200 hover:bg-gray-300 text-gray font-semibold py-2 px-6 rounded-full flex items-center mt-4">Delete</button>
+                    {projects.map((project) => (
+                        <div key={project.id} className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl m-5">
+                            <div className="pt-full relative flex flex-col justify-center items-center border-2 border-gray-500 rounded-3xl p-6 sm:p-8 md:p-10 lg:p-24">
+                            <label htmlFor={"project-" + project.id + "-photo"} className="hidden"></label>
+                            <input
+                                className="hidden"
+                                type="file"
+                                id={"project-" + project.id + "-photo"}
+                                name="project-photo"
+                                onChange={({target}) => {
+                                if (target.files) {
+                                    const file = target.files[0];
+                                    handleEditProjectPhoto(project.id, file, URL.createObjectURL(file));
+                                }
+                                }}
+                            />
+                            <div
+                                className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center border-2 cursor-pointer border-gray-500"
+                                onClick={() => document.getElementById("project-" + project.id + "-photo")?.click()}>
+                                {project.photoPath ? (
+                                <img src={project.photoPath} alt="" className="w-full h-full rounded-full object-cover" />
+                                ) : (
+                                <span><img src="/Vector.png" alt="" style={{ height: "30px" }} /></span>
+                                )}
                             </div>
+                            <label htmlFor={"project-" + project.id + "-name"} className="pt-2 font-semibold">Project name</label>
+                            <input
+                                className="border-2 rounded-2xl w-full border-gray-500 text-center break-words"
+                                type="text"
+                                id={"project-" + project.id + "-name"}
+                                name="project-name"
+                                value={project.name}
+                                onChange={({target}) => handleEditProjectName(project.id, target.value)}
+                            />
+                            <label htmlFor={"project-" + project.id + "-link"} className="pt-2 font-semibold">Project link</label>
+                            <input
+                                className="border-2 rounded-2xl w-full border-gray-500 text-center break-words"
+                                type="text"
+                                id={"project-" + project.id + "-link"}
+                                name="project-link"
+                                value={project.link}
+                                onChange={({target}) => handleEditProjectLink(project.id, target.value)}
+                            />
+                            <button onClick={() => handleDeleteProject(project.id)} className="bg-gray-200 hover:bg-gray-300 text-gray font-semibold py-2 px-6 rounded-full flex items-center mt-4">Delete</button>
+                            </div>
+                        </div>
                         ))}
                     </div>
                     <button onClick={handleAddProject} className="bg-gray-200 hover:bg-gray-300 text-gray font-semibold py-2 px-6 rounded-full flex items-center">Add Project</button><br/>
