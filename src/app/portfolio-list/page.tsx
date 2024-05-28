@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../firebase/firebaseConfig.js';
-import { fetchPortfolios, deletePortfolio, editPortfolioName } from '@/functions/databaseAccess';
+import { auth } from '@/firebase/firebaseConfig';
+import { fetchPortfoliosAsListItems, deletePortfolio, editPortfolioName } from '@/functions/databaseAccess';
 import PortfolioDeletePopUp from '../components/PortfolioDeletePopUp';
 
 interface Portfolio {
@@ -70,7 +70,7 @@ const PortfolioList = () => {
       if (user) {
         console.log("User is authenticated: ", user);
         try {
-          const portfolioData = await fetchPortfolios(user.uid);
+          const portfolioData = await fetchPortfoliosAsListItems(user.uid);
           setPortfolios(portfolioData);
         } catch (error) {
           console.error("Error fetching portfolios: ", error);

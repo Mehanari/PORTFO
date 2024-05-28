@@ -1,5 +1,13 @@
-import {PortfolioData as SecondTemplateData, ProjectData as SecondTemplateProjectData} from "@/model/secondTemplateTypes";
-import {PortfolioData as FirstTemplateData, ProjectData as FirstTemplateProjectData} from "@/model/firstTemplateTypes";
+import {
+    PortfolioData as SecondTemplateData,
+    ProjectData as SecondTemplateProjectData
+} from "@/model/secondTemplateTypes";
+import {
+    PortfolioData as FirstTemplateData,
+    ProjectData as FirstTemplateProjectData,
+    PortfolioDataPreview as FirstTemplateDataPreview,
+    ProjectDataPreview as FirstTemplateProjectPreview
+} from "@/model/firstTemplateTypes";
 import {getFileHash} from "@/functions/cryptographyUtilities";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
 import {db} from "@/firebase/firebaseConfig";
@@ -242,7 +250,7 @@ export async function downloadImage(url: string) : Promise<File | undefined> {
     }
 }
 
-async function fetchPortfolios(userId: string): Promise<PortfolioListItemData[]> {
+export async function fetchPortfoliosAsListItems(userId: string): Promise<PortfolioListItemData[]> {
     try {
       const snapshot = await getDocs(
         query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', userId))
@@ -263,7 +271,7 @@ async function fetchPortfolios(userId: string): Promise<PortfolioListItemData[]>
   }
 
 
-  async function deletePortfolio(portfolioId: string): Promise<string | undefined>{
+  export async function deletePortfolio(portfolioId: string): Promise<string | undefined>{
     try {
         const portfolioRef = doc(db, "portfolios", portfolioId);
         await deleteDoc(portfolioRef);
@@ -273,7 +281,7 @@ async function fetchPortfolios(userId: string): Promise<PortfolioListItemData[]>
     }
   }
 
-  async function editPortfolioName(portfolioName: string, portfolioId: string): Promise<string | undefined>{
+  export async function editPortfolioName(portfolioName: string, portfolioId: string): Promise<string | undefined>{
     try {
         const portfolioRef = doc(db, "portfolios", portfolioId);
         await updateDoc(portfolioRef, {
@@ -310,5 +318,3 @@ async function getImageUrlByPath(path: string): Promise<string | undefined> {
     console.log("Could not download an image for path: " + path + "\nError: " + error);
   }
 }
-
-export {saveFirstTemplateDataForUser, saveSecondTemplateDataForUser, fetchPortfolios, deletePortfolio, editPortfolioName};
