@@ -1,7 +1,6 @@
 'use client'
 import React from "react";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import {auth} from "../../firebase/firebaseConfig";
+import {auth} from "@/firebase/firebaseConfig";
 import { useRouter } from "next/navigation";
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import Image from "next/image";
@@ -29,10 +28,7 @@ export default function SignIn() {
     );
   }
   if (user) {
-    //TO DO push to the next page
-    return(
-      <h1>Profile!</h1>
-    );
+    router.push("/portfolio-list");
   }
 
   return (

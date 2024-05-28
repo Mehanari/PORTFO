@@ -77,7 +77,7 @@ const PortfolioList = () => {
         }
       } else {
         console.log("No user is authenticated.");
-        router.push('/signUp');
+        router.push('/sign-in');
       }
       setLoading(false); // Set loading to false after handling auth state change
     });
@@ -121,7 +121,7 @@ const PortfolioList = () => {
     if (editingId) {
       try {
 
-        editPortfolioName(editingName, editingId);
+        await editPortfolioName(editingName, editingId);
 
         setPortfolios((prevPortfolios) =>
           prevPortfolios.map((portfolio) =>
@@ -143,7 +143,7 @@ const PortfolioList = () => {
   const handleConfirmDelete = async () => {
     if (selectedPortfolioId) {
       try {
-        deletePortfolio(selectedPortfolioId);
+        await deletePortfolio(selectedPortfolioId);
 
         setPortfolios((prevPortfolios) =>
           prevPortfolios.filter((portfolio) => portfolio.id !== selectedPortfolioId)
