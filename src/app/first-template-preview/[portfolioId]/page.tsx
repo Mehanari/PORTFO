@@ -63,74 +63,87 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
   }
 
   return (
-      <div className="bg-rose-50 relative font-sans ">
-          <div className="gap-1 ml-20 ">
-              <div className="w-56 h-56 justify-center items-start inline-flex">
-                  <img
-                      className="w-56 h-56 justify-center mt-16 items-center gap-2.5 relative rounded-full border border-zinc-600"
-                      src={protfolioData.photoUrl} alt=""/>
-              </div>
-              <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md mt-6 font-[Plus_Jakarta_Sans]">Username:</p>
-              <div
-                  className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken max-h-screen bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex mt-2">
-                  <span className="w-20 h-5 text-center text-black text-sm font-medium ">{protfolioData.username}</span>
-              </div>
-              <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md font-normal mt-2">Full name:</p>
-              <div
-                  className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex mt-2">
-                  <span className="w-20 h-5 text-center text-black text-sm font-medium">{protfolioData.fullName}</span>
-              </div>
-              <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md font-normal mt-2">Location:</p>
-              <div
-                  className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex mt-2">
-                  <span className="w-20 h-5 text-center text-black text-sm font-medium">{protfolioData.location}</span>
-              </div>
-              <p className="w-56 grow shrink basis-0 text-center text-zinc-600 text-md font-normal mt-2">Role:</p>
-              <div
-                  className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex mt-2">
-                  <span className="text-center text-black text-sm font-medium">{protfolioData.role}</span>
-              </div>
-              <p className="w-56 grow shrink basis-0 text-start text-zinc-600 text-md font-normal mt-2">Bio:</p>
-              <div
-                  className="w-56 pl-15 pr-15 py-1.5 mix-blend-darken bg-white rounded-3xl border border-zinc-500 justify-center items-center inline-flex">
-                  <span className="text-center text-black text-sm font-medium px-4">{protfolioData.bio}</span>
-              </div>
-              <p className="w-56 grow shrink basis-0 text-start text-zinc-600 text-md font-normal mt-2 mb-2">Links:</p>
-              {protfolioData.links.map((row, index) => (
-                  <div className="text-balance text-black text-sm font-normal hover:text-orange-500" key={index}>
-                      <a href={row} target="_blank" rel="noreferrer">{row}</a>
+      <body className="font-cursive" style={{background: "#FFF0F5"}}>
+            <div className="flex flex-row pl-20 pr-20">
+              <div className="flex items-center w-1/3 h-20 ml-auto">
+                  <div className="flex flex-row text-2xl">
+                    <button onClick={handleBackToEditor}>Back to editor</button>
                   </div>
-              ))}
-          </div>
-          <div className="absolute left-[560px] top-[40px] shrink-0 mt-8 mr-7 max-w-full h-px border border-solid
-          bg-stone-500 border-stone-500 w-[825px] max-md:mr-1.5"
-          ></div>
-          <p className=" w-72 h-10 left-[846px] top-[80px] absolute text-center text-zinc-600 text-5xl font-bold">My
-              works</p><br/>
-          <div className="absolute left-[560px] top-[104px] flex justify-center items-center gap-8 pb-8 self-stretch ">
-              {protfolioData.projects.map((project, index) => (
-                  <div
-                      className="max-w-64 max-h-72 rounded-[50px] shadow border border-zinc-600 mt-16 flex flex-col
-                      justify-center items-center px-16 pt-6 pb-14 max-md:px-5 max-md:mt-8 hover:shadow-xl transition-shadow duration-300"
-                      key={index}>
-                      <p className="hidden">Project photo:</p>
-                      <div className=" relative w-32 items-center justify-center ">
-                          <img className="w-32 h-32 mt-4 flex justify-center rounded-full border border-zinc-600 self-center
-                    max-w-full aspect-square" src={project.photoUrl} alt=""/>
+                </div>
+                <div className="flex justify-center items-center w-2/3 h-20 ml-auto border-b-2 border-gray-500"></div>
+            </div>
+            
+            <div className="flex flex-row">
+                <div className="flex flex-col items-center justify-start w-1/3 pl-8 pr-8">
+                    <div className="circle">
+                        <img className="w-full h-full rounded-full object-cover" src={protfolioData.photoUrl} alt=""/>
+                    </div>
+                    <label htmlFor="username" className="pt-8 font-semibold">Username</label>
+                    <div
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center">
+                        <span>{protfolioData.username}</span>
+                    </div>
+
+                    <label htmlFor="fullname" className="pt-2 font-semibold">Full name</label>
+                    <div
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center">
+                        <span>{protfolioData.fullName}</span>
+                    </div>
+
+
+                    <label htmlFor="location" className="pt-2 font-semibold">Location</label>
+                    <div
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center">
+                        <span>{protfolioData.location}</span>
+                    </div>
+
+                    
+                    <label htmlFor="role" className="pt-2 font-semibold">Role</label>
+                    <div
+                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center">
+                        <span>{protfolioData.role}</span>
+                    </div>
+
+                    <div className="flex flex-col w-1/2">
+                        <label htmlFor="bio" className="pt-8 font-semibold">Bio</label>
+                        <div
+                          className="border-2 rounded-2xl w-full border-gray-500 text-center">
+                          <span>{protfolioData.bio}</span>
+                        </div>
+                    </div>
+                   
+                    <label htmlFor="links" className="pt-6 pb-2 font-semibold">Links</label>
+                    {protfolioData.links.map((row, index) => (
+                      <div className="flex flex-col justify-center items-center" key={index}>
+                        <a href={row} target="_blank" rel="noreferrer" className="hover:text-orange-500">{row}</a>
                       </div>
-                      <p className="hidden">Project name:</p>
-                      <p className="self-stretch text-balance text-center text-black text-2xl font-medium mt-4 ">{project.name}</p>
-                      <p className="hidden">Project link:</p>
-                      <div className="w-full ">
-                          <a className="block break-words px-4 justify-center text-center text-black text-base font-medium
-                           underline leading-tight mt-4 hover:text-orange-500"
-                             href={project.link} target="_blank" rel="noreferrer">See more</a>
-                      </div>
-                  </div>
-              ))}
-          </div>
-          <button onClick={handleBackToEditor}>Back to editor</button>
-      </div>
+                    ))}
+                    <br/>
+                </div>
+
+                <div className="flex flex-col w-2/3 pr-20 pt-20 items-center">
+                    <label htmlFor="projects" className="flex text-5xl justify-center font-extrabold">
+                        MY WORKS
+                    </label><br/>
+                    <div className="flex flex-row flex-wrap justify-center">
+                      {protfolioData.projects.map((project, index) => (
+                        <div
+                          className="flex flex-col justify-center items-center border-2 border-gray-500 rounded-3xl m-5 pr-32 pl-32 pt-16 pb-16"
+                          key={index}>
+                          <div className="w-40 h-40 bg-white rounded-full flex items-center justify-center border-2 cursor-pointer border-gray-500">
+                            <img src={project.photoUrl} alt="" className="w-full h-full rounded-full object-cover"/>
+                          </div>
+                          <p className="border-2 rounded-2xl w-full border-gray-500 text-center font-semibold mt-4">{project.name}</p>
+                          <div className="w-full">
+                            <a className="block break-words px-4 justify-center text-center text-black text-base font-medium underline leading-tight mt-4 hover:text-orange-500"
+                                href={project.link} target="_blank" rel="noreferrer">See more</a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                </div>
+            </div>
+        </body>
   )
 
 }

@@ -194,7 +194,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
 
     return (
         // <div className={`font-cursive ${backgroundColor}`}>
-        <div className="font-cursive bg-white">
+        <body className="font-cursive" style={{background: "#FFF0F5"}}>
             {/* {isMenuOpen && ( 
                 <div className="flex flex-row w-full justify-end pr-20 pt-5">}
                     <button className="bg-orange-200 hover:bg-orange-300 text-gray font-semibold py-2 px-4 rounded-md mr-2 border-2 border-gray-500" onClick={() => handleColorChange("orange")}>Orange</button>
@@ -312,7 +312,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                     <br/>
                 </div>
                 <div className="flex flex-col w-2/3 pr-20 pt-20 items-center">
-                    <label htmlFor="projects" className="flex text-5xl justify-center">
+                    <label htmlFor="projects" className="flex text-5xl justify-center font-extrabold">
                         MY WORKS
                     </label><br/>
                     <div className="flex flex-row flex-wrap justify-center">
@@ -362,6 +362,6 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                     <button onClick={handleAddProject} className="bg-gray-200 hover:bg-gray-300 text-gray font-semibold py-2 px-6 rounded-full flex items-center">Add Project</button><br/>
                 </div>
             </div>
-        </div>
+        </body>
     );
 }
