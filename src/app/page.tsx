@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import EmblaCarousel from './components/EmblaCarousel';
@@ -11,62 +11,31 @@ import {userHasPortfolios} from "@/functions/databaseAccess";
 import Pagination from '@/app/components/Pagination';
 
 
-const portfolios = [
-  {
-    "photo": "https://picsum.photos/200/300",
-    "fullname": "John Doe",
-    "role": "Software Engineer"
-  },
-  {
-    "photo": "https://picsum.photos/200/300",
-    "fullname": "Rebecca Smith",
-    "role": "Product Manager"
-  },
-  {
-    "photo": "https://picsum.photos/200/300",
-    "fullname": "Patrick Johnson",
-    "role": "Designer"
-  },
-  {
-    "photo": "https://picsum.photos/200/300",
-    "fullname": "Jane Doe",
-    "role": "Software Engineer"
-  },
-  {
-    "photo": "https://picsum.photos/200/300",
-    "fullname": "Nobody Nowhere",
-    "role": "Software Engineer"
-  },
-  {
-    "photo": "https://picsum.photos/200/300",
-    "fullname": "Paul Richardson",
-    "role": "Team Lead"
-  },
-  {
-    "photo": "https://picsum.photos/200/300",
-    "fullname": "Samantha Johnson",
-    "role": "Designer"
-  },
-  {
-    "photo": "https://picsum.photos/200/300",
-    "fullname": "Samantha Johnson",
-    "role": "Designer"
-  }
-]
-
-
-
-
 export default function Home() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
 
+  let [portfolios, setPortfolios] = useState<{photo: string, fullname: string, role: string}[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = portfolios.slice(indexOfFirstItem, indexOfLastItem);
+  let indexOfLastItem;
+  let indexOfFirstItem;
+  let currentItems: {photo: string, fullname: string, role: string}[] = [];
+
+  if (portfolios) {
+    indexOfLastItem = currentPage * itemsPerPage;
+    indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    currentItems = portfolios.slice(indexOfFirstItem, indexOfLastItem);
+  }
+
+  useEffect(() => {
+    fetch(`https://portfo-be0ce.web.app/getPortfoliosPreviews`).then((response) => {
+      response.json().then((data) => {
+        setPortfolios(data);
+      });
+    });
+  }, []);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -176,8 +145,9 @@ export default function Home() {
         </div>
       </section>
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
+      {portfolios ?
       <section className="flex flex-col lg:flex-col bg-white pb-20 justify-center items-center">
-        <h1 className="flex text-black font-bold text-4xl lg:text-5xl">Portfolios</h1>
+        <h1 className="flex text-black font-bold text-4xl lg:text-5xl">Last published portfolios</h1>
         <div className='flex flex-col justify-center'>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mt-14 mb-14">
             {currentItems.map((portfolio, index) => (
@@ -195,7 +165,8 @@ export default function Home() {
             paginate={paginate}
           />
         </div>
-      </section>
+      </section> : <></>
+      }
       <section className="flex flex-col lg:flex-row bg-white pb-20 justify-center items-center">
         <div className="flex flex-col lg:flex-col w-1/2 justify-center items-center">
           <h1 className="flex text-black font-bold text-4xl lg:text-5xl" style={{ marginLeft: '150px' }}>
