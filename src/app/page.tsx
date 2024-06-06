@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, {useState} from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import EmblaCarousel from './components/EmblaCarousel';
@@ -8,11 +8,68 @@ import { OPTIONS, SLIDES } from './index';
 import {auth} from "@/firebase/firebaseConfig";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {userHasPortfolios} from "@/functions/databaseAccess";
+import Pagination from '@/app/components/Pagination';
+
+
+const portfolios = [
+  {
+    "photo": "https://picsum.photos/200/300",
+    "fullname": "John Doe",
+    "role": "Software Engineer"
+  },
+  {
+    "photo": "https://picsum.photos/200/300",
+    "fullname": "Rebecca Smith",
+    "role": "Product Manager"
+  },
+  {
+    "photo": "https://picsum.photos/200/300",
+    "fullname": "Patrick Johnson",
+    "role": "Designer"
+  },
+  {
+    "photo": "https://picsum.photos/200/300",
+    "fullname": "Jane Doe",
+    "role": "Software Engineer"
+  },
+  {
+    "photo": "https://picsum.photos/200/300",
+    "fullname": "Nobody Nowhere",
+    "role": "Software Engineer"
+  },
+  {
+    "photo": "https://picsum.photos/200/300",
+    "fullname": "Paul Richardson",
+    "role": "Team Lead"
+  },
+  {
+    "photo": "https://picsum.photos/200/300",
+    "fullname": "Samantha Johnson",
+    "role": "Designer"
+  },
+  {
+    "photo": "https://picsum.photos/200/300",
+    "fullname": "Samantha Johnson",
+    "role": "Designer"
+  }
+]
+
+
 
 
 export default function Home() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = portfolios.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
 
   const handleCreatePortfolioClick = async () => {
     if (user){
@@ -119,6 +176,26 @@ export default function Home() {
         </div>
       </section>
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
+      <section className="flex flex-col lg:flex-col bg-white pb-20 justify-center items-center">
+        <h1 className="flex text-black font-bold text-4xl lg:text-5xl">Portfolios</h1>
+        <div className='flex flex-col justify-center'>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mt-14 mb-14">
+            {currentItems.map((portfolio, index) => (
+              <div key={index} className="flex flex-col items-center bg-white border-2 border-gray-200 rounded-3xl p-10 shadow">
+                <img src={portfolio.photo} alt={portfolio.fullname} className="circle-portfolio" />
+                <h2 className="mt-4 text-xl font-semibold">{portfolio.fullname}</h2>
+                <p className="text-gray-700">{portfolio.role}</p>
+              </div>
+            ))}
+          </div>
+          <Pagination
+            itemsPerPage={itemsPerPage}
+            totalItems={portfolios.length}
+            currentPage={currentPage}
+            paginate={paginate}
+          />
+        </div>
+      </section>
       <section className="flex flex-col lg:flex-row bg-white pb-20 justify-center items-center">
         <div className="flex flex-col lg:flex-col w-1/2 justify-center items-center">
           <h1 className="flex text-black font-bold text-4xl lg:text-5xl" style={{ marginLeft: '150px' }}>
@@ -128,7 +205,7 @@ export default function Home() {
         <div className="flex flex-col lg:flex-col bg-white w-1/2 justify-end">
           <div className="flex flex-row lg:flex-row">
             <div className="flex flex-col lg:flex-col w-1/3 justify-center items-center">
-              <div className="circle text-white font-bold text-1xl lg:text-2xl" style={{ background: '#FFA500' }}>
+              <div className="circle-page text-white font-bold text-1xl lg:text-2xl" style={{ background: '#FFA500' }}>
                 1
               </div>
               <div className="circle_small" style={{ background: '#D3D3D3' }}></div>
@@ -141,7 +218,7 @@ export default function Home() {
           </div>
           <div className="flex flex-row lg:flex-row">
             <div className="flex flex-col lg:flex-col w-1/3 justify-center items-center">
-              <div className="circle text-white font-bold text-1xl lg:text-2xl" style={{ background: '#FF8C00' }}>
+              <div className="circle-page text-white font-bold text-1xl lg:text-2xl" style={{ background: '#FF8C00' }}>
                 2
               </div>
               <div className="circle_small" style={{ background: '#D3D3D3' }}></div>
@@ -154,7 +231,7 @@ export default function Home() {
           </div>
           <div className="flex flex-row lg:flex-row">
             <div className="flex flex-col lg:flex-col w-1/3 justify-center items-center">
-              <div className="circle text-white font-bold text-1xl lg:text-2xl" style={{ background: '#FF6347' }}>
+              <div className="circle-page text-white font-bold text-1xl lg:text-2xl" style={{ background: '#FF6347' }}>
                 3
               </div>
             </div>
