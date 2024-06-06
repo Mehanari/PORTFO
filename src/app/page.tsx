@@ -7,7 +7,7 @@ import EmblaCarousel from './components/EmblaCarousel';
 import { OPTIONS, SLIDES } from './index';
 import {auth} from "@/firebase/firebaseConfig";
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {userHasPortfolios} from "@/functions/databaseAccess";
+import {getAllPortfolios, userHasPortfolios} from "@/functions/databaseAccess";
 import Pagination from '@/app/components/Pagination';
 
 
@@ -30,10 +30,8 @@ export default function Home() {
   }
 
   useEffect(() => {
-    fetch(`https://portfo-be0ce.web.app/getPortfoliosPreviews`).then((response) => {
-      response.json().then((data) => {
-        setPortfolios(data);
-      });
+    getAllPortfolios().then((data) => {
+      setPortfolios(data);
     });
   }, []);
 

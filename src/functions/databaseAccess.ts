@@ -1,12 +1,8 @@
+import {PortfolioData as SecondTemplateData} from "@/model/secondTemplateTypes";
 import {
-    PortfolioData as SecondTemplateData,
-    ProjectData as SecondTemplateProjectData
-} from "@/model/secondTemplateTypes";
-import {
-    PortfolioData as FirstTemplateData,
-    ProjectData as FirstTemplateProjectData,
-    PortfolioDataPreview as FirstTemplateDataPreview,
-    ProjectDataPreview as FirstTemplateProjectPreview
+  PortfolioData as FirstTemplateData,
+  PortfolioDataPreview as FirstTemplateDataPreview,
+  ProjectDataPreview as FirstTemplateProjectPreview
 } from "@/model/firstTemplateTypes";
 import {getFileHash} from "@/functions/cryptographyUtilities";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
@@ -15,9 +11,20 @@ import {IMAGES_DIRECTORY_NAME, PORTFOLIOS_COLLECTION_NAME,} from "@/constants";
 import {TemplateType} from "@/templatesTypes";
 import {validateFirstTemplateData} from "@/functions/validation";
 import {PortfolioStatus} from "@/portfolioStatuses";
-import { PortfolioListItemData } from "@/model/portflolioTypes";
-import { addDoc, getDocs, getDoc, collection, doc, deleteDoc, updateDoc, query, where } from '@firebase/firestore';
-import { getStatusName } from '@/functions/statusNameUtilities';
+import {PortfolioListItemData} from "@/model/portflolioTypes";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where
+} from '@firebase/firestore';
+import {getStatusName} from '@/functions/statusNameUtilities';
 
 export async function userHasPortfolios(userId: string): Promise<boolean>{
     try {
@@ -30,6 +37,33 @@ export async function userHasPortfolios(userId: string): Promise<boolean>{
         return false;
       }
 }
+
+export async function getAllPortfolios(): Promise<{photo: string, fullname: string, role: string}[]> {
+    try {
+      const snapshot = await getDocs(
+        query(collection(db, PORTFOLIOS_COLLECTION_NAME), orderBy('createdTimestamp', 'desc'), where("status", "==", PortfolioStatus.PUBLISHED))
+      );
+      const docs: {photo: string, fullname: string, role: string}[] = [];
+      for (const doc of snapshot.docs) {
+        const docData = doc.data();
+        console.log(docData);
+        const photoUrl = await getImageUrlByPath(docData.photoPath);
+        if (!photoUrl) {
+          throw new Error("Could not get image link for path: " + docData.photo);
+        }
+        docs.push({
+          photo: photoUrl,
+          fullname: docData.fullName,
+          role: docData.role,
+        });
+      }
+      return docs;
+
+    } catch (error) {
+      console.error('Error fetching portfolios: ', error);
+      return [];
+    }
+  }
 
 export async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
     const validationResults = validateFirstTemplateData(data);
