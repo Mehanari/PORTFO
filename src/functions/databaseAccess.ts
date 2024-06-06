@@ -73,6 +73,7 @@ export async function saveFirstTemplateDataForUser(userId: string, data: FirstTe
             role: data.role,
             projects: firebaseProjects,
             bio: data.bio,
+            createdTimestamp: Date.now(),
             links: data.links,
         });
       return docRef.id;
@@ -213,6 +214,7 @@ export async function saveSecondTemplateDataForUser(userId: string, data: Second
         role: data.role,
         projects: firebaseProjects,
         bio: data.bio,
+        createdTimestamp: Date.now()
       });
     return docRef.id;
   } catch (error) {
