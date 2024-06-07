@@ -82,7 +82,7 @@
     height: 35%;
   }
 
-  .circle {
+  .circle-page {
     width: 60px;
     height: 60px;
     border-radius: 50%; 
@@ -114,6 +114,18 @@
     justify-content: center;
     border: 2px solid grey;
     cursor: pointer;
+}
+
+
+.circle-portfolio {
+  width: 240px;
+  height: 240px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid grey;
 }
 
 @media (max-width: 768px) {
