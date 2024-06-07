@@ -41,4 +41,3 @@ export type PortfolioDataPreview = {
     projects: ProjectDataPreview[];
 }
 
-export type {PortfolioData, ProjectData}
