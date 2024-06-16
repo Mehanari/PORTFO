@@ -7,15 +7,24 @@ import EmblaCarousel from './components/EmblaCarousel';
 import { OPTIONS, SLIDES } from './index';
 import {auth} from "@/firebase/firebaseConfig";
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {getAllPortfolios, userHasPortfolios} from "@/functions/databaseAccess";
+import {getAllPortfolios, getPortfolios, userHasPortfolios} from "@/functions/databaseAccess";
 import Pagination from '@/app/components/Pagination';
+import {where} from "@firebase/firestore";
 
+
+function startsWithIgnoreCase(str: string, prefix: string): boolean {
+    return str.toLowerCase().startsWith(prefix.toLowerCase());
+}
 
 export default function Home() {
   const [user, loading] = useAuthState(auth);
+  //Search form values
+  const [name, setName] = useState('');
+  
   const router = useRouter();
 
   let [portfolios, setPortfolios] = useState<{photo: string, fullname: string, role: string}[] | null>(null);
+  const [portfoliosToShow, setPortfoliosToShow] = useState<{photo: string, fullname: string, role: string}[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -23,17 +32,28 @@ export default function Home() {
   let indexOfFirstItem;
   let currentItems: {photo: string, fullname: string, role: string}[] = [];
 
-  if (portfolios) {
+  if (portfoliosToShow) {
     indexOfLastItem = currentPage * itemsPerPage;
     indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    currentItems = portfolios.slice(indexOfFirstItem, indexOfLastItem);
+    currentItems = portfoliosToShow.slice(indexOfFirstItem, indexOfLastItem);
   }
 
   useEffect(() => {
-    getAllPortfolios().then((data) => {
+    getPortfolios([]).then((data) => {
       setPortfolios(data);
+      setPortfoliosToShow(data);
     });
   }, []);
+
+  useEffect(() => {
+    if (portfolios) {
+      if (name === '') {
+        setPortfoliosToShow(portfolios);
+      } else {
+        setPortfoliosToShow(portfolios.filter((portfolio) => startsWithIgnoreCase(portfolio.fullname, name)));
+      }
+    }
+  }, [name]);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -60,6 +80,7 @@ export default function Home() {
       router.push('/sign-in');
     }
   }
+  
 
   if (loading) {
     return (
@@ -143,31 +164,43 @@ export default function Home() {
         </div>
       </section>
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
-      {portfolios ?
-      <section className="flex flex-col lg:flex-col bg-white pb-20 justify-center items-center">
-        <h1 className="flex text-black font-bold text-4xl lg:text-5xl">Last published portfolios</h1>
-        <div className='flex flex-col justify-center'>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mt-14 mb-14">
-            {currentItems.map((portfolio, index) => (
-              <div key={index} className="flex flex-col items-center bg-white border-2 border-gray-200 rounded-3xl p-10 shadow">
-                <img src={portfolio.photo} alt={portfolio.fullname} className="circle-portfolio" />
-                <h2 className="mt-4 text-xl font-semibold">{portfolio.fullname}</h2>
-                <p className="text-gray-700">{portfolio.role}</p>
+      {portfoliosToShow ?
+          <section className="flex flex-col lg:flex-col bg-white pb-20 justify-center items-center">
+            <h1 className="flex text-black font-bold text-4xl lg:text-5xl">Explore other portfolios</h1>
+            <div className="mt-4">
+              <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name</label>
+              <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  onChange={({target}) => setName(target.value)}
+              />
+            </div>
+            <div className='flex flex-col justify-center'>
+              <div
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mt-14 mb-14">
+                {currentItems.map((portfolio, index) => (
+                    <div key={index}
+                         className="flex flex-col items-center bg-white border-2 border-gray-200 rounded-3xl p-10 shadow">
+                      <img src={portfolio.photo} alt={portfolio.fullname} className="circle-portfolio"/>
+                      <h2 className="mt-4 text-xl font-semibold">{portfolio.fullname}</h2>
+                      <p className="text-gray-700">{portfolio.role}</p>
+                    </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <Pagination
-            itemsPerPage={itemsPerPage}
-            totalItems={portfolios.length}
-            currentPage={currentPage}
-            paginate={paginate}
-          />
-        </div>
-      </section> : <></>
+              <Pagination
+                  itemsPerPage={itemsPerPage}
+                  totalItems={portfoliosToShow.length}
+                  currentPage={currentPage}
+                  paginate={paginate}
+              />
+            </div>
+          </section> : <></>
       }
       <section className="flex flex-col lg:flex-row bg-white pb-20 justify-center items-center">
         <div className="flex flex-col lg:flex-col w-1/2 justify-center items-center">
-          <h1 className="flex text-black font-bold text-4xl lg:text-5xl" style={{ marginLeft: '150px' }}>
+          <h1 className="flex text-black font-bold text-4xl lg:text-5xl" style={{marginLeft: '150px'}}>
             CREATING YOUR OWN PORTFOLIO
           </h1>
         </div>
