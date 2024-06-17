@@ -7,7 +7,7 @@ import EmblaCarousel from './components/EmblaCarousel';
 import { OPTIONS, SLIDES } from './index';
 import {auth} from "@/firebase/firebaseConfig";
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {getAllPortfolios, getPortfolios, userHasPortfolios} from "@/functions/databaseAccess";
+import {getAllPortfolios, userHasPortfolios} from "@/functions/databaseAccess";
 import Pagination from '@/app/components/Pagination';
 import {where} from "@firebase/firestore";
 
@@ -39,7 +39,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    getPortfolios([]).then((data) => {
+    getAllPortfolios().then((data) => {
       setPortfolios(data);
       setPortfoliosToShow(data);
     });

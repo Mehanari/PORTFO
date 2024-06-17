@@ -45,9 +45,9 @@ export async function getAllPortfolios(): Promise<{photo: string, fullname: stri
       console.error('Error fetching portfolios: ', error);
       return [];
     }
-  }
+}
 
-  export async function getPortfolios(constraints: QueryFieldFilterConstraint[]): Promise<{photo: string, fullname: string, role: string}[]> {
+async function getPortfolios(constraints: QueryFieldFilterConstraint[]): Promise<{photo: string, fullname: string, role: string}[]> {
     try {
         const snapshot = await getDocs(
             query(
@@ -77,8 +77,8 @@ export async function getAllPortfolios(): Promise<{photo: string, fullname: stri
         console.error('Error fetching portfolios: ', error);
         return [];
     }
-  }
-  
+}
+
 export async function saveFirstTemplateDataForUser(userId: string, data: FirstTemplateData): Promise<string | undefined> {
     const validationResults = validateFirstTemplateData(data);
     if (!validationResults.isValid) {
@@ -327,10 +327,10 @@ export async function fetchPortfoliosAsListItems(userId: string): Promise<Portfo
       console.error('Error fetching portfolios: ', error);
       return [];
     }
-  }
+}
 
 
-  export async function deletePortfolio(portfolioId: string): Promise<string | undefined>{
+export async function deletePortfolio(portfolioId: string): Promise<string | undefined>{
     try {
         const portfolioRef = doc(db, "portfolios", portfolioId);
         await deleteDoc(portfolioRef);
@@ -338,9 +338,9 @@ export async function fetchPortfoliosAsListItems(userId: string): Promise<Portfo
         console.error('Error deleting portfolio: ', error);
         return "hui";
     }
-  }
+}
 
-  export async function editPortfolioName(portfolioName: string, portfolioId: string): Promise<string | undefined>{
+export async function editPortfolioName(portfolioName: string, portfolioId: string): Promise<string | undefined>{
     try {
         const portfolioRef = doc(db, "portfolios", portfolioId);
         await updateDoc(portfolioRef, {
@@ -350,7 +350,7 @@ export async function fetchPortfoliosAsListItems(userId: string): Promise<Portfo
         console.error('Error updating portfolio name: ', error);
         return;
     }
-  }
+}
 
 
 async function addImage(image: File): Promise<string> {
@@ -377,3 +377,4 @@ async function getImageUrlByPath(path: string): Promise<string | undefined> {
     console.log("Could not download an image for path: " + path + "\nError: " + error);
   }
 }
+
