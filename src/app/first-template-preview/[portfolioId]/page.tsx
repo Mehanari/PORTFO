@@ -5,12 +5,14 @@ import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
 import {getFirstTemplatePortfolioData} from "@/functions/databaseAccess";
 import {useRouter} from "next/navigation";
+import { usePDF } from 'react-to-pdf';
 
 
 export default function FirstTemplatePreview({ params }: { params: { portfolioId: string } }) {
   const [user, loading, error] = useAuthState(auth);
   const [protfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
   const router = useRouter();
+  const { toPDF, targetRef } = usePDF({filename: `${params.portfolioId}.pdf`});
 
   useEffect(() => {
     if (user) {
@@ -66,14 +68,18 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
       <body className="font-cursive" style={{background: "#FFF0F5"}}>
             <div className="flex flex-row pl-20 pr-20">
               <div className="flex items-center w-1/3 h-20 ml-auto">
-                  <div className="flex flex-row text-2xl">
-                    <button onClick={handleBackToEditor}>Back to editor</button>
-                  </div>
+                <div className="flex flex-row text-2xl">
+                  <button onClick={handleBackToEditor}>Back to editor</button>
                 </div>
-                <div className="flex justify-center items-center w-2/3 h-20 ml-auto border-b-2 border-gray-500"></div>
+                <div className="flex flex-row text-2xl">
+                  <button onClick={() => toPDF({
+                  })}>Export to PDF</button>
+                </div>
+              </div>
+              <div className="flex justify-center items-center w-2/3 h-20 ml-auto border-b-2 border-gray-500"></div>
             </div>
-            
-            <div className="flex flex-row">
+
+            <div className="flex flex-row" ref={targetRef}>
                 <div className="flex flex-col items-center justify-start w-1/3 pl-8 pr-8">
                     <div className="circle">
                         <img className="w-full h-full rounded-full object-cover" src={protfolioData.photoUrl} alt=""/>
