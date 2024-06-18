@@ -7,13 +7,31 @@ import EmblaCarousel from './components/EmblaCarousel';
 import { OPTIONS, SLIDES } from './index';
 import {auth} from "@/firebase/firebaseConfig";
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {getAllPortfolios, userHasPortfolios} from "@/functions/databaseAccess";
+import {getAllPortfoliosAsSearchItems, userHasPortfolios} from "@/functions/databaseAccess";
 import Pagination from '@/app/components/Pagination';
-import {where} from "@firebase/firestore";
+import {PortfolioSearchItem} from "@/model/commonTypes";
 
 
 function startsWithIgnoreCase(str: string, prefix: string): boolean {
     return str.toLowerCase().startsWith(prefix.toLowerCase());
+}
+
+function portfolioHasProjectInTimeframe(portfolio: PortfolioSearchItem, fromDate: string, toDate: string): boolean {
+    console.log("PORTFOLIO PROJECTS DATES: " + portfolio.projectsCreationDates);
+    console.log("FROM DATE: " + fromDate);
+    console.log("TO DATE: " + toDate);
+    if (fromDate && toDate) {
+        const from = new Date(fromDate);
+        const to = new Date(toDate);
+        return portfolio.projectsCreationDates.some((date) => date >= from && date <= to);
+    } else if (fromDate) {
+        const from = new Date(fromDate);
+        return portfolio.projectsCreationDates.some((date) => date >= from);
+    } else if (toDate) {
+        const to = new Date(toDate);
+        return portfolio.projectsCreationDates.some((date) => date <= to);
+    }
+    return true;
 }
 
 export default function Home() {
@@ -21,19 +39,21 @@ export default function Home() {
   //Search form values
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
+  const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
   const [existingRoles, setExistingRoles] = useState<string[]>([]);
   const [existingRoleFiltered, setExistingRoleFiltered] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const router = useRouter();
 
-  let [portfolios, setPortfolios] = useState<{photo: string, fullname: string, role: string}[] | null>(null);
-  const [portfoliosToShow, setPortfoliosToShow] = useState<{photo: string, fullname: string, role: string}[] | null>(null);
+  let [portfolios, setPortfolios] = useState<PortfolioSearchItem[] | null>(null);
+  const [portfoliosToShow, setPortfoliosToShow] = useState<PortfolioSearchItem[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
   let indexOfLastItem;
   let indexOfFirstItem;
-  let currentItems: {photo: string, fullname: string, role: string}[] = [];
+  let currentItems: PortfolioSearchItem[] = [];
 
   if (portfoliosToShow) {
     indexOfLastItem = currentPage * itemsPerPage;
@@ -42,7 +62,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    getAllPortfolios().then((data) => {
+    getAllPortfoliosAsSearchItems().then((data) => {
       setPortfolios(data);
       setPortfoliosToShow(data);
       let roles: string[] = [];
@@ -66,9 +86,12 @@ export default function Home() {
       if (role != '') {
         filteredPortfolios = filteredPortfolios.filter((portfolio) => startsWithIgnoreCase(portfolio.role, role));
       }
-        setPortfoliosToShow(filteredPortfolios);
+      if (fromDate != '' || toDate != '') {
+          filteredPortfolios = filteredPortfolios.filter((portfolio) => portfolioHasProjectInTimeframe(portfolio, fromDate, toDate));
+      }
+      setPortfoliosToShow(filteredPortfolios);
     }
-  }, [portfolios, name, role]);
+  }, [portfolios, name, role, fromDate, toDate]);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -245,6 +268,30 @@ export default function Home() {
                       ))}
                     </ul>
                 )}
+              </div>
+              <div className="flex space-x-4 items-end">
+                <div>
+                  <label htmlFor="fromDate" className="block text-gray-700 text-sm font-bold mb-2">From</label>
+                  <input
+                      type="date"
+                      id="fromDate"
+                      name="fromDate"
+                      value={fromDate}
+                      onChange={({target}) => setFromDate(target.value)}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="toDate" className="block text-gray-700 text-sm font-bold mb-2">To</label>
+                  <input
+                      type="date"
+                      id="toDate"
+                      name="toDate"
+                      value={toDate}
+                      onChange={({target}) => setToDate(target.value)}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
               </div>
             </div>
             <div className='flex flex-col justify-center'>
