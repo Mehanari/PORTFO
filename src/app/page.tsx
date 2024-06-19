@@ -17,8 +17,6 @@ function startsWithIgnoreCase(str: string, prefix: string): boolean {
 }
 
 function portfolioHasProjectInTimeframe(portfolio: PortfolioSearchItem, fromDate: string, toDate: string): boolean {
-    console.log("FROM DATE: " + fromDate);
-    console.log("TO DATE: " + toDate);
     if (fromDate && toDate) {
         const from = new Date(fromDate);
         const to = new Date(toDate);
