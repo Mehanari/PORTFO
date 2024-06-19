@@ -1,4 +1,7 @@
-import {PortfolioData as SecondTemplateData} from "@/model/secondTemplateTypes";
+import {PortfolioData as SecondTemplateData,
+  PortfolioDataPreview as SecondTemplateDataPreview,
+  ProjectDataPreview as SecondTemplateProjectPreview
+} from "@/model/secondTemplateTypes";
 import {
   PortfolioData as FirstTemplateData,
   PortfolioDataPreview as FirstTemplateDataPreview,
@@ -270,6 +273,53 @@ export async function saveSecondTemplateDataForUser(userId: string, data: Second
     return;
   }
 }
+
+export async function getSecondTemplatePortfolioData(portfolioId: string): Promise<SecondTemplateDataPreview | undefined> {
+  try {
+    const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data) {
+        const imageLink = await getImageUrlByPath(data.photoPath);
+        if (!imageLink) {
+          throw new Error("Could not get image link for path: " + data.photoPath);
+        }
+        const projects: SecondTemplateProjectPreview[] = [];
+        for (const project of data.projects) {
+          const imageUrl = await getImageUrlByPath(project.filePath);
+          if (!imageUrl) {
+            throw new Error("Could not get image link for path: " + project.filePath);
+          }
+          projects.push({
+            photoUrl: project.photoUrl,
+            name: project.name,
+            link: project.link,
+            description: project.description
+          });
+        }
+        console.log(data.links);
+        return {
+          name: data.name,
+          status: data.status,
+          link: data.link,
+          photoUrl: imageLink,
+          fullName: data.fullName,
+          location: data.location,
+          role: data.role,
+          bio: data.bio,
+          links: data.links || [],
+          projects: projects
+        };
+      }
+    }
+    return;
+  } catch (error) {
+    console.error('Error getting template data for protfolio with id: ' + portfolioId + '\nError: ' + error);
+    return;
+  }
+}
+
 
 export async function publishPortfolio(portfolioId: string): Promise<string> {
     try {

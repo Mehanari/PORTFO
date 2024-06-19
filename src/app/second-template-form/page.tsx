@@ -5,6 +5,8 @@ import {saveSecondTemplateDataForUser} from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioStatus} from "@/portfolioStatuses";
+import {useRouter} from "next/navigation";
+import { validateSecondTemplateData } from "@/functions/validation";
 
 type LinkRow = {
     id: number;
@@ -30,9 +32,9 @@ export default function FirstTemplateForm(){
     const [location, setLocation] = useState<string>("");
     const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [projects, setProjects] = useState<ProjectRow[]>([]);
-
+    const [docId, setDocId] = useState<string | undefined>();
     const [user, loading, error] = useAuthState(auth);
-
+    const router = useRouter();
 
     const handleSave = async () => {
         const data: PortfolioData = {
@@ -54,9 +56,22 @@ export default function FirstTemplateForm(){
             })),
         }
         if (user){
-            await saveSecondTemplateDataForUser(user.uid, data);
+            const validationResults = validateSecondTemplateData(data);
+            if (validationResults.isValid){
+                const savedDocId = await saveSecondTemplateDataForUser(user.uid, data);
+                if (!docId){
+                    router.push(`/second-template-form/${savedDocId}`);
+                }
+            }
+            
         }
     };
+
+    const handlePreview = () => {
+        if (docId){
+            router.push(`/second-template-preview/${docId}`)
+        }
+    }
 
     const handleAddLink = () => {
         setLinksRows([...linksRows, {id: linksRows.length, link: ""}]);
@@ -116,6 +131,9 @@ export default function FirstTemplateForm(){
 
     return (
         <div>
+            <button onClick={handlePreview} className="mr-4">
+            <p>PREVIEW</p>
+            </button>
             <label htmlFor="photo">Change photo:</label><br/>
             <input
                 className="border-2"

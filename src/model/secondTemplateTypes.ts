@@ -21,5 +21,26 @@ type PortfolioData = {
     projects: ProjectData[];
 }
 
+
+export type ProjectDataPreview = {
+    photoUrl: string;
+    name: string;
+    description: string;
+    link: string;
+}
+
+export type PortfolioDataPreview = {
+    name: string;
+    status: PortfolioStatus.DRAFT;
+    link: string;
+    photoUrl: string;
+    fullName: string;
+    location: string;
+    role: string;
+    bio: string;
+    links: string[];
+    projects: ProjectDataPreview[];
+}
+
 //GeneralData
 export type {PortfolioData, ProjectData}
