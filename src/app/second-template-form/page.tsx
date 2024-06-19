@@ -83,27 +83,31 @@ export default function FirstTemplateForm(){
     };
 
     const handleAddProject = () => {
-        setProjects([...projects, {id: projects.length, photo: null, name: "", description: "", link: "", photoPath: ""}]);
+        let projectId = 1;
+        if (projects.length > 0) {
+            projectId = projects[projects.length - 1].id + 1;
+        }
+        setProjects([...projects, {id: projectId, photo: null, name: "", description: "", link: "", photoPath: ""}]);
     };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
-        setProjects(projects.map((project, i) => i === index ? {...project, photo, photoPath: photoPath} : project));
+        setProjects(projects.map((project) => project.id === index ? {...project, photo, photoPath: photoPath} : project));
     };
 
     const handleEditProjectName = (index: number, name: string) => {
-        setProjects(projects.map((project, i) => i === index ? {...project, name} : project));
+        setProjects(projects.map((project) => project.id === index ? {...project, name} : project));
     };
 
     const handleEditProjectDescription = (index: number, description: string) => {
-        setProjects(projects.map((project, i) => i === index ? {...project, description} : project));
+        setProjects(projects.map((project) => project.id === index ? {...project, description} : project));
     }
 
     const handleEditProjectLink = (index: number, link: string) => {
-        setProjects(projects.map((project, i) => i === index ? {...project, link} : project));
+        setProjects(projects.map((project) => project.id === index ? {...project, link} : project));
     };
 
     const handleDeleteProject = (index: number) => {
-        setProjects(projects.filter((project, i) => i !== index));
+        setProjects(projects.filter((project) => project.id !== index));
     };
 
     //This code is used to adjust the height of the block according to the image size
