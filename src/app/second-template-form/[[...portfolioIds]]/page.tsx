@@ -255,7 +255,9 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                     {photoPath ? (
                                         <img src={photoPath} alt="" className="w-full h-full object-cover" />
                                     ) : (
-                                        <img src="/Vector.png" alt="" className="absolute inset-0 w-full h-full object-contain" />
+                                        <div className="flex justify-center items-center">
+                                            <img src="/Vector.png" alt=""/>
+                                        </div>
                                     )}
                                 </div>
                             </div>

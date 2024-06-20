@@ -96,19 +96,17 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                     <div className="flex flex-row w-full justify-between">
                         <div className="w-1/2 xl:m-10 lg:m-8 md:m-6 sm:m-4 xs:m-2">
                             <div className="rectangle">
-                                <div className="rectangle-photo relative cursor-pointer">
+                                <div className="rectangle-photo relative">
                                     <img src={portfolioData.photoUrl} alt="" className="w-full h-full object-cover"/>
                                 </div>
                             </div>
                         </div>
-                        <div
-                            className={`${poppins.className} w-1/2 flex flex-col justify-start items-end xl:mt-24 lg:mt-18 md:mt-10 sm:mt-4`}>
+                        <div className={`${poppins.className} w-1/2 flex flex-col justify-start items-end xl:mt-24 lg:mt-18 md:mt-10 sm:mt-4`}>
                             <div className="users-data-block">
-                                <div
-                                    className="text-center break-words font-bold text-white xl:text-2xl md:text-xl sm:text-lg xl:m-5 lg:m-4 md:m-3 sm:m-2">
+                                <div className="text-center break-words font-bold text-white xl:text-2xl md:text-xl sm:text-lg xl:m-5 lg:m-4 md:m-3 sm:m-2">
                                     <p>{portfolioData.fullName}</p>
                                 </div>
-                                <div>
+                                <div className="text-center break-words text-white xl:text-lg md:text-base xl:m-5 lg:m-4 md:m-3 sm:m-2">
                                     <p>{portfolioData.role}</p>
                                 </div>
                             </div>
@@ -121,42 +119,45 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                         <div className="about-me-frame">
                             <div className="about-me xl:m-5 lg:m-4 md:m-3 sm:m-2" style={{wordBreak: "break-word"}}>
                                 <div className="flex flex-col items-start justify-start m-5 w-full h-full">
-                                    <div className="flex flex-row">
-                                        <div className="triangle"></div>
-                                        <label htmlFor="bio"
-                                               className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
-                                            ABOUT ME
-                                        </label>
-                                    </div>
-                                    <div
-                                        className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none">
-                                        <p>{portfolioData.bio}</p>
-                                    </div>
-                                    <div className="flex flex-row">
-                                        <div className="triangle"></div>
-                                        <label htmlFor="role"
-                                               className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
-                                            CONTACT ME
-                                        </label>
-                                    </div>
-                                    <div
-                                        className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
-                                        <p>{portfolioData.phoneNumber}</p>
-                                    </div>
-                                    <div
-                                        className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
-                                        <p>{portfolioData.location}</p>
-                                    </div>
-                                    {portfolioData.links.map((row, index) => (
-                                        <div key={row}
-                                             className="flex flex-col justify-center text-center items-center w-full"
-                                             style={{wordBreak: "break-word", overflowWrap: "break-word"}}>
-                                            <div
-                                                className="mt-2 border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
-                                                <p>{row}</p>
-                                            </div>
+                                    <div className="flex flex-col h-1/2 w-full">
+                                        <div className="flex flex-row">
+                                            <div className="triangle"></div>
+                                            <label htmlFor="bio"
+                                                className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
+                                                ABOUT ME
+                                            </label>
                                         </div>
-                                    ))}
+                                        <div className="border-2 w-full h-full text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base pt-2 pl-3 pb-2 pr-3">
+                                            <p>{portfolioData.bio}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col h-1/2 w-full">
+                                        <div className="flex flex-row">
+                                            <div className="triangle"></div>
+                                            <label htmlFor="role"
+                                                className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
+                                                CONTACT ME
+                                            </label>
+                                        </div>
+                                        <div
+                                            className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                            <p>{portfolioData.phoneNumber}</p>
+                                        </div>
+                                        <div
+                                            className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                            <p>{portfolioData.location}</p>
+                                        </div>
+                                        {portfolioData.links.map((row, index) => (
+                                            <div key={row}
+                                                className="flex flex-col justify-center text-center items-center w-full"
+                                                style={{wordBreak: "break-word", overflowWrap: "break-word"}}>
+                                                <div
+                                                    className="mt-2 border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                                    <p>{row}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -176,21 +177,21 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                          backgroundSize: '100%', // чтобы картинка заполняла весь фон блока
                          backgroundRepeat: 'no-repeat'
                      }}>
-                    <div className="rectangle-vice-versa flex justify-center items-center h-2/6">
-                        <div className="rectangle-vice-versa-photo relative cursor-pointer">
+                    <div className="rectangle-vice-versa flex justify-center items-center h-2/5">
+                        <div className="rectangle-vice-versa-photo relative">
                             <img src={project.photoUrl} alt="" className="w-full h-full object-cover"/>
                         </div>
                     </div>
-                    <div className="flex justify-center items-center h-1/6">
+                    <div className="flex justify-center items-center h-1/5">
                         <h1 className={`${poppins.className} flex justify-center items-center font-bold text-white xl:text-8xl md:text-6xl sm:text-5xl xs:text-4xl xl:mb-4`}>
                             PROJECT {index + 1}
                         </h1>
                     </div>
-                    <div className="flex flex-row justify-end items-end h-3/6 mr-5">
+                    <div className="flex flex-row justify-end items-end h-2/5 mr-5">
                         <div className="about-project-frame">
                             <div className="about-project">
                                 <div className="flex w-full h-full justify-between items-start">
-                                    <div className="flex flex-col w-2/5 m-10">
+                                    <div className="flex flex-col w-2/5 m-10 w-full h-3/4">
                                         <div className="flex flex-row">
                                             <div className="triangle"></div>
                                             <label htmlFor={"project-" + index + "-name"}
@@ -198,16 +199,14 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                                                 ABOUT THIS JOB
                                             </label>
                                         </div>
-                                        <div
-                                            className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
-                                            <p>{project.name}</p>
-                                        </div>
-                                        <div
-                                            className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none">
-                                            <p>{project.description}</p>
-                                        </div>
+                                            <div className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                                <p>{project.name}</p>
+                                            </div>
+                                            <div className="w-full h-full border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base pr-3 pl-3 pt-2 pb-2">
+                                                <p>{project.description}</p>
+                                            </div>
                                     </div>
-                                    <div className="flex flex-col w-2/5 m-10">
+                                    <div className="flex flex-col w-2/5 m-10 w-full h-3/4">
                                         <div className="flex flex-row">
                                             <div className="triangle"></div>
                                             <label htmlFor={"project-" + index + "-link"}
@@ -216,7 +215,7 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                                             </label>
                                         </div>
                                         <div
-                                            className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                            className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
                                             <p>{project.link}</p>
                                         </div>
                                     </div>
@@ -227,11 +226,11 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                 </div>
             ))}
           </div>
-          <div className="flex justify-between pr-10 pl-10 w-full bg-white pt-5 pb-5">
-              <button onClick={handleBackToEditor}>Back to editor</button>
+          <div className={`${poppins.className} flex justify-between text-bold text-3xl pr-10 pl-10 w-full bg-white pt-5 pb-5`}>
+              <button className="text-gray-700 custom-text-outline" onClick={handleBackToEditor}>Back to editor</button>
           </div>
-          <div className="text-2xl fixed bottom-3 right-5">
-              <button onClick={() => toPDF({})}>Export to PDF</button>
+          <div className={`${poppins.className} text-bold text-3xl fixed bottom-3 right-5`} style={{ zIndex: 3 }}>
+              <button className="text-gray-700 custom-text-outline" onClick={() => toPDF({})}>Export to PDF</button>
           </div>
       </div>
   )

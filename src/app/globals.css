@@ -271,3 +271,8 @@
   z-index: 2; /* Устанавливаем более высокий z-index, чтобы блок был поверх .about-me-frame */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Тень блока */
 }
+
+.custom-text-outline {
+  -webkit-text-stroke: 1px white;
+  text-stroke: 1px white; /* Для поддержки различных браузеров */
+}
