@@ -2,9 +2,10 @@
 import {useState, useEffect} from "react";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
-import {PortfolioDataPreview} from "@/model/firstTemplateTypes";
-import {getFirstTemplatePortfolioData} from "@/functions/databaseAccess";
+import {PortfolioDataPreview} from "@/model/secondTemplateTypes";
+import {getSecondTemplatePortfolioData} from "@/functions/databaseAccess";
 import {useRouter} from "next/navigation";
+import Image from "next/image";
 
 
 export default function SecondTemplatePreview({ params }: { params: { portfolioId: string } }) {
@@ -14,14 +15,14 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
 
   useEffect(() => {
     if (user) {
-      getFirstTemplatePortfolioData(params.portfolioId).then((data) => {
+      getSecondTemplatePortfolioData(params.portfolioId).then((data) => {
         setPortfolioData(data);
       });
     }
   }, [params.portfolioId, user]);
 
   const handleBackToEditor = () => {
-    router.push('/first-template-form/' + params.portfolioId);
+    router.push('/second-template-form/' + params.portfolioId);
   }
 
   if (loading) {
@@ -63,93 +64,287 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
   }
 
   return (
-      <body className="font-cursive" style={{background: "#FFF0F5"}}>
-            <div className="flex flex-row pl-20 pr-20">
-              <div className="flex items-center w-1/3 h-20 ml-auto">
-                  <div className="flex flex-row text-2xl">
-                    <button onClick={handleBackToEditor}>Back to editor</button>
-                  </div>
-                </div>
-                <div className="flex justify-center items-center w-2/3 h-20 ml-auto border-b-2 border-gray-500"></div>
-            </div>
-            
-            <div className="flex flex-row">
-                <div className="flex flex-col items-center justify-start w-1/3 pl-8 pr-8">
-                    <div className="circle">
-                        <img className="w-full h-full rounded-full object-cover" src={protfolioData.photoUrl} alt=""/>
-                    </div>
-                    <label htmlFor="username" className="pt-8 font-semibold">Username</label>
-                    <div
-                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center">
-                        <span className="break-all">{protfolioData.username}</span>
-                    </div>
-
-                    <label htmlFor="fullname" className="pt-2 font-semibold">Full name</label>
-                    <div
-                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center">
-                        <span className="break-all">{protfolioData.fullName}</span>
-                    </div>
-
-
-                    <label htmlFor="location" className="pt-2 font-semibold">Location</label>
-                    <div
-                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center">
-                        <span className="break-all">{protfolioData.location}</span>
-                    </div>
-
-                    
-                    <label htmlFor="role" className="pt-2 font-semibold">Role</label>
-                    <div
-                        className="border-2 rounded-2xl w-1/2 border-gray-500 text-center">
-                        <span className="break-all">{protfolioData.role}</span>
-                    </div>
-
-                    <div className="flex flex-col w-1/2">
-                        <label htmlFor="bio" className="pt-8 font-semibold">Bio</label>
-                        <div
-                          className="border-2 rounded-2xl w-full border-gray-500 text-center">
-                          <span className="break-all">{protfolioData.bio}</span>
-                        </div>
-                    </div>
-                   
-                    <label htmlFor="links" className="pt-6 pb-2 font-semibold">Links</label>
-                    {protfolioData.links.map((row, index) => (
-                        <div
-                            className="block flex-col justify-center items-center text-wrapblock w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3"
-                            key={index}>
-                            <div>
-                                <a href={row} target="_blank" rel="noreferrer"
-                                   className="break-all hover:text-orange-500">{row}</a>
-                            </div>
-                            <br/>
-                        </div>
-                    ))}
-                    <br/>
-                </div>
-
-                <div className="flex flex-col w-2/3 mr-5 pt-20 items-center">
-                    <label htmlFor="projects" className="flex text-5xl justify-center font-extrabold">
-                        MY WORKS
-                    </label><br/>
-                    <div className="flex flex-row flex-wrap justify-center">
-                        {protfolioData.projects.map((project, index) => (
-                            <div
-                        className="flex flex-col justify-center items-center border-2 border-gray-500 rounded-3xl m-5 p-8 sm:p-10 md:p-12 lg:p-24 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
-                        key={index}>
-                        <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center border-2 cursor-pointer border-gray-500">
-                          <img src={project.photoUrl} alt="" className="w-full h-full rounded-full object-cover"/>
-                        </div>
-                        <p className="border-2 rounded-2xl w-full border-gray-500 text-center font-semibold mt-4 p-2">{project.name}</p>
-                        <div className="w-full">
-                          <a className="block break-words px-4 justify-center text-center text-black text-base font-medium underline leading-tight mt-4 hover:text-orange-500"
-                              href={project.link} target="_blank" rel="noreferrer">See more</a>
-                        </div>
+      <div className="bg-white">
+          <div className="flex flex-row"
+               style={{
+                   width: '100%', // ширина блока 100% от ширины экрана
+                   height: '69vw', // высота блока 75% от ширины экрана (используем vw - viewport width units)
+                   backgroundColor: 'lightgray',
+                   backgroundImage: "url('/Background_data.png')",
+                   backgroundSize: '100%', // чтобы картинка заполняла весь фон блока
+                   backgroundRepeat: 'no-repeat'
+               }}
+          >
+              <div className="personal-photo flex flex-col justify-center items-center w-1/2">
+                  <h1 className={`${zenTokyoZoo.className} portfolio-template font-bold text-white xl:text-7xl md:text-6xl sm:text-5xl xs:text-4xl xl:mb-4`}>
+                      PORTFOLIO
+                  </h1>
+                  <div className="flex flex-row w-full justify-between">
+                      <div className="w-1/2 xl:m-10 lg:m-8 md:m-6 sm:m-4 xs:m-2">
+                          <div className="rectangle">
+                              <input
+                                  className="hidden"
+                                  type="file"
+                                  id="photo"
+                                  name="photo"
+                                  onChange={({target}) => {
+                                      if (target.files) {
+                                          const file = target.files[0];
+                                          setPhotoPath(URL.createObjectURL(file));
+                                          setPhoto(file);
+                                      }
+                                  }}
+                              />
+                              <div
+                                  className="rectangle-photo relative cursor-pointer"
+                                  onClick={() => document.getElementById('photo')?.click()}
+                              >
+                                  {photoPath ? (
+                                      <img src={photoPath} alt="" className="w-full h-full object-cover"/>
+                                  ) : (
+                                      <img src="/Vector.png" alt=""
+                                           className="absolute inset-0 w-full h-full object-contain"/>
+                                  )}
+                              </div>
+                          </div>
                       </div>
-                    ))}
-                    </div>
-                </div>
-            </div>
-        </body>
-  )
+                      <div
+                          className={`${poppins.className} w-1/2 flex flex-col justify-start items-end xl:mt-24 lg:mt-18 md:mt-10 sm:mt-4`}>
+                          <div className="users-data-block">
+                              <div
+                                  className="text-center break-words font-bold text-white xl:text-2xl md:text-xl sm:text-lg xl:m-5 lg:m-4 md:m-3 sm:m-2">
+                                  <label htmlFor="fullName"></label>
+                                  <input
+                                      className="border-b-2 border-white bg-transparent text-center placeholder-white cursor-pointer w-full"
+                                      type="text"
+                                      id="fullName"
+                                      name="fullName"
+                                      placeholder="Enter full name"
+                                      value={fullname}
+                                      onChange={({target}) => setFullname(target.value)}
+                                  />
+                              </div>
+                              <div
+                                  className="text-center break-words text-white xl:text-lg md:text-base xl:m-5 lg:m-4 md:m-3 sm:m-2">
+                                  <label htmlFor="profession"></label>
+                                  <input
+                                      className="border-b-2 border-white bg-transparent text-center placeholder-white cursor-pointer w-full"
+                                      type="text"
+                                      id="profession"
+                                      name="profession"
+                                      placeholder="Enter profession"
+                                      value={profession}
+                                      onChange={({target}) => setProfession(target.value)}
+                                  />
+                              </div>
+                          </div>
+                      </div>
 
+                  </div>
+              </div>
+              <div className="personal-data flex flex-row w-1/2">
+                  <div className="w-2/3 flex justify-center items-center">
+                      <div className="about-me-frame">
+                          <div className="about-me xl:m-5 lg:m-4 md:m-3 sm:m-2" style={{wordBreak: "break-word"}}>
+                              <div className="flex flex-col items-start justify-start m-5 w-full h-full">
+                                  <div className="flex flex-row">
+                                      <div className="triangle"></div>
+                                      <label htmlFor="bio"
+                                             className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
+                                          ABOUT ME
+                                      </label>
+                                  </div>
+                                  <textarea
+                                      className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none"
+                                      id="aboutMe"
+                                      name="aboutMe"
+                                      value={aboutMe}
+                                      onChange={({target}) => setAboutMe(target.value)}
+                                      style={{height: '35%', width: '100%'}}></textarea>
+                                  <div className="flex flex-row">
+                                      <div className="triangle"></div>
+                                      <label htmlFor="role"
+                                             className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
+                                          CONTACT ME
+                                      </label>
+                                  </div>
+                                  <input
+                                      className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                      type="text"
+                                      id="phoneNumber"
+                                      name="phoneNumber"
+                                      value={phoneNumber}
+                                      placeholder="+380 (XX) XXX-XX-XX"
+                                      onChange={({target}) => setPhoneNumber(target.value)}/>
+                                  <label htmlFor="location"></label>
+                                  <input
+                                      className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                      type="text"
+                                      id="location"
+                                      name="location"
+                                      value={location}
+                                      placeholder="Enter your location"
+                                      onChange={({target}) => setLocation(target.value)}/>
+                                  <label htmlFor="links"></label>
+                                  {linksRows.map((row) => (
+                                      <div key={row.id}
+                                           className="flex flex-col justify-center text-center items-center w-full"
+                                           style={{wordBreak: "break-word", overflowWrap: "break-word"}}>
+                                          <input
+                                              className="mt-2 border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                              type="url"
+                                              id="links"
+                                              name="links"
+                                              value={linksRows[row.id].link}
+                                              style={{wordBreak: "break-word", overflowWrap: "break-word"}}
+                                              onChange={({target}) => onLinkChange(row.id, target.value)}
+                                          />
+                                          <button onClick={() => handleDeleteLink(row.id)}
+                                                  className="w-1/4 text-sm border-2 border-gray-400 bg-gray-200 text-gray-600 px-1 py-0.5 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                                              Delete
+                                          </button>
+                                      </div>
+                                  ))}
+                                  <div className="flex flex-row justify-center text-center items-center w-full">
+                                      <button onClick={handleAddLink}
+                                              className="mt-2 mb-3 w-1/4 text-sm border-2 border-gray-400 bg-gray-200 text-gray-600 px-1 py-0.5 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400">Add
+                                          Link
+                                      </button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                  </div>
+              </div>
+          </div>
+
+          <label htmlFor="projects"></label>
+          {projects.map((project, index) => (
+              <div key={project.id} className="mt-5 flex flex-col"
+                   style={{
+                       width: '100%', // ширина блока 100% от ширины экрана
+                       height: '69vw', // высота блока 75% от ширины экрана (используем vw - viewport width units)
+                       backgroundColor: 'lightgray',
+                       backgroundImage: "url('/Background_project.png')",
+                       backgroundSize: '100%', // чтобы картинка заполняла весь фон блока
+                       backgroundRepeat: 'no-repeat'
+                   }}>
+                  <div className="rectangle-vice-versa flex justify-center items-center h-2/6">
+                      <label htmlFor="project-photo"></label>
+                      <input
+                          className="hidden"
+                          type="file"
+                          id={"project-" + project.id + "-photo"}
+                          name="project-photo"
+                          onChange={({target}) => {
+                              if (target.files) {
+                                  const file = target.files[0];
+                                  handleEditProjectPhoto(project.id, file, URL.createObjectURL(file));
+                              }
+                          }}/>
+                      <div
+                          className="rectangle-vice-versa-photo relative cursor-pointer"
+                          onClick={() => document.getElementById("project-" + project.id + "-photo")?.click()}>
+                          {project.photoPath ? (
+                              <img src={project.photoPath} alt="" className="w-full h-full object-cover"/>
+                          ) : (
+                              <span><img src="/Vector.png" alt="" style={{height: "30px"}}/></span>
+                          )}
+                      </div>
+                  </div>
+                  <div className="flex justify-center items-center h-1/6">
+                      <h1 className={`${poppins.className} flex justify-center items-center font-bold text-white xl:text-8xl md:text-6xl sm:text-5xl xs:text-4xl xl:mb-4`}>
+                          PROJECT {index + 1}
+                      </h1>
+                  </div>
+                  <div className="flex flex-row justify-end items-end h-3/6 mr-5">
+                      <div className="about-project-frame">
+                          <div className="about-project">
+                              <div className="flex w-full h-full justify-between items-start">
+                                  <div className="flex flex-col w-2/5 m-10">
+                                      <div className="flex flex-row">
+                                          <div className="triangle"></div>
+                                          <label htmlFor={"project-" + project.id + "-name"}
+                                                 className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
+                                              ABOUT THIS JOB
+                                          </label>
+                                      </div>
+                                      <input
+                                          className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                          type="text"
+                                          id={"project-" + project.id + "-name"}
+                                          name="project-name"
+                                          value={project.name}
+                                          placeholder="Name the project"
+                                          onChange={({target}) => handleEditProjectName(project.id, target.value)}/>
+                                      <label htmlFor="project-name"></label>
+                                      <textarea //Probably here should be texarea, not input
+                                          className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none"
+                                          //type="text"
+                                          id="description"
+                                          name="description"
+                                          value={project.description}
+                                          style={{height: '150px', width: '100%'}}
+                                          onChange={({target}) => handleEditProjectDescription(project.id, target.value)}></textarea>
+                                  </div>
+                                  <div className="flex flex-col w-2/5 m-10">
+                                      <div className="flex flex-row">
+                                          <div className="triangle"></div>
+                                          <label htmlFor={"project-" + project.id + "-link"}
+                                                 className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
+                                              PROJECT LINK:
+                                          </label>
+                                      </div>
+                                      <input
+                                          className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                          type="text"
+                                          id={"project-" + project.id + "-link"}
+                                          name="project-link"
+                                          value={project.link}
+                                          placeholder="Link the project"
+                                          onChange={({target}) => handleEditProjectLink(project.id, target.value)}/>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div className="flex flex-col justify-center items-center h-1/6">
+                      <button
+                          onClick={() => handleDeleteProject(project.id)}
+                          className="px-4 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600"
+                      >
+                          Delete
+                      </button>
+                  </div>
+              </div>
+          ))}
+          <div className="flex justify-center items-center w-full bg-gray-300 shadow-md p-5 mb-5">
+              <button
+                  onClick={handleAddProject}
+                  className="px-4 py-2 bg-gray-400 text-gray-700 font-bold rounded-md shadow-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                  Add Project
+              </button>
+          </div>
+          <div className="flex justify-between pr-10 pl-10 w-full bg-white pt-5 pb-5">
+              <div>
+                  <button className="mr-4"> {/*TODO return to the previous page*/}
+                      <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2"/>
+                  </button>
+              </div>
+              <div className="flex justify-between">
+                  <button className="mr-4"> {/*TODO preview button*/}
+                      <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2"/>
+                  </button>
+                  <button className="mr-4"> {/*TODO publish button*/}
+                      <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2"/>
+                  </button>
+                  <button onClick={handleSave}>
+                      <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2"/>
+                  </button>
+              </div>
+          </div>
+      </div>
+  )
 }
