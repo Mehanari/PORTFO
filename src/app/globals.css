@@ -145,3 +145,129 @@
 .pt-full {
   padding-top: 80%;
 }
+
+/* .rectangle {
+  width: 35vh;
+  height: 30%; 
+  background-color: rgb(174, 173, 230);
+  border: 2px solid rgb(76, 76, 129); 
+  box-sizing: border-box;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+} */
+
+.rectangle {
+  width: 80%; /* Ширина блока 50% от ширины экрана */
+  height: 40vw; /* Высота блока 60% от ширины экрана (используем vw - viewport width units) */
+  max-height: 22vw; /* Максимальная высота блока 70% от высоты экрана (используем vh - viewport height units) */
+  background-color: white; /* Цвет фона */
+  box-sizing: border-box; /* Учитываем границы внутри размеров блока */
+  display: flex; /* Используем flexbox для центрирования текста */
+  justify-content: center; /* Центрируем текст по горизонтали */
+  align-items: center; /* Центрируем текст по вертикали */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Тень блока */
+  margin: 10px;
+}
+
+.rectangle-photo {
+  width: 80%; /*Ширина блока 50% от ширины экрана*/
+  height: 18vw; /* Высота блока 60% от ширины экрана (используем vw - viewport width units) */
+  max-height: 72vw; /* Максимальная высота блока 70% от высоты экрана (используем vh - viewport height units) */
+  background-color: white; /* Цвет фона */
+  display: flex; /* Используем flexbox для центрирования текста */
+  justify-content: center; /* Центрируем текст по горизонтали */
+  align-items: center; /* Центрируем текст по вертикали */
+}
+
+.about-me-frame {
+  position: relative; /* Относительное позиционирование для установки z-index */
+  width: 75%;
+  height: 75%;
+  border: 8px solid transparent; /* Прозрачная граница */
+  border-image: linear-gradient(to bottom, #b31c1c, #fff); /* Градиентная граница */
+  border-image-slice: 1; /* Толщина градиентной границы */
+  display: flex;
+  justify-content: flex-end; /* Выравнивание контента по правому краю */
+  align-items: center; /* Выравнивание контента по центру вертикали */
+  z-index: 1; /* Устанавливаем высокий z-index, чтобы блок был поверх остального содержимого */
+}
+
+.about-me {
+  position: absolute; /* Абсолютное позиционирование для перекрытия */
+  top: 50%; /* Позиционируем блок относительно верхнего края .about-me-frame */
+  left: 50%; /* Позиционируем блок относительно левого края .about-me-frame */
+  transform: translate(-60%, -48%); /* Перемещаем блок левее, чтобы правая часть .about-me-frame выглядывала */
+  width: 100%; /* Ширина 100% */
+  height: 100%; /* Высота 100% */
+  background-color: white;
+  display: flex;
+  justify-content: center; /* Выравнивание контента по центру горизонтали */
+  align-items: center; /* Выравнивание контента по центру вертикали */
+  font-size: 50px;
+  word-break: break-word;
+  z-index: 2; /* Устанавливаем более высокий z-index, чтобы блок был поверх .about-me-frame */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Тень блока */
+}
+
+.triangle{
+  width: 0;
+  height: 0;
+  border-bottom: 25px solid #7F1D1D; /* Цвет треугольника */
+  border-right: 25px solid transparent;
+  justify-self: end;
+  align-self: center;
+}
+
+.rectangle-vice-versa {
+  width: 40%; /* Ширина блока 50% от ширины экрана */
+  height: 40vw; /* Высота блока 60% от ширины экрана (используем vw - viewport width units) */
+  max-height: 22vw; /* Максимальная высота блока 70% от высоты экрана (используем vh - viewport height units) */
+  background-color: white; /* Цвет фона */
+  box-sizing: border-box; /* Учитываем границы внутри размеров блока */
+  display: flex; /* Используем flexbox для центрирования текста */
+  justify-content: center; /* Центрируем текст по горизонтали */
+  align-items: center; /* Центрируем текст по вертикали */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Тень блока */
+  margin: 25px;
+}
+
+.rectangle-vice-versa-photo {
+  width: 90%; /*Ширина блока 50% от ширины экрана*/
+  height: 18vw; /* Высота блока 60% от ширины экрана (используем vw - viewport width units) */
+  max-height: 72vw; /* Максимальная высота блока 70% от высоты экрана (используем vh - viewport height units) */
+  background-color: white; /* Цвет фона */
+  display: flex; /* Используем flexbox для центрирования текста */
+  justify-content: center; /* Центрируем текст по горизонтали */
+  align-items: center; /* Центрируем текст по вертикали */
+}
+
+.about-project-frame {
+  position: relative; /* Относительное позиционирование для установки z-index */
+  width: 50%;
+  height: 90%;
+  border: 8px solid transparent; /* Прозрачная граница */
+  border-image: linear-gradient(to left, #b31c1c, #fff); /* Градиентная граница */
+  border-image-slice: 1; /* Толщина градиентной границы */
+  display: flex;
+  justify-content: flex-end; /* Выравнивание контента по правому краю */
+  align-items: center; /* Выравнивание контента по центру вертикали */
+  z-index: 1; /* Устанавливаем высокий z-index, чтобы блок был поверх остального содержимого */
+}
+
+.about-project {
+  position: absolute; /* Абсолютное позиционирование для перекрытия */
+  top: 50%; /* Позиционируем блок относительно верхнего края .about-me-frame */
+  left: 50%; /* Позиционируем блок относительно левого края .about-me-frame */
+  transform: translate(-55%, -43%); /* Перемещаем блок левее, чтобы правая часть .about-me-frame выглядывала */
+  width: 100%; /* Ширина 100% */
+  height: 100%; /* Высота 100% */
+  background-color: white;
+  display: flex;
+  justify-content: center; /* Выравнивание контента по центру горизонтали */
+  align-items: center; /* Выравнивание контента по центру вертикали */
+  font-size: 50px;
+  word-break: break-word;
+  z-index: 2; /* Устанавливаем более высокий z-index, чтобы блок был поверх .about-me-frame */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Тень блока */
+}
