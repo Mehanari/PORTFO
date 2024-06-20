@@ -17,6 +17,7 @@ type ProjectRow = {
     name: string;
     description: string;
     link: string;
+    creationDate: Date;
 }
 
 
@@ -51,6 +52,7 @@ export default function FirstTemplateForm(){
                 name: project.name,
                 description: project.description,
                 link: project.link,
+                creationDate: project.creationDate,
             })),
         }
         if (user){
@@ -71,7 +73,7 @@ export default function FirstTemplateForm(){
     };
 
     const handleAddProject = () => {
-        setProjects([...projects, {id: projects.length, photo: null, name: "", description: "", link: "", photoPath: ""}]);
+        setProjects([...projects, {id: projects.length, photo: null, name: "", description: "", link: "", photoPath: "", creationDate: new Date()}]);
     };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
