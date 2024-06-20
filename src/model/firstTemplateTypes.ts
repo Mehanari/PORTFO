@@ -4,6 +4,7 @@ export interface ProjectData {
     photo: File | null;
     name: string;
     link: string;
+    creationDate: Date;
 }
 
 export interface PortfolioData {
@@ -25,6 +26,7 @@ export type ProjectDataPreview = {
     photoUrl: string;
     name: string;
     link: string;
+    creationDate: Date;
 }
 
 export type PortfolioDataPreview = {
