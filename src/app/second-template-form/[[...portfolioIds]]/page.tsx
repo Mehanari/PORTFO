@@ -1,12 +1,20 @@
 "use client"
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {PortfolioData} from "@/model/secondTemplateTypes";
-import {saveSecondTemplateDataForUser} from "@/functions/databaseAccess";
+import {
+    downloadImage,
+    getSecondTemplatePortfolioData,
+    saveSecondTemplateDataForUser,
+    updateSecondTemplateDataForUser
+} from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioStatus} from "@/portfolioStatuses";
 import { Zen_Tokyo_Zoo, Poppins } from 'next/font/google';
 import Image from "next/image";
+import {validateSecondTemplateData} from "@/functions/validation";
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 const zenTokyoZoo = Zen_Tokyo_Zoo({
     weight: '400',
@@ -33,7 +41,7 @@ type ProjectRow = {
     creationDate: Date;
 }
 
-export default function FirstTemplateForm(){
+export default function FirstTemplateForm({ params }: { params: { portfolioIds: string[] } }){
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPath, setPhotoPath] = useState<string>("");
     const [fullname, setFullname] = useState<string>("");
@@ -43,9 +51,49 @@ export default function FirstTemplateForm(){
     const [location, setLocation] = useState<string>("");
     const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [projects, setProjects] = useState<ProjectRow[]>([]);
+    const [docId, setDocId] = useState<string | undefined>();
+    const router = useRouter();
 
     const [user, loading, error] = useAuthState(auth);
 
+    useEffect(() => {
+        if (params.portfolioIds) {
+            setDocId(params.portfolioIds[0]);
+            getSecondTemplatePortfolioData(params.portfolioIds[0]).then( async (data) => {
+                if (!data) return;
+                setPhotoPath(data.photoUrl);
+                setFullname(data.fullName);
+                setProfession(data.role);
+                setAboutMe(data.bio);
+                setPhoneNumber(data.phoneNumber);
+                setLocation(data.location);
+                setLinksRows(data.links.map((link, index) => ({id: index, link})));
+                const projectPhotosUrls = data.projects.map((project) => project.photoUrl);
+                const projectPhotos: File[] = [];
+                for (const url of projectPhotosUrls) {
+                    const file = await downloadImage(url);
+                    if (file){
+                        projectPhotos.push(file);
+                    }
+                }
+                const loadedProjects = data.projects.map((project, index) => ({
+                    id: index,
+                    photoPath: project.photoUrl,
+                    photo: projectPhotos[index],
+                    name: project.name,
+                    description: project.description,
+                    link: project.link,
+                    creationDate: new Date(project.creationDate),
+                }));
+                setProjects(loadedProjects);
+                const photo = await downloadImage(data.photoUrl);
+                if (photo){
+                    setPhoto(photo);
+                }
+            });
+        }
+    }, [params]);
+    
     const handleSave = async () => {
         const data: PortfolioData = {
             name: "New Portfolio",
@@ -67,7 +115,21 @@ export default function FirstTemplateForm(){
             })),
         }
         if (user){
-            await saveSecondTemplateDataForUser(user.uid, data);
+            const validationResult = validateSecondTemplateData(data);
+            if (validationResult.isValid){
+                if (docId){
+                    await updateSecondTemplateDataForUser(user.uid, data,  docId);
+                }
+                else {
+                    const savedDocId = await saveSecondTemplateDataForUser(user.uid, data);
+                    if (!docId){
+                        router.push(`/second-template-form/${savedDocId}`);
+                    }
+                }
+            }
+            else {
+                alert(validationResult.message);
+            }
         }
     };
 

@@ -1,4 +1,5 @@
 import {PortfolioData as FirstTemplateData, ProjectData as FirstTemplateProjectData} from "@/model/firstTemplateTypes";
+import {PortfolioData as SecondTemplateData, ProjectData as SecondTemplateProjectData} from "@/model/secondTemplateTypes";
 
 export type ValidationResult = {
     isValid: boolean;
@@ -10,44 +11,44 @@ export function validateFirstTemplateData(data: FirstTemplateData): ValidationRe
         return {
             isValid: false,
             message: "Cannot save portfolio data. Username is required!"
-        }
+        };
     }
     if (!data.fullName) {
         return {
             isValid: false,
             message: "Cannot save portfolio data. Full name is required!"
-        }
+        };
     }
     if (!data.photo) {
         return {
             isValid: false,
             message: "Cannot save portfolio data. Photo is required!"
-        }
+        };
     }
     if (!data.location) {
         return {
             isValid: false,
             message: "Cannot save portfolio data. Location is required!"
-        }
+        };
     }
     if (!data.role) {
         return {
             isValid: false,
             message: "Cannot save portfolio data. Role is required!"
-        }
+        };
     }
     if (!data.bio) {
         return {
             isValid: false,
             message: "Cannot save portfolio data. Bio is required!"
-        }
+        };
     }
     for (const link of data.links) {
         if (!urlIsValid(link)) {
             return {
                 isValid: false,
                 message: "Cannot save portfolio data. Link number " + (data.links.indexOf(link) + 1) + " is not a valid URL!"
-            }
+            };
         }
     }
     for (const project of data.projects) {
@@ -59,7 +60,7 @@ export function validateFirstTemplateData(data: FirstTemplateData): ValidationRe
     return {
         isValid: true,
         message: ""
-    }
+    };
 }
 
 export function firstTemplateProjectDataIsValid(project: FirstTemplateProjectData): ValidationResult {
@@ -67,33 +68,132 @@ export function firstTemplateProjectDataIsValid(project: FirstTemplateProjectDat
         return {
             isValid: false,
             message: "Cannot save project data. Project name is required!"
-        }
+        };
     }
     if (!project.link) {
         return {
             isValid: false,
             message: "Cannot save project data. Project link is required!"
-        }
+        };
     }
     if (!urlIsValid(project.link)) {
         return {
             isValid: false,
             message: "Cannot save project data. Project link is not a valid URL!"
-        }
+        };
     }
     if (!project.photo) {
         return {
             isValid: false,
             message: "Cannot save project data. Project photo is required!"
+        };
+    }
+    return {
+        isValid: true,
+        message: ""
+    };
+}
+
+export function validateSecondTemplateData(data: SecondTemplateData): ValidationResult {
+    if(!data.name){
+        return {
+            isValid: false,
+            message: "Cannot save portfolio data. Name is required!"
+        };
+    }
+    if(!data.photo){
+        return {
+            isValid: false,
+            message: "Cannot save portfolio data. Photo is required!"
+        };
+    }
+    if(!data.phoneNumber){
+        return {
+            isValid: false,
+            message: "Cannot save portfolio data. Phone number is required!"
+        };
+    }
+    if(!data.fullName){
+        return {
+            isValid: false,
+            message: "Cannot save portfolio data. Full name is required!"
+        };
+    }
+    if(!data.location){
+        return {
+            isValid: false,
+            message: "Cannot save portfolio data. Location is required!"
+        };
+    }
+    if(!data.role){
+        return {
+            isValid: false,
+            message: "Cannot save portfolio data. Role is required!"
+        };
+    }
+    if(!data.bio){
+        return {
+            isValid: false,
+            message: "Cannot save portfolio data. Bio is required!"
+        };
+    }
+    for(const link of data.links){
+        if(!urlIsValid(link)){
+            return {
+                isValid: false,
+                message: "Cannot save portfolio data. Link number " + (data.links.indexOf(link) + 1) + " is not a valid URL!"
+            };
+        }
+    }
+    for(const project of data.projects){
+        const projectDataValidationResult = secondTemplateProjectDataIsValid(project);
+        if(!projectDataValidationResult.isValid){
+            return projectDataValidationResult;
         }
     }
     return {
         isValid: true,
         message: ""
-    }
-
+    };
 }
-
+    
+export function secondTemplateProjectDataIsValid(project: SecondTemplateProjectData): ValidationResult {
+    if (!project.name) {
+        return {
+            isValid: false,
+            message: "Cannot save project data. Project name is required!"
+        };
+    }
+    if (!project.link) {
+        return {
+            isValid: false,
+            message: "Cannot save project data. Project link is required!"
+        };
+    }
+    if (!urlIsValid(project.link)) {
+        return {
+            isValid: false,
+            message: "Cannot save project data. Project link is not a valid URL!"
+        };
+    }
+    if (!project.photo) {
+        return {
+            isValid: false,
+            message: "Cannot save project data. Project photo is required!"
+        };
+    }
+    if (!project.description) {
+        return {
+            isValid: false,
+            message: "Cannot save project data. Project description is required!"
+        };
+    }
+    return {
+        isValid: true,
+        message: ""
+    };
+}
+    
 export function urlIsValid(url: string): boolean {
     try {
         new URL(url);

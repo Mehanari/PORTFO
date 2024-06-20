@@ -1,15 +1,20 @@
-import {PortfolioData as SecondTemplateData} from "@/model/secondTemplateTypes";
 import {
   PortfolioData as FirstTemplateData,
   PortfolioDataPreview as FirstTemplateDataPreview,
   ProjectDataPreview as FirstTemplateProjectPreview
 } from "@/model/firstTemplateTypes";
+import {
+    PortfolioDataPreview as SecondTemplateDataPreview,
+    PortfolioData as SecondTemplateData,
+    ProjectData as SecondTemplateProjectData,
+    ProjectDataPreview as SecondTemplateProjectPreview
+} from "@/model/secondTemplateTypes";
 import {getFileHash} from "@/functions/cryptographyUtilities";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
 import {db} from "@/firebase/firebaseConfig";
 import {IMAGES_DIRECTORY_NAME, PORTFOLIOS_COLLECTION_NAME,} from "@/constants";
 import {TemplateType} from "@/templatesTypes";
-import {validateFirstTemplateData} from "@/functions/validation";
+import {validateFirstTemplateData, validateSecondTemplateData} from "@/functions/validation";
 import {PortfolioStatus} from "@/portfolioStatuses";
 import {PortfolioListItemData} from "@/model/portflolioTypes";
 import {
@@ -235,6 +240,11 @@ export async function getFirstTemplatePortfolioData(portfolioId: string): Promis
 }
 
 export async function saveSecondTemplateDataForUser(userId: string, data: SecondTemplateData): Promise<string | undefined> {
+  const validationResults = validateSecondTemplateData(data);
+  if (!validationResults.isValid) {
+      console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
+      return;
+  }
   try {
     type FirebaseProjectData = {
       filePath: string;
@@ -282,6 +292,104 @@ export async function saveSecondTemplateDataForUser(userId: string, data: Second
     console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
     return;
   }
+}
+
+export async function updateSecondTemplateDataForUser(userId: string, data: SecondTemplateData, portfolioId: string): Promise<string | undefined> {
+    const validationResults = validateSecondTemplateData(data);
+    if (!validationResults.isValid) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
+        return;
+    }
+    try {
+        type FirebaseProjectData = {
+            filePath: string;
+            name: string;
+            link: string;
+            description: string;
+            creationDate: Date;
+        }
+        let photoPath: string = "";
+        if (data.photo) {
+            photoPath = await addImage(data.photo);
+        }
+        let firebaseProjects: FirebaseProjectData[] = [];
+        for (const project of data.projects) {
+            let projectPhotoPath: string = "";
+            if (project.photo) {
+                projectPhotoPath = await addImage(project.photo);
+            }
+            firebaseProjects.push({
+                filePath: projectPhotoPath,
+                name: project.name,
+                link: project.link,
+                description: project.description,
+                creationDate: project.creationDate,
+            });
+        }
+        const docRef = doc(collection(db, PORTFOLIOS_COLLECTION_NAME), portfolioId);
+        await updateDoc(docRef,{
+            photoPath: photoPath,
+            phoneNumber: data.phoneNumber,
+            fullName: data.fullName,
+            location: data.location,
+            role: data.role,
+            projects: firebaseProjects,
+            bio: data.bio,
+            links: data.links,
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+        return;
+    }
+}
+
+export async function getSecondTemplatePortfolioData(portfolioId: string): Promise<SecondTemplateDataPreview | undefined>{
+    try {
+        const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data) {
+                const imageLink = await getImageUrlByPath(data.photoPath);
+                if (!imageLink) {
+                    throw new Error("Could not get image link for path: " + data.photoPath);
+                }
+                const projects: SecondTemplateProjectPreview[] = [];
+                for (const project of data.projects) {
+                    const imageUrl = await getImageUrlByPath(project.filePath);
+                    if (!imageUrl) {
+                        throw new Error("Could not get image link for path: " + project.filePath);
+                    }
+                    projects.push({
+                        name: project.name,
+                        link: project.link,
+                        photoUrl: imageUrl,
+                        description: project.description,
+                        creationDate: project.creationDate.toDate(),
+                    });
+                }
+                console.log(data.links);
+                return {
+                    name: data.name,
+                    status: data.status,
+                    link: data.link,
+                    photoUrl: imageLink,
+                    phoneNumber: data.phoneNumber,
+                    fullName: data.fullName,
+                    location: data.location,
+                    role: data.role,
+                    bio: data.bio,
+                    links: data.links || [],
+                    projects: projects,
+                };
+            }
+        }
+        return;
+    } catch (error) {
+        console.error('Error getting template data for protfolio with id: ' + portfolioId + '\nError: ' + error);
+        return;
+    }
 }
 
 export async function publishPortfolio(portfolioId: string): Promise<string> {
