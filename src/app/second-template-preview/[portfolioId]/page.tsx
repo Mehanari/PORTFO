@@ -5,12 +5,22 @@ import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioDataPreview} from "@/model/secondTemplateTypes";
 import {getSecondTemplatePortfolioData} from "@/functions/databaseAccess";
 import {useRouter} from "next/navigation";
-import Image from "next/image";
+import {Poppins, Zen_Tokyo_Zoo} from "next/font/google";
 
+const zenTokyoZoo = Zen_Tokyo_Zoo({
+    weight: '400',
+    style: 'normal',
+    subsets: ['latin'],
+});
+const poppins = Poppins({
+    weight: '700',
+    style: 'normal',
+    subsets: ['latin'],
+});
 
 export default function SecondTemplatePreview({ params }: { params: { portfolioId: string } }) {
   const [user, loading, error] = useAuthState(auth);
-  const [protfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
+  const [portfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,7 +63,7 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
     );
   }
 
-  if (!protfolioData) {
+  if (!portfolioData) {
     return (
       <main className="flex justify-center items-center h-screen ">
         <div className="bg-blue-100 text-blue-700 p-4 rounded shadow-md">
@@ -82,29 +92,8 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                   <div className="flex flex-row w-full justify-between">
                       <div className="w-1/2 xl:m-10 lg:m-8 md:m-6 sm:m-4 xs:m-2">
                           <div className="rectangle">
-                              <input
-                                  className="hidden"
-                                  type="file"
-                                  id="photo"
-                                  name="photo"
-                                  onChange={({target}) => {
-                                      if (target.files) {
-                                          const file = target.files[0];
-                                          setPhotoPath(URL.createObjectURL(file));
-                                          setPhoto(file);
-                                      }
-                                  }}
-                              />
-                              <div
-                                  className="rectangle-photo relative cursor-pointer"
-                                  onClick={() => document.getElementById('photo')?.click()}
-                              >
-                                  {photoPath ? (
-                                      <img src={photoPath} alt="" className="w-full h-full object-cover"/>
-                                  ) : (
-                                      <img src="/Vector.png" alt=""
-                                           className="absolute inset-0 w-full h-full object-contain"/>
-                                  )}
+                              <div className="rectangle-photo relative cursor-pointer">
+                                  <img src={portfolioData.photoUrl} alt="" className="w-full h-full object-cover"/>
                               </div>
                           </div>
                       </div>
@@ -113,29 +102,10 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                           <div className="users-data-block">
                               <div
                                   className="text-center break-words font-bold text-white xl:text-2xl md:text-xl sm:text-lg xl:m-5 lg:m-4 md:m-3 sm:m-2">
-                                  <label htmlFor="fullName"></label>
-                                  <input
-                                      className="border-b-2 border-white bg-transparent text-center placeholder-white cursor-pointer w-full"
-                                      type="text"
-                                      id="fullName"
-                                      name="fullName"
-                                      placeholder="Enter full name"
-                                      value={fullname}
-                                      onChange={({target}) => setFullname(target.value)}
-                                  />
+                                  <p>{portfolioData.fullName}</p>
                               </div>
-                              <div
-                                  className="text-center break-words text-white xl:text-lg md:text-base xl:m-5 lg:m-4 md:m-3 sm:m-2">
-                                  <label htmlFor="profession"></label>
-                                  <input
-                                      className="border-b-2 border-white bg-transparent text-center placeholder-white cursor-pointer w-full"
-                                      type="text"
-                                      id="profession"
-                                      name="profession"
-                                      placeholder="Enter profession"
-                                      value={profession}
-                                      onChange={({target}) => setProfession(target.value)}
-                                  />
+                              <div>
+                                  <p>{portfolioData.role}</p>
                               </div>
                           </div>
                       </div>
@@ -154,13 +124,9 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                                           ABOUT ME
                                       </label>
                                   </div>
-                                  <textarea
-                                      className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none"
-                                      id="aboutMe"
-                                      name="aboutMe"
-                                      value={aboutMe}
-                                      onChange={({target}) => setAboutMe(target.value)}
-                                      style={{height: '35%', width: '100%'}}></textarea>
+                                  <div className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none">
+                                      <p>{portfolioData.bio}</p>
+                                  </div>
                                   <div className="flex flex-row">
                                       <div className="triangle"></div>
                                       <label htmlFor="role"
@@ -168,49 +134,21 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                                           CONTACT ME
                                       </label>
                                   </div>
-                                  <input
-                                      className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
-                                      type="text"
-                                      id="phoneNumber"
-                                      name="phoneNumber"
-                                      value={phoneNumber}
-                                      placeholder="+380 (XX) XXX-XX-XX"
-                                      onChange={({target}) => setPhoneNumber(target.value)}/>
-                                  <label htmlFor="location"></label>
-                                  <input
-                                      className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
-                                      type="text"
-                                      id="location"
-                                      name="location"
-                                      value={location}
-                                      placeholder="Enter your location"
-                                      onChange={({target}) => setLocation(target.value)}/>
-                                  <label htmlFor="links"></label>
-                                  {linksRows.map((row) => (
-                                      <div key={row.id}
+                                  <div className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                      <p>{portfolioData.phoneNumber}</p>
+                                  </div>
+                                  <div className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                      <p>{portfolioData.location}</p>
+                                  </div>
+                                  {portfolioData.links.map((row, index) => (
+                                      <div key={row}
                                            className="flex flex-col justify-center text-center items-center w-full"
                                            style={{wordBreak: "break-word", overflowWrap: "break-word"}}>
-                                          <input
-                                              className="mt-2 border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
-                                              type="url"
-                                              id="links"
-                                              name="links"
-                                              value={linksRows[row.id].link}
-                                              style={{wordBreak: "break-word", overflowWrap: "break-word"}}
-                                              onChange={({target}) => onLinkChange(row.id, target.value)}
-                                          />
-                                          <button onClick={() => handleDeleteLink(row.id)}
-                                                  className="w-1/4 text-sm border-2 border-gray-400 bg-gray-200 text-gray-600 px-1 py-0.5 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                                              Delete
-                                          </button>
+                                          <div className="mt-2 border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                              <p>{row}</p>
+                                          </div>
                                       </div>
                                   ))}
-                                  <div className="flex flex-row justify-center text-center items-center w-full">
-                                      <button onClick={handleAddLink}
-                                              className="mt-2 mb-3 w-1/4 text-sm border-2 border-gray-400 bg-gray-200 text-gray-600 px-1 py-0.5 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400">Add
-                                          Link
-                                      </button>
-                                  </div>
                               </div>
                           </div>
                       </div>
@@ -220,8 +158,8 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
           </div>
 
           <label htmlFor="projects"></label>
-          {projects.map((project, index) => (
-              <div key={project.id} className="mt-5 flex flex-col"
+          {portfolioData.projects.map((project, index) => (
+              <div key={index} className="mt-5 flex flex-col"
                    style={{
                        width: '100%', // ширина блока 100% от ширины экрана
                        height: '69vw', // высота блока 75% от ширины экрана (используем vw - viewport width units)
@@ -231,26 +169,8 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                        backgroundRepeat: 'no-repeat'
                    }}>
                   <div className="rectangle-vice-versa flex justify-center items-center h-2/6">
-                      <label htmlFor="project-photo"></label>
-                      <input
-                          className="hidden"
-                          type="file"
-                          id={"project-" + project.id + "-photo"}
-                          name="project-photo"
-                          onChange={({target}) => {
-                              if (target.files) {
-                                  const file = target.files[0];
-                                  handleEditProjectPhoto(project.id, file, URL.createObjectURL(file));
-                              }
-                          }}/>
-                      <div
-                          className="rectangle-vice-versa-photo relative cursor-pointer"
-                          onClick={() => document.getElementById("project-" + project.id + "-photo")?.click()}>
-                          {project.photoPath ? (
-                              <img src={project.photoPath} alt="" className="w-full h-full object-cover"/>
-                          ) : (
-                              <span><img src="/Vector.png" alt="" style={{height: "30px"}}/></span>
-                          )}
+                      <div className="rectangle-vice-versa-photo relative cursor-pointer">
+                          <img src={project.photoUrl} alt="" className="w-full h-full object-cover"/>
                       </div>
                   </div>
                   <div className="flex justify-center items-center h-1/6">
@@ -265,85 +185,38 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
                                   <div className="flex flex-col w-2/5 m-10">
                                       <div className="flex flex-row">
                                           <div className="triangle"></div>
-                                          <label htmlFor={"project-" + project.id + "-name"}
+                                          <label htmlFor={"project-" + index + "-name"}
                                                  className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
                                               ABOUT THIS JOB
                                           </label>
                                       </div>
-                                      <input
-                                          className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
-                                          type="text"
-                                          id={"project-" + project.id + "-name"}
-                                          name="project-name"
-                                          value={project.name}
-                                          placeholder="Name the project"
-                                          onChange={({target}) => handleEditProjectName(project.id, target.value)}/>
-                                      <label htmlFor="project-name"></label>
-                                      <textarea //Probably here should be texarea, not input
-                                          className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none"
-                                          //type="text"
-                                          id="description"
-                                          name="description"
-                                          value={project.description}
-                                          style={{height: '150px', width: '100%'}}
-                                          onChange={({target}) => handleEditProjectDescription(project.id, target.value)}></textarea>
+                                      <div className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                          <p>{project.name}</p>
+                                      </div>
+                                      <div className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none">
+                                          <p>{project.description}</p>
+                                      </div>
                                   </div>
                                   <div className="flex flex-col w-2/5 m-10">
                                       <div className="flex flex-row">
                                           <div className="triangle"></div>
-                                          <label htmlFor={"project-" + project.id + "-link"}
+                                          <label htmlFor={"project-" + index + "-link"}
                                                  className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
                                               PROJECT LINK:
                                           </label>
                                       </div>
-                                      <input
-                                          className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
-                                          type="text"
-                                          id={"project-" + project.id + "-link"}
-                                          name="project-link"
-                                          value={project.link}
-                                          placeholder="Link the project"
-                                          onChange={({target}) => handleEditProjectLink(project.id, target.value)}/>
+                                      <div className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1">
+                                          <p>{project.link}</p>
+                                      </div>
                                   </div>
                               </div>
                           </div>
                       </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center h-1/6">
-                      <button
-                          onClick={() => handleDeleteProject(project.id)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600"
-                      >
-                          Delete
-                      </button>
-                  </div>
               </div>
           ))}
-          <div className="flex justify-center items-center w-full bg-gray-300 shadow-md p-5 mb-5">
-              <button
-                  onClick={handleAddProject}
-                  className="px-4 py-2 bg-gray-400 text-gray-700 font-bold rounded-md shadow-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              >
-                  Add Project
-              </button>
-          </div>
           <div className="flex justify-between pr-10 pl-10 w-full bg-white pt-5 pb-5">
-              <div>
-                  <button className="mr-4"> {/*TODO return to the previous page*/}
-                      <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2"/>
-                  </button>
-              </div>
-              <div className="flex justify-between">
-                  <button className="mr-4"> {/*TODO preview button*/}
-                      <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2"/>
-                  </button>
-                  <button className="mr-4"> {/*TODO publish button*/}
-                      <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2"/>
-                  </button>
-                  <button onClick={handleSave}>
-                      <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2"/>
-                  </button>
-              </div>
+              <button onClick={handleBackToEditor}>Back to editor</button>
           </div>
       </div>
   )

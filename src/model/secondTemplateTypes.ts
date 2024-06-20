@@ -1,13 +1,14 @@
 import {PortfolioStatus} from "@/portfolioStatuses";
 
-type ProjectData = {
+export type ProjectData = {
     photo: File | null;
     name: string;
     description: string;
     link: string;
+    creationDate: Date;
 }
 
-type PortfolioData = {
+export type PortfolioData = {
     name: string;
     status: PortfolioStatus.DRAFT;
     link: string;
@@ -27,6 +28,7 @@ export type ProjectDataPreview = {
     name: string;
     description: string;
     link: string;
+    creationDate: Date;
 }
 
 export type PortfolioDataPreview = {
@@ -34,6 +36,7 @@ export type PortfolioDataPreview = {
     status: PortfolioStatus.DRAFT;
     link: string;
     photoUrl: string;
+    phoneNumber: string;
     fullName: string;
     location: string;
     role: string;
@@ -41,6 +44,3 @@ export type PortfolioDataPreview = {
     links: string[];
     projects: ProjectDataPreview[];
 }
-
-//GeneralData
-export type {PortfolioData, ProjectData}
