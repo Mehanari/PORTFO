@@ -201,6 +201,7 @@ export async function getFirstTemplatePortfolioData(portfolioId: string): Promis
             name: project.name,
             link: project.link,
             photoUrl: imageUrl,
+            creationDate: project.creationDate
           });
         }
         console.log(data.links);
