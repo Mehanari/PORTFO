@@ -25,6 +25,7 @@ import {
     where
 } from '@firebase/firestore';
 import {getStatusName} from '@/functions/statusNameUtilities';
+import {PortfolioSearchItem} from "@/model/commonTypes";
 
 export async function userHasPortfolios(userId: string): Promise<boolean>{
     try {
@@ -38,16 +39,16 @@ export async function userHasPortfolios(userId: string): Promise<boolean>{
       }
 }
 
-export async function getAllPortfolios(): Promise<{photo: string, fullname: string, role: string}[]> {
+export async function getAllPortfoliosAsSearchItems(): Promise<PortfolioSearchItem[]> {
     try {
-        return await getPortfolios([]);
+        return await getPortfoliosAsSearchItems([]);
     } catch (error) {
       console.error('Error fetching portfolios: ', error);
       return [];
     }
 }
 
-async function getPortfolios(constraints: QueryFieldFilterConstraint[]): Promise<{photo: string, fullname: string, role: string}[]> {
+async function getPortfoliosAsSearchItems(constraints: QueryFieldFilterConstraint[]): Promise<PortfolioSearchItem[]> {
     try {
         const snapshot = await getDocs(
             query(
@@ -57,7 +58,7 @@ async function getPortfolios(constraints: QueryFieldFilterConstraint[]): Promise
                 ...constraints
             )
         );
-        const docs: {photo: string, fullname: string, role: string}[] = [];
+        const portfolios: PortfolioSearchItem[] = [];
         for (const doc of snapshot.docs) {
             const docData = doc.data();
             console.log(docData);
@@ -65,13 +66,18 @@ async function getPortfolios(constraints: QueryFieldFilterConstraint[]): Promise
             if (!photoUrl) {
                 throw new Error("Could not get image link for path: " + docData.photo);
             }
-            docs.push({
+            const projectsCreationDates: Date[] = [];
+            for (const project of docData.projects) {
+                projectsCreationDates.push(project.creationDate.toDate());
+            }
+            portfolios.push({
                 photo: photoUrl,
                 fullname: docData.fullName,
                 role: docData.role,
+                projectsCreationDates: projectsCreationDates
             });
         }
-        return docs;
+        return portfolios;
 
     } catch (error) {
         console.error('Error fetching portfolios: ', error);
@@ -89,7 +95,8 @@ export async function saveFirstTemplateDataForUser(userId: string, data: FirstTe
       type FirebaseProjectData = {
         filePath: string;
         name: string;
-        link: string
+        link: string, 
+        creationDate: Date;
       }
       let photoPath: string = "";
       if (data.photo) {
@@ -105,6 +112,7 @@ export async function saveFirstTemplateDataForUser(userId: string, data: FirstTe
           filePath: projectPhotoPath,
           name: project.name,
           link: project.link,
+          creationDate: project.creationDate,
         });
       }
       const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
@@ -142,6 +150,7 @@ export async function updateFirstTemplateDataForUser(userId: string, data: First
             filePath: string;
             name: string;
             link: string;
+            creationDate: Date;
         }
         let photoPath: string = "";
         if (data.photo) {
@@ -157,6 +166,7 @@ export async function updateFirstTemplateDataForUser(userId: string, data: First
                 filePath: projectPhotoPath,
                 name: project.name,
                 link: project.link,
+                creationDate: project.creationDate,
             });
         }
         const docRef = doc(collection(db, PORTFOLIOS_COLLECTION_NAME), portfolioId);
@@ -198,6 +208,7 @@ export async function getFirstTemplatePortfolioData(portfolioId: string): Promis
             name: project.name,
             link: project.link,
             photoUrl: imageUrl,
+            creationDate: project.creationDate.toDate(),
           });
         }
         console.log(data.links);
@@ -230,6 +241,7 @@ export async function saveSecondTemplateDataForUser(userId: string, data: Second
       name: string;
       description: string;
       link: string;
+      creationDate: Date;
     }
     let photoPath: string = "";
     if (data.photo) {
@@ -246,6 +258,7 @@ export async function saveSecondTemplateDataForUser(userId: string, data: Second
         name: project.name,
         description: project.description,
         link: project.link,
+        creationDate: project.creationDate,
       });
     }
     const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),

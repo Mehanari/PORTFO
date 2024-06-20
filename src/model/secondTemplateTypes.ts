@@ -5,6 +5,7 @@ type ProjectData = {
     name: string;
     description: string;
     link: string;
+    creationDate: Date;
 }
 
 type PortfolioData = {

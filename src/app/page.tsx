@@ -7,30 +7,50 @@ import EmblaCarousel from './components/EmblaCarousel';
 import { OPTIONS, SLIDES } from './index';
 import {auth} from "@/firebase/firebaseConfig";
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {getAllPortfolios, userHasPortfolios} from "@/functions/databaseAccess";
+import {getAllPortfoliosAsSearchItems, userHasPortfolios} from "@/functions/databaseAccess";
 import Pagination from '@/app/components/Pagination';
-import {where} from "@firebase/firestore";
+import {PortfolioSearchItem} from "@/model/commonTypes";
 
 
 function startsWithIgnoreCase(str: string, prefix: string): boolean {
     return str.toLowerCase().startsWith(prefix.toLowerCase());
 }
 
+function portfolioHasProjectInTimeframe(portfolio: PortfolioSearchItem, fromDate: string, toDate: string): boolean {
+    if (fromDate && toDate) {
+        const from = new Date(fromDate);
+        const to = new Date(toDate);
+        return portfolio.projectsCreationDates.some((date) => date >= from && date <= to);
+    } else if (fromDate) {
+        const from = new Date(fromDate);
+        return portfolio.projectsCreationDates.some((date) => date >= from);
+    } else if (toDate) {
+        const to = new Date(toDate);
+        return portfolio.projectsCreationDates.some((date) => date <= to);
+    }
+    return true;
+}
+
 export default function Home() {
   const [user, loading] = useAuthState(auth);
   //Search form values
   const [name, setName] = useState('');
-  
+  const [role, setRole] = useState('');
+  const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
+  const [existingRoles, setExistingRoles] = useState<string[]>([]);
+  const [existingRoleFiltered, setExistingRoleFiltered] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const router = useRouter();
 
-  let [portfolios, setPortfolios] = useState<{photo: string, fullname: string, role: string}[] | null>(null);
-  const [portfoliosToShow, setPortfoliosToShow] = useState<{photo: string, fullname: string, role: string}[] | null>(null);
+  let [portfolios, setPortfolios] = useState<PortfolioSearchItem[] | null>(null);
+  const [portfoliosToShow, setPortfoliosToShow] = useState<PortfolioSearchItem[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
   let indexOfLastItem;
   let indexOfFirstItem;
-  let currentItems: {photo: string, fullname: string, role: string}[] = [];
+  let currentItems: PortfolioSearchItem[] = [];
 
   if (portfoliosToShow) {
     indexOfLastItem = currentPage * itemsPerPage;
@@ -39,21 +59,36 @@ export default function Home() {
   }
 
   useEffect(() => {
-    getAllPortfolios().then((data) => {
+    getAllPortfoliosAsSearchItems().then((data) => {
       setPortfolios(data);
       setPortfoliosToShow(data);
+      let roles: string[] = [];
+      if (data){
+        data.forEach((portfolio) => {
+          if (portfolio.role) {
+            roles.push(portfolio.role);
+          }
+        });
+      }
+      setExistingRoles(roles);
     });
   }, []);
 
   useEffect(() => {
     if (portfolios) {
-      if (name === '') {
-        setPortfoliosToShow(portfolios);
-      } else {
-        setPortfoliosToShow(portfolios.filter((portfolio) => startsWithIgnoreCase(portfolio.fullname, name)));
+      let filteredPortfolios = portfolios;
+      if (name != '') {
+        filteredPortfolios = filteredPortfolios.filter((portfolio) => startsWithIgnoreCase(portfolio.fullname, name));
       }
+      if (role != '') {
+        filteredPortfolios = filteredPortfolios.filter((portfolio) => startsWithIgnoreCase(portfolio.role, role));
+      }
+      if (fromDate != '' || toDate != '') {
+          filteredPortfolios = filteredPortfolios.filter((portfolio) => portfolioHasProjectInTimeframe(portfolio, fromDate, toDate));
+      }
+      setPortfoliosToShow(filteredPortfolios);
     }
-  }, [name]);
+  }, [portfolios, name, role, fromDate, toDate]);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -80,7 +115,33 @@ export default function Home() {
       router.push('/sign-in');
     }
   }
-  
+
+  const handleRoleInputChange = (value: string) => {
+    setRole(value);
+    filterRolesSuggestions(value);
+  };
+
+  const handleRoleInputFocus = () => {
+    filterRolesSuggestions(role);
+    setShowSuggestions(true);
+  }
+
+  const filterRolesSuggestions = (value: string) => {
+    if (value) {
+      const filtered = existingRoles.filter((role) =>
+          role.toLowerCase().startsWith(value.toLowerCase())
+      );
+      setExistingRoleFiltered(filtered);
+    } else {
+      setExistingRoleFiltered(existingRoles);
+    }
+  }
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setRole(suggestion);
+    setExistingRoleFiltered([]);
+    setShowSuggestions(false);
+  };
 
   if (loading) {
     return (
@@ -167,15 +228,68 @@ export default function Home() {
       {portfoliosToShow ?
           <section className="flex flex-col lg:flex-col bg-white pb-20 justify-center items-center">
             <h1 className="flex text-black font-bold text-4xl lg:text-5xl">Explore other portfolios</h1>
-            <div className="mt-4">
-              <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name</label>
-              <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  onChange={({target}) => setName(target.value)}
-              />
+            <div className="flex mt-4 space-x-4">
+              <div>
+                <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={name}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    onChange={({target}) => setName(target.value)}
+                />
+              </div>
+              <div className="relative">
+                <label htmlFor="role" className="block text-gray-700 text-sm font-bold mb-2">Role</label>
+                <input
+                    type="text"
+                    id="role"
+                    name="role"
+                    value={role}
+                    onChange={({target}) => handleRoleInputChange(target.value)}
+                    onFocus={handleRoleInputFocus}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                {showSuggestions && existingRoleFiltered.length > 0 && (
+                    <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded mt-1 max-h-60 overflow-auto">
+                      {existingRoleFiltered.map((suggestion, index) => (
+                          <li
+                              key={index}
+                              onMouseDown={() => handleSuggestionClick(suggestion)}
+                              className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                          >
+                            {suggestion}
+                          </li>
+                      ))}
+                    </ul>
+                )}
+              </div>
+              <div className="flex space-x-4 items-end">
+                <div>
+                  <label htmlFor="fromDate" className="block text-gray-700 text-sm font-bold mb-2">From</label>
+                  <input
+                      type="date"
+                      id="fromDate"
+                      name="fromDate"
+                      value={fromDate}
+                      onChange={({target}) => setFromDate(target.value)}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="toDate" className="block text-gray-700 text-sm font-bold mb-2">To</label>
+                  <input
+                      type="date"
+                      id="toDate"
+                      name="toDate"
+                      value={toDate}
+                      onChange={({target}) => setToDate(target.value)}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              </div>
             </div>
             <div className='flex flex-col justify-center'>
               <div
@@ -207,7 +321,7 @@ export default function Home() {
         <div className="flex flex-col lg:flex-col bg-white w-1/2 justify-end">
           <div className="flex flex-row lg:flex-row">
             <div className="flex flex-col lg:flex-col w-1/3 justify-center items-center">
-              <div className="circle-page text-white font-bold text-1xl lg:text-2xl" style={{ background: '#FFA500' }}>
+              <div className="circle-page text-white font-bold text-1xl lg:text-2xl" style={{background: '#FFA500'}}>
                 1
               </div>
               <div className="circle_small" style={{ background: '#D3D3D3' }}></div>

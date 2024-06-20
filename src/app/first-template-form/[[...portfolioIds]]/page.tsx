@@ -24,6 +24,7 @@ type ProjectRow = {
     name: string;
     link: string;
     photoPath: string;
+    creationDate: Date;
 }
 
 export default function FirstTemplateForm({ params }: { params: { portfolioIds: string[] } }){
@@ -67,7 +68,8 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                         photoPath: project.photoUrl,
                         photo: projectPhotos[index],
                         name: project.name,
-                        link: project.link
+                        link: project.link,
+                        creationDate: new Date(project.creationDate)
                     }));
                     setProjects(loadedProjects);
                     const photo = await downloadImage(data.photoUrl);
@@ -95,6 +97,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                 photo: project.photo,
                 name: project.name,
                 link: project.link,
+                creationDate: project.creationDate
             })),
         }
         if (user){
@@ -143,7 +146,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
         if (projects.length > 0) {
             projectId = projects[projects.length - 1].id + 1;
         }
-        setProjects([...projects, {id: projectId, photo: null, name: "", link: "", photoPath: ""}]);
+        setProjects([...projects, {id: projectId, photo: null, name: "", link: "", photoPath: "", creationDate: new Date()}]);
     };
 
     const handleEditProjectPhoto = (index: number, photo: File, photoPath: string) => {
