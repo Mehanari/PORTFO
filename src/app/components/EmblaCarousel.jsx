@@ -8,6 +8,7 @@ import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
 
 const EmblaCarousel = (props) => {
+  const photoSrc = ["/portfolio_one.png", "/portfolio_two.png", "/portfolio_three.png"]; // Добавьте сюда все изображения, если их несколько
   const { slides, options } = props
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()])
 
@@ -37,7 +38,16 @@ const EmblaCarousel = (props) => {
                 <div className="embla__container">
                 {slides.map((index) => (
                     <div className="embla__slide" key={index}>
-                    <div className="embla__slide__number">{index + 1}</div>
+                      <div
+                        className="embla__slide__number"
+                        style={{
+                          backgroundImage: `url(${photoSrc[index % photoSrc.length]})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          width: '100%',
+                          height: '100%'
+                        }}>
+                      </div>
                     </div>
                 ))}
                 </div>
