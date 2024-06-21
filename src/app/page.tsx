@@ -11,7 +11,7 @@ import {getAllPortfoliosAsSearchItems, userHasPortfolios} from "@/functions/data
 import Pagination from '@/app/components/Pagination';
 import {PortfolioSearchItem} from "@/model/commonTypes";
 import {TemplateType} from "@/templatesTypes";
-
+import "@/app/globals.css";
 
 function startsWithIgnoreCase(str: string, prefix: string): boolean {
     return str.toLowerCase().startsWith(prefix.toLowerCase());

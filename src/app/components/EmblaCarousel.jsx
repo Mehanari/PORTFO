@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react'
+import { DotButton, useDotButton } from '@/app/components/EmblaCarouselDotButton';
 import {
   PrevButton,
   NextButton,
@@ -11,7 +12,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import {auth} from "@/firebase/firebaseConfig";
 
 const EmblaCarousel = (props) => {
-  const photoSrc = ["/portfolio_one.png", "/portfolio_two.png", "/portfolio_three.png"]; 
+  const photoSrc = ["/portfolio_one.png", "/portfolio_two.png", "/portfolio_three.png", "/portfolio_four.jpg"]; 
   const { slides, options } = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()]);
   const router = useRouter();
@@ -28,6 +29,11 @@ const EmblaCarousel = (props) => {
 
     resetOrStop()
   }, [])
+
+  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(
+    emblaApi,
+    onNavButtonClick
+  )
 
   const {
     prevBtnDisabled,
@@ -74,10 +80,22 @@ const EmblaCarousel = (props) => {
             </div>
 
             <div className="embla__controls">
-                <div className="embla__buttons">
+              <div className="embla__buttons">
                 <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
                 <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
-                </div>
+              </div>
+
+              <div className="embla__dots">
+                {scrollSnaps.map((_, index) => (
+                  <DotButton
+                    key={index}
+                    onClick={() => onDotButtonClick(index)}
+                    className={'embla__dot'.concat(
+                      index === selectedIndex ? ' embla__dot--selected' : ''
+                    )}
+                  />
+                ))}
+              </div>
             </div>
         </div>
         <img className="flex flex-col lg:flex-row bg-white pb-10 justify-center items-center w-full" src="/Bubbles.png" alt="" />
