@@ -2,14 +2,15 @@
 
 import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import EmblaCarousel from './components/EmblaCarousel';
-import { OPTIONS, SLIDES } from './index';
+import {OPTIONS, SLIDES} from './index';
 import {auth} from "@/firebase/firebaseConfig";
-import { useAuthState } from 'react-firebase-hooks/auth';
+import {useAuthState} from 'react-firebase-hooks/auth';
 import {getAllPortfoliosAsSearchItems, userHasPortfolios} from "@/functions/databaseAccess";
 import Pagination from '@/app/components/Pagination';
 import {PortfolioSearchItem} from "@/model/commonTypes";
+import {TemplateType} from "@/templatesTypes";
 
 
 function startsWithIgnoreCase(str: string, prefix: string): boolean {
@@ -155,8 +156,8 @@ export default function Home() {
     setShowSuggestions(false);
   };
 
-  const handlePortfolioClick = () => {
-    console.log(`Clicked on portfolio`);
+  const handlePortfolioClick = (item: PortfolioSearchItem) => {
+    router.push(`${item.link}`);
   };
 
   if (loading) {
@@ -358,7 +359,7 @@ export default function Home() {
                   className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mt-14 mb-14">
                 {currentItems.map((portfolio, index) => (
                     <div key={index}
-                          onClick={handlePortfolioClick}
+                          onClick={() => handlePortfolioClick(portfolio)}
                           className="flex flex-col items-center bg-white border-2 border-gray-200 rounded-3xl p-10 shadow cursor-pointer">
                       <img src={portfolio.photo} alt={portfolio.fullname} className="circle-portfolio"/>
                       <h2 className="mt-4 text-xl font-semibold">{portfolio.fullname}</h2>

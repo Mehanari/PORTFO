@@ -74,7 +74,9 @@ async function getPortfoliosAsSearchItems(constraints: QueryFieldFilterConstrain
                 photo: photoUrl,
                 fullname: docData.fullName,
                 role: docData.role,
-                projectsCreationDates: projectsCreationDates
+                projectsCreationDates: projectsCreationDates,
+                link: docData.link,
+                templateType: docData.templateType === 0 ? TemplateType.FIRST_TEMPLATE : TemplateType.SECOND_TEMPLATE,
             });
         }
         return portfolios;
