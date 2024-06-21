@@ -1,12 +1,19 @@
 "use client"
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {PortfolioData} from "@/model/secondTemplateTypes";
-import {saveSecondTemplateDataForUser} from "@/functions/databaseAccess";
+import {
+    downloadImage,
+    getSecondTemplatePortfolioData, publishPortfolio,
+    saveSecondTemplateDataForUser,
+    updateSecondTemplateDataForUser, userHasPortfolios
+} from "@/functions/databaseAccess";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebaseConfig";
 import {PortfolioStatus} from "@/portfolioStatuses";
 import { Zen_Tokyo_Zoo, Poppins } from 'next/font/google';
 import Image from "next/image";
+import {validateSecondTemplateData} from "@/functions/validation";
+import {useRouter} from "next/navigation";
 
 const zenTokyoZoo = Zen_Tokyo_Zoo({
     weight: '400',
@@ -33,7 +40,7 @@ type ProjectRow = {
     creationDate: Date;
 }
 
-export default function FirstTemplateForm(){
+export default function FirstTemplateForm({ params }: { params: { portfolioIds: string[] } }){
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPath, setPhotoPath] = useState<string>("");
     const [fullname, setFullname] = useState<string>("");
@@ -43,9 +50,49 @@ export default function FirstTemplateForm(){
     const [location, setLocation] = useState<string>("");
     const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [projects, setProjects] = useState<ProjectRow[]>([]);
+    const [docId, setDocId] = useState<string | undefined>();
+    const router = useRouter();
 
     const [user, loading, error] = useAuthState(auth);
 
+    useEffect(() => {
+        if (params.portfolioIds) {
+            setDocId(params.portfolioIds[0]);
+            getSecondTemplatePortfolioData(params.portfolioIds[0]).then( async (data) => {
+                if (!data) return;
+                setPhotoPath(data.photoUrl);
+                setFullname(data.fullName);
+                setProfession(data.role);
+                setAboutMe(data.bio);
+                setPhoneNumber(data.phoneNumber);
+                setLocation(data.location);
+                setLinksRows(data.links.map((link, index) => ({id: index, link})));
+                const projectPhotosUrls = data.projects.map((project) => project.photoUrl);
+                const projectPhotos: File[] = [];
+                for (const url of projectPhotosUrls) {
+                    const file = await downloadImage(url);
+                    if (file){
+                        projectPhotos.push(file);
+                    }
+                }
+                const loadedProjects = data.projects.map((project, index) => ({
+                    id: index,
+                    photoPath: project.photoUrl,
+                    photo: projectPhotos[index],
+                    name: project.name,
+                    description: project.description,
+                    link: project.link,
+                    creationDate: new Date(project.creationDate),
+                }));
+                setProjects(loadedProjects);
+                const photo = await downloadImage(data.photoUrl);
+                if (photo){
+                    setPhoto(photo);
+                }
+            });
+        }
+    }, [params]);
+    
     const handleSave = async () => {
         const data: PortfolioData = {
             name: "New Portfolio",
@@ -67,7 +114,21 @@ export default function FirstTemplateForm(){
             })),
         }
         if (user){
-            await saveSecondTemplateDataForUser(user.uid, data);
+            const validationResult = validateSecondTemplateData(data);
+            if (validationResult.isValid){
+                if (docId){
+                    await updateSecondTemplateDataForUser(user.uid, data,  docId);
+                }
+                else {
+                    const savedDocId = await saveSecondTemplateDataForUser(user.uid, data);
+                    if (!docId){
+                        router.push(`/second-template-form/${savedDocId}`);
+                    }
+                }
+            }
+            else {
+                alert(validationResult.message);
+            }
         }
     };
 
@@ -111,7 +172,32 @@ export default function FirstTemplateForm(){
     const handleDeleteProject = (index: number) => {
         setProjects(projects.filter((project) => project.id !== index));
     };
+    
+    const handleBackToMenu = async () => {
+        if (user){
+            if (await userHasPortfolios(user.uid)){
+                router.push("/portfolio-list");
+            }
+            else {
+                router.push("/choose-template");
+            }
+        }
+    }
 
+    const handlePreviewClick = () => {
+        if (docId){
+            router.push(`/second-template-preview/${docId}`)
+        }
+    }
+
+    const handlePublish = async () => {
+        if (docId){
+            const publishedPageLink = await publishPortfolio(docId);
+            if (publishedPageLink){
+                router.push(publishedPageLink);
+            }
+        }
+    }
     //This code is used to adjust the height of the block according to the image size
 
 
@@ -176,7 +262,9 @@ export default function FirstTemplateForm(){
                                     {photoPath ? (
                                         <img src={photoPath} alt="" className="w-full h-full object-cover" />
                                     ) : (
-                                        <img src="/Vector.png" alt="" className="absolute inset-0 w-full h-full object-contain" />
+                                        <div className="flex justify-center items-center">
+                                            <img src="/Vector.png" alt=""/>
+                                        </div>
                                     )}
                                 </div>
                             </div>
@@ -388,15 +476,15 @@ export default function FirstTemplateForm(){
             </div>
             <div className="flex justify-between pr-10 pl-10 w-full bg-white pt-5 pb-5">
                 <div>
-                     <button className="mr-4"> {/*TODO return to the previous page*/}
+                     <button className="mr-4" onClick={handleBackToMenu}> {/*TODO return to the previous page*/}
                         <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
                 </div>
                 <div className="flex justify-between">
-                    <button className="mr-4"> {/*TODO preview button*/}
+                    <button className="mr-4" onClick={handlePreviewClick}> {/*TODO preview button*/}
                         <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
-                    <button className="mr-4"> {/*TODO publish button*/}
+                    <button className="mr-4" onClick={handlePublish}> {/*TODO publish button*/}
                         <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
                     <button onClick={handleSave}>
