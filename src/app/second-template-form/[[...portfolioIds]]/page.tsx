@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {PortfolioData} from "@/model/secondTemplateTypes";
 import {
     downloadImage,
-    getSecondTemplatePortfolioData,
+    getSecondTemplatePortfolioData, publishPortfolio,
     saveSecondTemplateDataForUser,
     updateSecondTemplateDataForUser, userHasPortfolios
 } from "@/functions/databaseAccess";
@@ -13,7 +13,6 @@ import {PortfolioStatus} from "@/portfolioStatuses";
 import { Zen_Tokyo_Zoo, Poppins } from 'next/font/google';
 import Image from "next/image";
 import {validateSecondTemplateData} from "@/functions/validation";
-import {router} from "next/client";
 import {useRouter} from "next/navigation";
 
 const zenTokyoZoo = Zen_Tokyo_Zoo({
@@ -190,7 +189,15 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
             router.push(`/second-template-preview/${docId}`)
         }
     }
-    
+
+    const handlePublish = async () => {
+        if (docId){
+            const publishedPageLink = await publishPortfolio(docId);
+            if (publishedPageLink){
+                router.push(publishedPageLink);
+            }
+        }
+    }
     //This code is used to adjust the height of the block according to the image size
 
 
@@ -477,7 +484,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                     <button className="mr-4" onClick={handlePreviewClick}> {/*TODO preview button*/}
                         <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
-                    <button className="mr-4"> {/*TODO publish button*/}
+                    <button className="mr-4" onClick={handlePublish}> {/*TODO publish button*/}
                         <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2" />
                     </button>
                     <button onClick={handleSave}>
