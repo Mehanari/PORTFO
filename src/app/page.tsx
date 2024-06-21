@@ -41,6 +41,7 @@ export default function Home() {
   const [existingRoles, setExistingRoles] = useState<string[]>([]);
   const [existingRoleFiltered, setExistingRoleFiltered] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
   const router = useRouter();
 
   let [portfolios, setPortfolios] = useState<PortfolioSearchItem[] | null>(null);
@@ -142,6 +143,21 @@ export default function Home() {
     setExistingRoleFiltered([]);
     setShowSuggestions(false);
   };
+  const clearInput = () => {
+    setName('');
+  };
+
+  const clearAllFields = () => {
+    setName('');
+    setRole('');
+    setFromDate('');
+    setToDate('');
+    setShowSuggestions(false);
+  };
+
+  const handlePortfolioClick = () => {
+    console.log(`Clicked on portfolio`);
+  };
 
   if (loading) {
     return (
@@ -227,33 +243,66 @@ export default function Home() {
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
       {portfoliosToShow ?
           <section className="flex flex-col lg:flex-col bg-white pb-20 justify-center items-center">
-            <h1 className="flex text-black font-bold text-4xl lg:text-5xl">Explore other portfolios</h1>
-            <div className="flex mt-4 space-x-4">
+            <h1 className="flex text-black font-bold text-4xl lg:text-5xl mb-10">Explore other portfolios</h1>
+            <div className="flex justify-center items-end mt-4 space-x-4">
               <div>
-                <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name</label>
-                <input
+                <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2"></label>
+                <div className="relative">
+                  <input
                     type="text"
                     id="name"
                     name="name"
                     value={name}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="Name"
+                    className="shadow placeholder-black appearance-none border border-orange-500 rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2 pr-10"
+                    onChange={({ target }) => setName(target.value)}
+                  />
+                  {name && (
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center mb-2">
+                      <svg
+                        className="h-5 w-5 text-gray-500 cursor-pointer"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        onClick={clearInput}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                
+                {/* <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={name}
+                    placeholder="Name"
+                    className="shadow placeholder-black appearance-none border border-orange-500 rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
                     onChange={({target}) => setName(target.value)}
-                />
+                /> */}
               </div>
               <div className="relative">
-                <label htmlFor="role" className="block text-gray-700 text-sm font-bold mb-2">Role</label>
+                <label htmlFor="role" className="block text-gray-700 text-sm font-bold mb-2"></label>
                 <input
                     type="text"
                     id="role"
                     name="role"
                     value={role}
+                    placeholder="Role"
                     onChange={({target}) => handleRoleInputChange(target.value)}
                     onFocus={handleRoleInputFocus}
                     onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow placeholder-black appearance-none border border-orange-500 rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
                 />
                 {showSuggestions && existingRoleFiltered.length > 0 && (
-                    <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded mt-1 max-h-60 overflow-auto">
+                    <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-60 overflow-auto">
                       {existingRoleFiltered.map((suggestion, index) => (
                           <li
                               key={index}
@@ -266,37 +315,51 @@ export default function Home() {
                     </ul>
                 )}
               </div>
-              <div className="flex space-x-4 items-end">
-                <div>
-                  <label htmlFor="fromDate" className="block text-gray-700 text-sm font-bold mb-2">From</label>
-                  <input
-                      type="date"
-                      id="fromDate"
-                      name="fromDate"
-                      value={fromDate}
-                      onChange={({target}) => setFromDate(target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="toDate" className="block text-gray-700 text-sm font-bold mb-2">To</label>
-                  <input
-                      type="date"
-                      id="toDate"
-                      name="toDate"
-                      value={toDate}
-                      onChange={({target}) => setToDate(target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
+              <div className="flex space-x-4">
+                <div className="flex flex-col justify-end">
+                  <div className="flex justify-center items-center">
+                    <h1 className="font-extrabold text-black text-xl m-3">Project Datepicker</h1>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="m-2">
+                      <label htmlFor="fromDate" className="block text-black font-bold text-sm mb-2">From</label>
+                      <input
+                          type="date"
+                          id="fromDate"
+                          name="fromDate"
+                          value={fromDate}
+                          onChange={({target}) => setFromDate(target.value)}
+                          className="shadow appearance-none border border-orange-500 rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                    <div className="m-2">
+                      <label htmlFor="toDate" className="block text-black font-bold text-sm mb-2">To</label>
+                      <input
+                          type="date"
+                          id="toDate"
+                          name="toDate"
+                          value={toDate}
+                          onChange={({target}) => setToDate(target.value)}
+                          className="shadow appearance-none border border-orange-500 rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
+              <button
+                onClick={clearAllFields}
+                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mb-2"
+              >
+                Clear All
+              </button>
             </div>
             <div className='flex flex-col justify-center'>
               <div
                   className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mt-14 mb-14">
                 {currentItems.map((portfolio, index) => (
                     <div key={index}
-                         className="flex flex-col items-center bg-white border-2 border-gray-200 rounded-3xl p-10 shadow">
+                          onClick={handlePortfolioClick}
+                          className="flex flex-col items-center bg-white border-2 border-gray-200 rounded-3xl p-10 shadow cursor-pointer">
                       <img src={portfolio.photo} alt={portfolio.fullname} className="circle-portfolio"/>
                       <h2 className="mt-4 text-xl font-semibold">{portfolio.fullname}</h2>
                       <p className="text-gray-700">{portfolio.role}</p>
