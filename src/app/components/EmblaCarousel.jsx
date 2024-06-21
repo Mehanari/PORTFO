@@ -6,11 +6,16 @@ import {
 } from './EmblaCarouselArrowButtons'
 import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
+import {useRouter} from "next/navigation";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {auth} from "@/firebase/firebaseConfig";
 
 const EmblaCarousel = (props) => {
-  const photoSrc = ["/portfolio_one.png", "/portfolio_two.png", "/portfolio_three.png"]; // Добавьте сюда все изображения, если их несколько
-  const { slides, options } = props
-  const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()])
+  const photoSrc = ["/portfolio_one.png", "/portfolio_two.png", "/portfolio_three.png"]; 
+  const { slides, options } = props;
+  const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()]);
+  const router = useRouter();
+  const [user, loading, error] = useAuthState(auth);
 
   const onNavButtonClick = useCallback((emblaApi) => {
     const autoplay = emblaApi?.plugins()?.autoplay
@@ -31,15 +36,30 @@ const EmblaCarousel = (props) => {
     onNextButtonClick
   } = usePrevNextButtons(emblaApi, onNavButtonClick)
 
+  const handleOptionClick = (index) => {
+      if (!user) {
+          router.push('/sign-in');
+      }
+      else {
+            if (index % photoSrc.length === 0){
+                router.push('/first-template-form');
+            }
+            if (index % photoSrc.length === 1){
+                router.push('/second-template-form');
+            }
+      }
+  }  
+    
   return (
     <section className="bg-white pt-20">
         <div className="embla">
             <div className="embla__viewport" ref={emblaRef}>
                 <div className="embla__container">
                 {slides.map((index) => (
-                    <div className="embla__slide" key={index}>
+                    <div className="embla__slide" key={index} >
                       <div
                         className="embla__slide__number"
+                        onClick={() => handleOptionClick(index)}
                         style={{
                           backgroundImage: `url(${photoSrc[index % photoSrc.length]})`,
                           backgroundSize: 'cover',
