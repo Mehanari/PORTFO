@@ -433,18 +433,18 @@ export default function Home() {
       >
         <div className="flex flex-col w-1/3 justify-start items-end p-4 ml-auto lg:flex-row">
           <div className="text-left w-full" style={{ paddingTop: '20px', paddingLeft: '25px' }}>
-            <h1 className="text-black font-bold text-3xl mb-4 lg:text-6xl">WHY WE?</h1>
+            <h1 className="text-black font-bold text-3xl mb-4 lg:text-6xl">WHY US?</h1>
             <p className="text-black font-medium text-sm mb-4 lg:text-xl mt-8 mb-4">
               <span className="font-bold">01. </span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              User-Friendly Interface and Customization Options
             </p>
             <p className="text-black font-medium text-sm mb-4 lg:text-xl mt-4 mb-4">
               <span className="font-bold">02. </span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Versatile Media Integration and Compatibility
             </p>
             <p className="text-black font-medium text-sm mb-4 lg:text-xl mt-4 mb-8">
               <span className="font-bold">03. </span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Continuous Innovation and Support
             </p>
             <button onClick={handleStartCreatingClick} className="bg-black hover:bg-gray-800 text-white font-semibold py-4 px-6 lg:px-10 text-sm rounded-full flex shadow-md mt-4 lg:text-lg">
               Start Creating
@@ -457,7 +457,7 @@ export default function Home() {
         <div className="flex flex-row mt-10 mb-20">
           <div className="flex flex-col lg:w-1/3 pr-14 pl-14">
             <p className="text-black font-medium text-1xl mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit?
+              How to register my account on PORTFO?
             </p>
             <div className="flex flex-row items-start">
               <span>
@@ -470,7 +470,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col lg:w-1/3 pr-14 pl-14">
             <p className="text-black font-medium text-1xl mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit?
+              Is it possible to restore my previous portfolios?
             </p>
             <div className="flex flex-row items-start">
               <span>
@@ -483,7 +483,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col lg:w-1/3 pr-14 pl-14">
             <p className="text-black font-medium text-1xl mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit?
+              How to get Pro account?
             </p>
             <div className="flex flex-row items-start">
               <span>
