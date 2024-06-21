@@ -1,15 +1,20 @@
-import {PortfolioData as SecondTemplateData} from "@/model/secondTemplateTypes";
 import {
-  PortfolioData as FirstTemplateData,
-  PortfolioDataPreview as FirstTemplateDataPreview,
-  ProjectDataPreview as FirstTemplateProjectPreview
+    PortfolioData as FirstTemplateData,
+    PortfolioDataPreview as FirstTemplateDataPreview,
+    ProjectDataPreview as FirstTemplateProjectPreview
 } from "@/model/firstTemplateTypes";
+import {
+    PortfolioDataPreview as SecondTemplateDataPreview,
+    PortfolioData as SecondTemplateData,
+    ProjectData as SecondTemplateProjectData,
+    ProjectDataPreview as SecondTemplateProjectPreview
+} from "@/model/secondTemplateTypes";
 import {getFileHash} from "@/functions/cryptographyUtilities";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "@firebase/storage";
 import {db} from "@/firebase/firebaseConfig";
 import {IMAGES_DIRECTORY_NAME, PORTFOLIOS_COLLECTION_NAME,} from "@/constants";
 import {TemplateType} from "@/templatesTypes";
-import {validateFirstTemplateData} from "@/functions/validation";
+import {validateFirstTemplateData, validateSecondTemplateData} from "@/functions/validation";
 import {PortfolioStatus} from "@/portfolioStatuses";
 import {PortfolioListItemData} from "@/model/portflolioTypes";
 import {
@@ -30,21 +35,21 @@ import {PortfolioSearchItem} from "@/model/commonTypes";
 export async function userHasPortfolios(userId: string): Promise<boolean>{
     try {
         const snapshot = await getDocs(
-          query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', userId))
+            query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', userId))
         );
         return snapshot.docs.length > 0;
-      } catch (error) {
+    } catch (error) {
         console.error('Error fetching portfolios: ', error);
         return false;
-      }
+    }
 }
 
 export async function getAllPortfoliosAsSearchItems(): Promise<PortfolioSearchItem[]> {
     try {
         return await getPortfoliosAsSearchItems([]);
     } catch (error) {
-      console.error('Error fetching portfolios: ', error);
-      return [];
+        console.error('Error fetching portfolios: ', error);
+        return [];
     }
 }
 
@@ -92,50 +97,50 @@ export async function saveFirstTemplateDataForUser(userId: string, data: FirstTe
         return;
     }
     try {
-      type FirebaseProjectData = {
-        filePath: string;
-        name: string;
-        link: string, 
-        creationDate: Date;
-      }
-      let photoPath: string = "";
-      if (data.photo) {
-        photoPath = await addImage(data.photo);
-      }
-      let firebaseProjects: FirebaseProjectData[] = [];
-      for (const project of data.projects) {
-        let projectPhotoPath: string = "";
-        if (project.photo) {
-          projectPhotoPath = await addImage(project.photo);
+        type FirebaseProjectData = {
+            filePath: string;
+            name: string;
+            link: string,
+            creationDate: Date;
         }
-        firebaseProjects.push({
-          filePath: projectPhotoPath,
-          name: project.name,
-          link: project.link,
-          creationDate: project.creationDate,
-        });
-      }
-      const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
-        {
-            templateType: TemplateType.FIRST_TEMPLATE,
-            userId: userId,
-            name: data.name,
-            status: data.status,
-            link: data.link,
-            photoPath: photoPath,
-            username: data.username,
-            fullName: data.fullName,
-            location: data.location,
-            role: data.role,
-            projects: firebaseProjects,
-            bio: data.bio,
-            createdTimestamp: Date.now(),
-            links: data.links,
-        });
-      return docRef.id;
+        let photoPath: string = "";
+        if (data.photo) {
+            photoPath = await addImage(data.photo);
+        }
+        let firebaseProjects: FirebaseProjectData[] = [];
+        for (const project of data.projects) {
+            let projectPhotoPath: string = "";
+            if (project.photo) {
+                projectPhotoPath = await addImage(project.photo);
+            }
+            firebaseProjects.push({
+                filePath: projectPhotoPath,
+                name: project.name,
+                link: project.link,
+                creationDate: project.creationDate,
+            });
+        }
+        const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
+            {
+                templateType: TemplateType.FIRST_TEMPLATE,
+                userId: userId,
+                name: data.name,
+                status: data.status,
+                link: data.link,
+                photoPath: photoPath,
+                username: data.username,
+                fullName: data.fullName,
+                location: data.location,
+                role: data.role,
+                projects: firebaseProjects,
+                bio: data.bio,
+                createdTimestamp: Date.now(),
+                links: data.links,
+            });
+        return docRef.id;
     } catch (error) {
-      console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
-      return;
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+        return;
     }
 }
 
@@ -188,116 +193,219 @@ export async function updateFirstTemplateDataForUser(userId: string, data: First
 }
 
 export async function getFirstTemplatePortfolioData(portfolioId: string): Promise<FirstTemplateDataPreview | undefined> {
-  try {
-    const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      if (data) {
-        const imageLink = await getImageUrlByPath(data.photoPath);
-        if (!imageLink) {
-          throw new Error("Could not get image link for path: " + data.photoPath);
+    try {
+        const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data) {
+                const imageLink = await getImageUrlByPath(data.photoPath);
+                if (!imageLink) {
+                    throw new Error("Could not get image link for path: " + data.photoPath);
+                }
+                const projects: FirstTemplateProjectPreview[] = [];
+                for (const project of data.projects) {
+                    const imageUrl = await getImageUrlByPath(project.filePath);
+                    if (!imageUrl) {
+                        throw new Error("Could not get image link for path: " + project.filePath);
+                    }
+                    projects.push({
+                        name: project.name,
+                        link: project.link,
+                        photoUrl: imageUrl,
+                        creationDate: project.creationDate.toDate(),
+                    });
+                }
+                console.log(data.links);
+                return {
+                    name: data.name,
+                    status: data.status,
+                    link: data.link,
+                    photoUrl: imageLink,
+                    username: data.username,
+                    fullName: data.fullName,
+                    location: data.location,
+                    role: data.role,
+                    bio: data.bio,
+                    links: data.links || [],
+                    projects: projects,
+                };
+            }
         }
-        const projects: FirstTemplateProjectPreview[] = [];
-        for (const project of data.projects) {
-          const imageUrl = await getImageUrlByPath(project.filePath);
-          if (!imageUrl) {
-            throw new Error("Could not get image link for path: " + project.filePath);
-          }
-          projects.push({
-            name: project.name,
-            link: project.link,
-            photoUrl: imageUrl,
-            creationDate: project.creationDate.toDate(),
-          });
-        }
-        console.log(data.links);
-        return {
-          name: data.name,
-          status: data.status,
-          link: data.link,
-          photoUrl: imageLink,
-          username: data.username,
-          fullName: data.fullName,
-          location: data.location,
-          role: data.role,
-          bio: data.bio,
-          links: data.links || [],
-          projects: projects,
-        };
-      }
+        return;
+    } catch (error) {
+        console.error('Error getting template data for protfolio with id: ' + portfolioId + '\nError: ' + error);
+        return;
     }
-    return;
-  } catch (error) {
-    console.error('Error getting template data for protfolio with id: ' + portfolioId + '\nError: ' + error);
-    return;
-  }
 }
 
 export async function saveSecondTemplateDataForUser(userId: string, data: SecondTemplateData): Promise<string | undefined> {
-  try {
-    type FirebaseProjectData = {
-      filePath: string;
-      name: string;
-      description: string;
-      link: string;
-      creationDate: Date;
+    const validationResults = validateSecondTemplateData(data);
+    if (!validationResults.isValid) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
+        return;
     }
-    let photoPath: string = "";
-    if (data.photo) {
-      photoPath = await addImage(data.photo);
+    try {
+        type FirebaseProjectData = {
+            filePath: string;
+            name: string;
+            description: string;
+            link: string;
+            creationDate: Date;
+        }
+        let photoPath: string = "";
+        if (data.photo) {
+            photoPath = await addImage(data.photo);
+        }
+        let firebaseProjects: FirebaseProjectData[] = [];
+        for (const project of data.projects) {
+            let projectPhotoPath: string = "";
+            if (project.photo) {
+                projectPhotoPath = await addImage(project.photo);
+            }
+            firebaseProjects.push({
+                filePath: projectPhotoPath,
+                name: project.name,
+                description: project.description,
+                link: project.link,
+                creationDate: project.creationDate,
+            });
+        }
+        const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
+            {
+                templateType: TemplateType.SECOND_TEMPLATE,
+                userId: userId,
+                name: data.name,
+                status: data.status,
+                link: data.link,
+                photoPath: photoPath,
+                phoneNumber: data.phoneNumber,
+                fullName: data.fullName,
+                location: data.location,
+                role: data.role,
+                projects: firebaseProjects,
+                bio: data.bio,
+                createdTimestamp: Date.now()
+            });
+        return docRef.id;
+    } catch (error) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+        return;
     }
-    let firebaseProjects: FirebaseProjectData[] = [];
-    for (const project of data.projects) {
-      let projectPhotoPath: string = "";
-      if (project.photo) {
-        projectPhotoPath = await addImage(project.photo);
-      }
-      firebaseProjects.push({
-        filePath: projectPhotoPath,
-        name: project.name,
-        description: project.description,
-        link: project.link,
-        creationDate: project.creationDate,
-      });
+}
+
+export async function updateSecondTemplateDataForUser(userId: string, data: SecondTemplateData, portfolioId: string): Promise<string | undefined> {
+    const validationResults = validateSecondTemplateData(data);
+    if (!validationResults.isValid) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + validationResults.message);
+        return;
     }
-    const docRef = await addDoc(collection(db, PORTFOLIOS_COLLECTION_NAME),
-      {
-        templateType: TemplateType.SECOND_TEMPLATE,
-        userId: userId,
-        name: data.name,
-        status: data.status,
-        link: data.link,
-        photoPath: photoPath,
-        phoneNumber: data.phoneNumber,
-        fullName: data.fullName,
-        location: data.location,
-        role: data.role,
-        projects: firebaseProjects,
-        bio: data.bio,
-        createdTimestamp: Date.now()
-      });
-    return docRef.id;
-  } catch (error) {
-    console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
-    return;
-  }
+    try {
+        type FirebaseProjectData = {
+            filePath: string;
+            name: string;
+            link: string;
+            description: string;
+            creationDate: Date;
+        }
+        let photoPath: string = "";
+        if (data.photo) {
+            photoPath = await addImage(data.photo);
+        }
+        let firebaseProjects: FirebaseProjectData[] = [];
+        for (const project of data.projects) {
+            let projectPhotoPath: string = "";
+            if (project.photo) {
+                projectPhotoPath = await addImage(project.photo);
+            }
+            firebaseProjects.push({
+                filePath: projectPhotoPath,
+                name: project.name,
+                link: project.link,
+                description: project.description,
+                creationDate: project.creationDate,
+            });
+        }
+        const docRef = doc(collection(db, PORTFOLIOS_COLLECTION_NAME), portfolioId);
+        await updateDoc(docRef,{
+            photoPath: photoPath,
+            phoneNumber: data.phoneNumber,
+            fullName: data.fullName,
+            location: data.location,
+            role: data.role,
+            projects: firebaseProjects,
+            bio: data.bio,
+            links: data.links,
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error('Error saving template data for user with id: ' + userId + '\nError: ' + error);
+        return;
+    }
+}
+
+export async function getSecondTemplatePortfolioData(portfolioId: string): Promise<SecondTemplateDataPreview | undefined>{
+    try {
+        const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data) {
+                const imageLink = await getImageUrlByPath(data.photoPath);
+                if (!imageLink) {
+                    throw new Error("Could not get image link for path: " + data.photoPath);
+                }
+                const projects: SecondTemplateProjectPreview[] = [];
+                for (const project of data.projects) {
+                    const imageUrl = await getImageUrlByPath(project.filePath);
+                    if (!imageUrl) {
+                        throw new Error("Could not get image link for path: " + project.filePath);
+                    }
+                    projects.push({
+                        name: project.name,
+                        link: project.link,
+                        photoUrl: imageUrl,
+                        description: project.description,
+                        creationDate: project.creationDate.toDate(),
+                    });
+                }
+                console.log(data.links);
+                return {
+                    name: data.name,
+                    status: data.status,
+                    link: data.link,
+                    photoUrl: imageLink,
+                    phoneNumber: data.phoneNumber,
+                    fullName: data.fullName,
+                    location: data.location,
+                    role: data.role,
+                    bio: data.bio,
+                    links: data.links || [],
+                    projects: projects,
+                };
+            }
+        }
+        return;
+    } catch (error) {
+        console.error('Error getting template data for protfolio with id: ' + portfolioId + '\nError: ' + error);
+        return;
+    }
 }
 
 export async function publishPortfolio(portfolioId: string): Promise<string> {
     try {
-      const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
-      const templateType = (await getDoc(docRef)).data()?.templateType;
-      const docId = docRef.id;
-      let pageName = "";
-      if (templateType === TemplateType.FIRST_TEMPLATE) {
-        pageName = "first-template-published";
-      } else if (templateType === TemplateType.SECOND_TEMPLATE) {
-        pageName = "second-template-published";
-      }
-      const link = "/" + pageName + "/" + docId;
-      await updateDoc(docRef, {status: PortfolioStatus.PUBLISHED, link: link});
-      return link;
+        const docRef = doc(db, PORTFOLIOS_COLLECTION_NAME, portfolioId);
+        const templateType = (await getDoc(docRef)).data()?.templateType;
+        const docId = docRef.id;
+        let pageName = "";
+        if (templateType === TemplateType.FIRST_TEMPLATE) {
+            pageName = "first-template-published";
+        } else if (templateType === TemplateType.SECOND_TEMPLATE) {
+            pageName = "second-template-published";
+        }
+        const link = "/" + pageName + "/" + docId;
+        await updateDoc(docRef, {status: PortfolioStatus.PUBLISHED, link: link});
+        return link;
     }
     catch(error){
         console.error('Error publishing portfolio with id: ' + portfolioId + '\nError: ' + error);
@@ -324,21 +432,21 @@ export async function downloadImage(url: string) : Promise<File | undefined> {
 
 export async function fetchPortfoliosAsListItems(userId: string): Promise<PortfolioListItemData[]> {
     try {
-      const snapshot = await getDocs(
-        query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', userId))
-      );
-      const portfolioData: PortfolioListItemData[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        name: doc.data().name,
-        imageUrl: doc.data().photoPath,
-        status: getStatusName(doc.data().status),
-        link: doc.data().link,
-        templateType: doc.data().templateType,
-      }));
-      return portfolioData;
+        const snapshot = await getDocs(
+            query(collection(db, PORTFOLIOS_COLLECTION_NAME), where('userId', '==', userId))
+        );
+        const portfolioData: PortfolioListItemData[] = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            name: doc.data().name,
+            imageUrl: doc.data().photoPath,
+            status: getStatusName(doc.data().status),
+            link: doc.data().link,
+            templateType: doc.data().templateType,
+        }));
+        return portfolioData;
     } catch (error) {
-      console.error('Error fetching portfolios: ', error);
-      return [];
+        console.error('Error fetching portfolios: ', error);
+        return [];
     }
 }
 
@@ -357,7 +465,7 @@ export async function editPortfolioName(portfolioName: string, portfolioId: stri
     try {
         const portfolioRef = doc(db, "portfolios", portfolioId);
         await updateDoc(portfolioRef, {
-          name: portfolioName
+            name: portfolioName
         });
     } catch (error) {
         console.error('Error updating portfolio name: ', error);
@@ -367,27 +475,27 @@ export async function editPortfolioName(portfolioName: string, portfolioId: stri
 
 
 async function addImage(image: File): Promise<string> {
-  try {
-    const storage = getStorage();
-    const hash = await getFileHash(image);
-    const fileType = image.name.split(".").slice(-1);
-    const path = `${IMAGES_DIRECTORY_NAME}/${hash}.${fileType}`;
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, image);
-    return path;
-  } catch (error) {
-    throw error;
-  }
+    try {
+        const storage = getStorage();
+        const hash = await getFileHash(image);
+        const fileType = image.name.split(".").slice(-1);
+        const path = `${IMAGES_DIRECTORY_NAME}/${hash}.${fileType}`;
+        const storageRef = ref(storage, path);
+        await uploadBytes(storageRef, image);
+        return path;
+    } catch (error) {
+        throw error;
+    }
 }
 
 
 async function getImageUrlByPath(path: string): Promise<string | undefined> {
-  const storage = getStorage();
-  const storageRef = ref(storage, path);
-  try {
-    return await getDownloadURL(storageRef);
-  } catch (error) {
-    console.log("Could not download an image for path: " + path + "\nError: " + error);
-  }
+    const storage = getStorage();
+    const storageRef = ref(storage, path);
+    try {
+        return await getDownloadURL(storageRef);
+    } catch (error) {
+        console.log("Could not download an image for path: " + path + "\nError: " + error);
+    }
 }
 

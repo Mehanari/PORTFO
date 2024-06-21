@@ -297,7 +297,7 @@ export default function Home() {
                 {currentItems.map((portfolio, index) => (
                     <div key={index}
                          className="flex flex-col items-center bg-white border-2 border-gray-200 rounded-3xl p-10 shadow">
-                      <img src={portfolio.photo} alt={portfolio.fullname} className="circle-portfolio"/>
+                      <img src={portfolio.photo} alt={portfolio.fullname} className="circle-portfolio object-cover"/>
                       <h2 className="mt-4 text-xl font-semibold">{portfolio.fullname}</h2>
                       <p className="text-gray-700">{portfolio.role}</p>
                     </div>

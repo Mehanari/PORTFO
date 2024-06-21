@@ -42,4 +42,3 @@ export type PortfolioDataPreview = {
     links: string[];
     projects: ProjectDataPreview[];
 }
-
