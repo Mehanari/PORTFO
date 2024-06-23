@@ -28,6 +28,7 @@ type ProjectRow = {
 }
 
 export default function FirstTemplateForm({ params }: { params: { portfolioIds: string[] } }){
+    const [portfolioName, setPortfolioName] = useState("New Portfolio");
     const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPath, setPhotoPath] = useState<string>("");
@@ -83,7 +84,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
 
     const handleSave = async () => {
         const data: PortfolioData = {
-            name: "New Portfolio",
+            name: portfolioName,
             link: "",
             status: PortfolioStatus.DRAFT,
             photo,
@@ -218,28 +219,38 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                 </div>)} */}
             <div className="flex flex-row pl-20 pr-20">
                 <div className="flex justify-end items-center w-2/3 h-20 ml-auto border-b-2 border-gray-500">
+                    <label htmlFor="portfolioName" className="block text-gray-700 text-sm font-bold mr-2">
+                        Portfolio name:
+                    </label>
+                    <input
+                        type="text"
+                        id="portfolioName"
+                        value={portfolioName}
+                        onChange={(e) => setPortfolioName(e.target.value)}
+                        className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
                     <button onClick={handleExit} className="mr-4">
-                        <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2" />
+                        <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                     <button className="mr-4"> {/*onClick={toggleMenu}}*/} {/*TODO change template color*/}
-                        <Image src="/ColorPalette.png" alt="" width={54} height={54} className="mr-2" />
+                        <Image src="/ColorPalette.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                     <button onClick={handlePreview} className="mr-4">
-                        <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2" />
+                        <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                     <button onClick={handlePublish} className="mr-4">
-                        <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2" />
+                        <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                     <button
                         onClick={handleSave}> {/*TODO save changes*/}
-                        <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2" />
+                        <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                 </div>
             </div>
-            
+
             <div className="flex flex-row">
                 <div className="flex flex-col items-center justify-start w-1/3 pl-8 pr-8">
-                    <label htmlFor="photo"></label> 
+                    <label htmlFor="photo"></label>
                     <input
                         className="hidden"
                         type="file"
