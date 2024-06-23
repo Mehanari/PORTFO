@@ -52,6 +52,8 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
     const [linksRows, setLinksRows] = useState<LinkRow[]>([]);
     const [projects, setProjects] = useState<ProjectRow[]>([]);
     const [docId, setDocId] = useState<string | undefined>();
+    const [dataIsLoading, setDataIsLoading] = useState(false);
+    const [dataIsSaving, setDataIsSaving] = useState(false);
     const router = useRouter();
 
     const [user, loading, error] = useAuthState(auth);
@@ -59,6 +61,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
     useEffect(() => {
         if (params.portfolioIds) {
             setDocId(params.portfolioIds[0]);
+            setDataIsLoading(true);
             getSecondTemplatePortfolioData(params.portfolioIds[0]).then( async (data) => {
                 if (!data) return;
                 setPortfolioName(data.name);
@@ -91,6 +94,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                 if (photo){
                     setPhoto(photo);
                 }
+                setDataIsLoading(false);
             });
         }
     }, [params]);
@@ -119,10 +123,14 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
             const validationResult = validateSecondTemplateData(data);
             if (validationResult.isValid){
                 if (docId){
+                    setDataIsSaving(true);
                     await updateSecondTemplateDataForUser(user.uid, data,  docId);
+                    setDataIsSaving(false);
                 }
                 else {
+                    setDataIsSaving(true);
                     const savedDocId = await saveSecondTemplateDataForUser(user.uid, data);
+                    setDataIsSaving(false);
                     if (!docId){
                         router.push(`/second-template-form/${savedDocId}`);
                     }
@@ -201,15 +209,22 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
         }
     }
     //This code is used to adjust the height of the block according to the image size
-
-
-
-
-    if (loading) {
+    
+    if (loading || dataIsLoading) {
         return (
             <main className="flex justify-center items-center h-screen">
                 <div className="bg-blue-100 text-blue-700 p-4 rounded shadow-md">
                     <h1>Loading...</h1>
+                </div>
+            </main>
+        );
+    }
+
+    if (dataIsSaving) {
+        return (
+            <main className="flex justify-center items-center h-screen">
+                <div className="bg-blue-100 text-blue-700 p-4 rounded shadow-md">
+                    <h1>Saving...</h1>
                 </div>
             </main>
         );
