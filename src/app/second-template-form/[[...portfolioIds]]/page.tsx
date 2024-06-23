@@ -41,6 +41,7 @@ type ProjectRow = {
 }
 
 export default function FirstTemplateForm({ params }: { params: { portfolioIds: string[] } }){
+    const [portfolioName, setPortfolioName] = useState("New portfolio");
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPath, setPhotoPath] = useState<string>("");
     const [fullname, setFullname] = useState<string>("");
@@ -60,6 +61,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
             setDocId(params.portfolioIds[0]);
             getSecondTemplatePortfolioData(params.portfolioIds[0]).then( async (data) => {
                 if (!data) return;
+                setPortfolioName(data.name);
                 setPhotoPath(data.photoUrl);
                 setFullname(data.fullName);
                 setProfession(data.role);
@@ -95,7 +97,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
     
     const handleSave = async () => {
         const data: PortfolioData = {
-            name: "New Portfolio",
+            name: portfolioName,
             link: "",
             status: PortfolioStatus.DRAFT,
             photo,
@@ -225,15 +227,26 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
 
     return (
         <div className="bg-white">
+            <label htmlFor="portfolioName" className="block text-gray-700 text-sm font-bold mr-2">
+                Portfolio name:
+            </label>
+            <input
+                type="text"
+                id="portfolioName"
+                value={portfolioName}
+                onChange={(e) => setPortfolioName(e.target.value)}
+                placeholder="Enter portfolio name"
+                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
             <div className="flex flex-row"
-                style={{
-                    width: '100%', // ширина блока 100% от ширины экрана
-                    height: '69vw', // высота блока 75% от ширины экрана (используем vw - viewport width units)
-                    backgroundColor: 'lightgray',
-                    backgroundImage: "url('/Background_data.png')",
-                    backgroundSize: '100%', // чтобы картинка заполняла весь фон блока
-                    backgroundRepeat: 'no-repeat'
-                }}
+                 style={{
+                     width: '100%', // ширина блока 100% от ширины экрана
+                     height: '69vw', // высота блока 75% от ширины экрана (используем vw - viewport width units)
+                     backgroundColor: 'lightgray',
+                     backgroundImage: "url('/Background_data.png')",
+                     backgroundSize: '100%', // чтобы картинка заполняла весь фон блока
+                     backgroundRepeat: 'no-repeat'
+                 }}
             >
                 <div className="personal-photo flex flex-col justify-center items-center w-1/2">
                     <h1 className={`${zenTokyoZoo.className} portfolio-template font-bold text-white xl:text-7xl md:text-6xl sm:text-5xl xs:text-4xl xl:mb-4`}>
@@ -247,7 +260,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                     type="file"
                                     id="photo"
                                     name="photo"
-                                    onChange={({ target }) => {
+                                    onChange={({target}) => {
                                         if (target.files) {
                                             const file = target.files[0];
                                             setPhotoPath(URL.createObjectURL(file));
@@ -260,7 +273,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                     onClick={() => document.getElementById('photo')?.click()}
                                 >
                                     {photoPath ? (
-                                        <img src={photoPath} alt="" className="w-full h-full object-cover" />
+                                        <img src={photoPath} alt="" className="w-full h-full object-cover"/>
                                     ) : (
                                         <div className="flex justify-center items-center">
                                             <img src="/Vector.png" alt=""/>
@@ -269,9 +282,11 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                 </div>
                             </div>
                         </div>
-                        <div className={`${poppins.className} w-1/2 flex flex-col justify-start items-end xl:mt-24 lg:mt-18 md:mt-10 sm:mt-4`}>
+                        <div
+                            className={`${poppins.className} w-1/2 flex flex-col justify-start items-end xl:mt-24 lg:mt-18 md:mt-10 sm:mt-4`}>
                             <div className="users-data-block">
-                                <div className="text-center break-words font-bold text-white xl:text-2xl md:text-xl sm:text-lg xl:m-5 lg:m-4 md:m-3 sm:m-2">
+                                <div
+                                    className="text-center break-words font-bold text-white xl:text-2xl md:text-xl sm:text-lg xl:m-5 lg:m-4 md:m-3 sm:m-2">
                                     <label htmlFor="fullName"></label>
                                     <input
                                         className="border-b-2 border-white bg-transparent text-center placeholder-white cursor-pointer w-full"
@@ -283,7 +298,8 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                         onChange={({target}) => setFullname(target.value)}
                                     />
                                 </div>
-                                <div className="text-center break-words text-white xl:text-lg md:text-base xl:m-5 lg:m-4 md:m-3 sm:m-2">
+                                <div
+                                    className="text-center break-words text-white xl:text-lg md:text-base xl:m-5 lg:m-4 md:m-3 sm:m-2">
                                     <label htmlFor="profession"></label>
                                     <input
                                         className="border-b-2 border-white bg-transparent text-center placeholder-white cursor-pointer w-full"
@@ -307,7 +323,8 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                 <div className="flex flex-col items-start justify-start m-5 w-full h-full">
                                     <div className="flex flex-row">
                                         <div className="triangle"></div>
-                                        <label htmlFor="bio" className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
+                                        <label htmlFor="bio"
+                                               className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
                                             ABOUT ME
                                         </label>
                                     </div>
@@ -316,11 +333,12 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                         id="aboutMe"
                                         name="aboutMe"
                                         value={aboutMe}
-                                        onChange={({target}) => setAboutMe(target.value)}  
-                                        style={{ height: '35%', width: '100%'}}></textarea>
+                                        onChange={({target}) => setAboutMe(target.value)}
+                                        style={{height: '35%', width: '100%'}}></textarea>
                                     <div className="flex flex-row">
                                         <div className="triangle"></div>
-                                        <label htmlFor="role" className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
+                                        <label htmlFor="role"
+                                               className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
                                             CONTACT ME
                                         </label>
                                     </div>
@@ -343,42 +361,49 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                         onChange={({target}) => setLocation(target.value)}/>
                                     <label htmlFor="links"></label>
                                     {linksRows.map((row) => (
-                                        <div key={row.id} className="flex flex-col justify-center text-center items-center w-full" style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>
+                                        <div key={row.id}
+                                             className="flex flex-col justify-center text-center items-center w-full"
+                                             style={{wordBreak: "break-word", overflowWrap: "break-word"}}>
                                             <input
                                                 className="mt-2 border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
                                                 type="url"
                                                 id="links"
                                                 name="links"
                                                 value={linksRows[row.id].link}
-                                                style={{ wordBreak: "break-word", overflowWrap: "break-word" }}
+                                                style={{wordBreak: "break-word", overflowWrap: "break-word"}}
                                                 onChange={({target}) => onLinkChange(row.id, target.value)}
                                             />
-                                            <button onClick={() => handleDeleteLink(row.id)} className="w-1/4 text-sm border-2 border-gray-400 bg-gray-200 text-gray-600 px-1 py-0.5 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                                                Delete</button>
+                                            <button onClick={() => handleDeleteLink(row.id)}
+                                                    className="w-1/4 text-sm border-2 border-gray-400 bg-gray-200 text-gray-600 px-1 py-0.5 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                                                Delete
+                                            </button>
                                         </div>
                                     ))}
                                     <div className="flex flex-row justify-center text-center items-center w-full">
-                                        <button onClick={handleAddLink} className="mt-2 mb-3 w-1/4 text-sm border-2 border-gray-400 bg-gray-200 text-gray-600 px-1 py-0.5 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400">Add Link</button>
+                                        <button onClick={handleAddLink}
+                                                className="mt-2 mb-3 w-1/4 text-sm border-2 border-gray-400 bg-gray-200 text-gray-600 px-1 py-0.5 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400">Add
+                                            Link
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
-            </div>        
+            </div>
 
             <label htmlFor="projects"></label>
             {projects.map((project, index) => (
                 <div key={project.id} className="mt-5 flex flex-col"
-                style={{
-                    width: '100%', // ширина блока 100% от ширины экрана
-                    height: '69vw', // высота блока 75% от ширины экрана (используем vw - viewport width units)
-                    backgroundColor: 'lightgray',
-                    backgroundImage: "url('/Background_project.png')",
-                    backgroundSize: '100%', // чтобы картинка заполняла весь фон блока
-                    backgroundRepeat: 'no-repeat'
-                }}>
+                     style={{
+                         width: '100%', // ширина блока 100% от ширины экрана
+                         height: '69vw', // высота блока 75% от ширины экрана (используем vw - viewport width units)
+                         backgroundColor: 'lightgray',
+                         backgroundImage: "url('/Background_project.png')",
+                         backgroundSize: '100%', // чтобы картинка заполняла весь фон блока
+                         backgroundRepeat: 'no-repeat'
+                     }}>
                     <div className="rectangle-vice-versa flex justify-center items-center h-2/6">
                         <label htmlFor="project-photo"></label>
                         <input
@@ -398,7 +423,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                             {project.photoPath ? (
                                 <img src={project.photoPath} alt="" className="w-full h-full object-cover"/>
                             ) : (
-                                <span><img src="/Vector.png" alt="" style={{ height: "30px" }} /></span>
+                                <span><img src="/Vector.png" alt="" style={{height: "30px"}}/></span>
                             )}
                         </div>
                     </div>
@@ -414,7 +439,8 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                     <div className="flex flex-col w-2/5 m-10">
                                         <div className="flex flex-row">
                                             <div className="triangle"></div>
-                                            <label htmlFor={"project-" + project.id + "-name"} className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
+                                            <label htmlFor={"project-" + project.id + "-name"}
+                                                   className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
                                                 ABOUT THIS JOB
                                             </label>
                                         </div>
@@ -433,13 +459,14 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                             id="description"
                                             name="description"
                                             value={project.description}
-                                            style={{ height: '150px', width: '100%'}}
+                                            style={{height: '150px', width: '100%'}}
                                             onChange={({target}) => handleEditProjectDescription(project.id, target.value)}></textarea>
                                     </div>
                                     <div className="flex flex-col w-2/5 m-10">
                                         <div className="flex flex-row">
                                             <div className="triangle"></div>
-                                            <label htmlFor={"project-" + project.id + "-link"} className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
+                                            <label htmlFor={"project-" + project.id + "-link"}
+                                                   className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
                                                 PROJECT LINK:
                                             </label>
                                         </div>
@@ -476,19 +503,19 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
             </div>
             <div className="flex justify-between pr-10 pl-10 w-full bg-white pt-5 pb-5">
                 <div>
-                     <button className="mr-4" onClick={handleBackToMenu}> {/*TODO return to the previous page*/}
-                        <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2" />
+                    <button className="mr-4" onClick={handleBackToMenu}> {/*TODO return to the previous page*/}
+                        <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                 </div>
                 <div className="flex justify-between">
                     <button className="mr-4" onClick={handlePreviewClick}> {/*TODO preview button*/}
-                        <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2" />
+                        <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                     <button className="mr-4" onClick={handlePublish}> {/*TODO publish button*/}
-                        <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2" />
+                        <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                     <button onClick={handleSave}>
-                        <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2" />
+                        <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2"/>
                     </button>
                 </div>
             </div>
