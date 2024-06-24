@@ -276,3 +276,7 @@
   -webkit-text-stroke: 1px white;
   text-stroke: 1px white; /* Для поддержки различных браузеров */
 }
+
+.description-class{
+  height: 73%;
+}

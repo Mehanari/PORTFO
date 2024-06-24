@@ -242,17 +242,19 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
 
     return (
         <div className="bg-white">
-            <label htmlFor="portfolioName" className="block text-gray-700 text-sm font-bold mr-2">
-                Portfolio name:
-            </label>
-            <input
-                type="text"
-                id="portfolioName"
-                value={portfolioName}
-                onChange={(e) => setPortfolioName(e.target.value)}
-                placeholder="Enter portfolio name"
-                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+            <div className="flex flex-row justify-center items-center m-3 text-base xl:text-2xl md:text-xl sm:text-lg">
+                <label htmlFor="portfolioName" className="block text-gray-700 font-bold mr-2">
+                    Enter portfolio name
+                </label>
+                <input
+                    type="text"
+                    id="portfolioName"
+                    value={portfolioName}
+                    onChange={(e) => setPortfolioName(e.target.value)}
+                    placeholder="Enter portfolio name"
+                    className="shadow appearance-none border rounded-full text-center py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+            </div>
             <div className="flex flex-row"
                  style={{
                      width: '100%', // ширина блока 100% от ширины экрана
@@ -264,7 +266,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                  }}
             >
                 <div className="personal-photo flex flex-col justify-center items-center w-1/2">
-                    <h1 className={`${zenTokyoZoo.className} portfolio-template font-bold text-white xl:text-7xl md:text-6xl sm:text-5xl xs:text-4xl xl:mb-4`}>
+                    <h1 className={`${zenTokyoZoo.className} portfolio-template font-bold text-white text-base xl:text-7xl md:text-6xl sm:text-5xl xs:text-4xl xl:mb-4`}>
                         PORTFOLIO
                     </h1>
                     <div className="flex flex-row w-full justify-between">
@@ -301,7 +303,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                             className={`${poppins.className} w-1/2 flex flex-col justify-start items-end xl:mt-24 lg:mt-18 md:mt-10 sm:mt-4`}>
                             <div className="users-data-block">
                                 <div
-                                    className="text-center break-words font-bold text-white xl:text-2xl md:text-xl sm:text-lg xl:m-5 lg:m-4 md:m-3 sm:m-2">
+                                    className="text-center break-words font-bold text-white text-base xl:text-2xl md:text-xl sm:text-lg xl:m-5 lg:m-4 md:m-3 sm:m-2">
                                     <label htmlFor="fullName"></label>
                                     <input
                                         className="border-b-2 border-white bg-transparent text-center placeholder-white cursor-pointer w-full"
@@ -314,7 +316,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                     />
                                 </div>
                                 <div
-                                    className="text-center break-words text-white xl:text-lg md:text-base xl:m-5 lg:m-4 md:m-3 sm:m-2">
+                                    className="text-center break-words text-white text-base xl:text-lg md:text-base xl:m-5 lg:m-4 md:m-3 sm:m-2">
                                     <label htmlFor="profession"></label>
                                     <input
                                         className="border-b-2 border-white bg-transparent text-center placeholder-white cursor-pointer w-full"
@@ -339,12 +341,12 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                     <div className="flex flex-row">
                                         <div className="triangle"></div>
                                         <label htmlFor="bio"
-                                               className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
+                                               className={`${poppins.className} font-black text-red-900 text-base xl:text-3xl md:text-xl sm:text-sm xs:text-xs xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
                                             ABOUT ME
                                         </label>
                                     </div>
                                     <textarea
-                                        className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none"
+                                        className="border-2 text-red-900 text-base xl:text-lg md:text-base sm:text-base xs:text-base resize-none"
                                         id="aboutMe"
                                         name="aboutMe"
                                         value={aboutMe}
@@ -353,12 +355,12 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                     <div className="flex flex-row">
                                         <div className="triangle"></div>
                                         <label htmlFor="role"
-                                               className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
+                                               className={`${poppins.className} font-black text-red-900 text-base xl:text-3xl md:text-xl sm:text-sm xs:text-xs xl:mt-10 lg:mt-6 md:mt-4 sm:mt-2 xl:mb-10 lg:mb-6 md:mb-4 sm:mb-2 ml-4 mr-4`}>
                                             CONTACT ME
                                         </label>
                                     </div>
                                     <input
-                                        className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                        className="border-b-2 border-gray-200 text-red-900 w-full text-base xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
                                         type="text"
                                         id="phoneNumber"
                                         name="phoneNumber"
@@ -367,7 +369,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                         onChange={({target}) => setPhoneNumber(target.value)}/>
                                     <label htmlFor="location"></label>
                                     <input
-                                        className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                        className="border-b-2 border-gray-200 text-red-900 w-full text-base xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
                                         type="text"
                                         id="location"
                                         name="location"
@@ -380,7 +382,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                              className="flex flex-col justify-center text-center items-center w-full"
                                              style={{wordBreak: "break-word", overflowWrap: "break-word"}}>
                                             <input
-                                                className="mt-2 border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                                className="mt-2 border-b-2 border-gray-200 text-red-900 w-full text-base xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
                                                 type="url"
                                                 id="links"
                                                 name="links"
@@ -443,7 +445,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                         </div>
                     </div>
                     <div className="flex justify-center items-center h-1/6">
-                        <h1 className={`${poppins.className} flex justify-center items-center font-bold text-white xl:text-8xl md:text-6xl sm:text-5xl xs:text-4xl xl:mb-4`}>
+                        <h1 className={`${poppins.className} flex justify-center items-center font-bold text-white text-base xl:text-8xl md:text-6xl sm:text-5xl xs:text-4xl xl:mb-4`}>
                             PROJECT {index + 1}
                         </h1>
                     </div>
@@ -451,16 +453,16 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                         <div className="about-project-frame">
                             <div className="about-project">
                                 <div className="flex w-full h-full justify-between items-start">
-                                    <div className="flex flex-col w-2/5 m-10">
+                                    <div className="flex flex-col w-2/5 m-10 description-class">
                                         <div className="flex flex-row">
                                             <div className="triangle"></div>
                                             <label htmlFor={"project-" + project.id + "-name"}
-                                                   className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
+                                                   className={`${poppins.className} font-black text-red-900 text-base xl:text-3xl md:text-xl sm:text-sm xs:text-xs xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
                                                 ABOUT THIS JOB
                                             </label>
                                         </div>
                                         <input
-                                            className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                            className="border-b-2 border-gray-200 text-red-900 w-full text-base xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
                                             type="text"
                                             id={"project-" + project.id + "-name"}
                                             name="project-name"
@@ -469,7 +471,7 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                             onChange={({target}) => handleEditProjectName(project.id, target.value)}/>
                                         <label htmlFor="project-name"></label>
                                         <textarea //Probably here should be texarea, not input
-                                            className="border-2 text-red-900 xl:text-lg md:text-base sm:text-base xs:text-base resize-none"
+                                            className="border-2 text-red-900 text-base xl:text-lg md:text-base sm:text-base xs:text-base resize-none"
                                             //type="text"
                                             id="description"
                                             name="description"
@@ -481,12 +483,12 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                                         <div className="flex flex-row">
                                             <div className="triangle"></div>
                                             <label htmlFor={"project-" + project.id + "-link"}
-                                                   className={`${poppins.className} font-black text-red-900 xl:text-3xl md:text-2xl sm:text-xl xs:text-lg xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
+                                                   className={`${poppins.className} font-black text-red-900 text-base xl:text-3xl md:text-xl sm:text-sm xs:text-xs xl:mt-5 lg:mt-4 md:mt-3 sm:mt-2 xl:mb-5 lg:mb-4 md:mb-3 sm:mb-2 ml-2`}>
                                                 PROJECT LINK:
                                             </label>
                                         </div>
                                         <input
-                                            className="border-b-2 border-gray-200 text-red-900 w-full xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
+                                            className="border-b-2 border-gray-200 text-red-900 w-full text-base xl:text-lg md:text-base sm:text-base xs:text-base cursor-pointer xl:mb-5 lg:mb-3 md:mb-1 sm:mb-1"
                                             type="text"
                                             id={"project-" + project.id + "-link"}
                                             name="project-link"

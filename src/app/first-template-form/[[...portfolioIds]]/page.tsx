@@ -226,45 +226,41 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
 
 
     return (
-        // <div className={`font-cursive ${backgroundColor}`}>
         <body className="font-cursive" style={{background: "#FFF0F5"}}>
-            {/* {isMenuOpen && ( 
-                <div className="flex flex-row w-full justify-end pr-20 pt-5">}
-                    <button className="bg-orange-200 hover:bg-orange-300 text-gray font-semibold py-2 px-4 rounded-md mr-2 border-2 border-gray-500" onClick={() => handleColorChange("orange")}>Orange</button>
-                    <button className="bg-blue-200 hover:bg-blue-300 text-gray font-semibold py-2 px-4 rounded-md mr-2 border-2 border-gray-500" onClick={() => handleColorChange("blue")}>Blue</button>
-                    <button className="bg-green-200 hover:bg-green-300 text-gray font-semibold py-2 px-4 rounded-md mr-2 border-2 border-gray-500" onClick={() => handleColorChange("green")}>Green</button>
-                    <button className="bg-white hover:bg-gray-100 text-gray font-semibold py-2 px-4 rounded-md border-2 border-gray-500" onClick={() => handleColorChange("default")}>Default</button>
-                </div>)} */}
-            <div className="flex flex-row pl-20 pr-20">
-                <div className="flex justify-end items-center w-2/3 h-20 ml-auto border-b-2 border-gray-500">
-                    <label htmlFor="portfolioName" className="block text-gray-700 text-sm font-bold mr-2">
-                        Portfolio name:
-                    </label>
-                    <input
-                        type="text"
-                        id="portfolioName"
-                        value={portfolioName}
-                        onChange={(e) => setPortfolioName(e.target.value)}
-                        className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <button onClick={handleExit} className="mr-4">
-                        <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2"/>
-                    </button>
-                    <button className="mr-4"> {/*onClick={toggleMenu}}*/} {/*TODO change template color*/}
-                        <Image src="/ColorPalette.png" alt="" width={54} height={54} className="mr-2"/>
-                    </button>
-                    <button onClick={handlePreview} className="mr-4">
-                        <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2"/>
-                    </button>
-                    <button onClick={handlePublish} className="mr-4">
-                        <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2"/>
-                    </button>
-                    <button
-                        onClick={handleSave}> {/*TODO save changes*/}
-                        <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2"/>
-                    </button>
+            
+                <div className="flex flex-row justify-between w-full">
+                    <div className="flex flex-row justify-start items-center text-base xl:text-2xl md:text-xl sm:text-lg pt-3 pb-3 pl-20 pr-2">
+                        <label htmlFor="portfolioName" className="block text-gray-700 font-medium mr-2">
+                            Enter the name of your portfolio
+                        </label>
+                        <input
+                            type="text"
+                            id="portfolioName"
+                            value={portfolioName}
+                            onChange={(e) => setPortfolioName(e.target.value)}
+                            className="shadow appearance-none border rounded-full text-center py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                    </div>
+                    <div className="flex flex-row justify-between items-center pt-3 pb-3 pr-20 pl-2">
+                        <button onClick={handleExit} className="mr-4">
+                            <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2"/>
+                        </button>
+                        <button className="mr-4"> {/*onClick={toggleMenu}}*/} {/*TODO change template color*/}
+                            <Image src="/ColorPalette.png" alt="" width={54} height={54} className="mr-2"/>
+                        </button>
+                        <button onClick={handlePreview} className="mr-4">
+                            <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2"/>
+                        </button>
+                        <button onClick={handlePublish} className="mr-4">
+                            <Image src="/PublishButton.png" alt="" width={54} height={54} className="mr-2"/>
+                        </button>
+                        <button
+                            onClick={handleSave}> {/*TODO save changes*/}
+                            <Image src="/SaveButton.png" alt="" width={54} height={54} className="mr-2"/>
+                        </button>
+                    </div>
                 </div>
-            </div>
+                <div className="flex flex-row justify-between w-2/3 h-1 ml-auto border-b-2 border-gray-500 mr-20"></div>
 
             <div className="flex flex-row">
                 <div className="flex flex-col items-center justify-start w-1/3 pl-8 pr-8">
