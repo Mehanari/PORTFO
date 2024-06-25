@@ -155,6 +155,7 @@ export default function Home() {
     setFromDate('');
     setToDate('');
     setShowSuggestions(false);
+    setErrorMessage('');
   };
 
   const handleFromDateChange = (value: any) => {
@@ -264,6 +265,7 @@ export default function Home() {
       {portfoliosToShow ?
           <section className="flex flex-col lg:flex-col bg-white pb-20 justify-center items-center">
             <h1 className="flex text-black font-bold text-4xl lg:text-5xl mb-10">Explore other portfolios</h1>
+            <div className="flex flex-col items-end">
             <div className="flex justify-center items-end mt-4 space-x-4">
               <div>
                 <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2"></label>
@@ -352,9 +354,7 @@ export default function Home() {
                         onChange={({ target }) => handleFromDateChange(target.value)}
                         className="shadow appearance-none border border-orange-500 rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       />
-                      
                     </div>
-                  
                     <div className="m-2">
                       <label htmlFor="toDate" className="block text-black font-bold text-sm mb-2">To</label>
                       <input
@@ -367,19 +367,23 @@ export default function Home() {
                         className="shadow appearance-none border border-orange-500 rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       />
                     </div>
-                    
                   </div>
-                  <div className='' >{errorMessage && <p className="text-red-500 text-sm mt-1">{errorMessage}</p>}</div>
+                  
                 </div>
-                
               </div>
-              <button
-                onClick={clearAllFields}
-                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mb-2"
-              >
-                Clear All
-              </button>
+                <button
+                  onClick={clearAllFields}
+                  className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mb-2"
+                >
+                  Clear All
+                </button>
+              </div>
+              <div className='flex flex-col w-1/2 justify-end items-start'>
+                <div>{errorMessage && <p className="text-red-500 text-sm mt-1 ml-4">{errorMessage}</p>}</div>
+              </div>
+              
             </div>
+            
             <div className='flex flex-col justify-center'>
               <div
                   className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mt-14 mb-14">
