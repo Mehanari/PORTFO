@@ -245,9 +245,6 @@ export default function FirstTemplateForm({ params }: { params: { portfolioIds: 
                         <button onClick={handleExit} className="mr-4">
                             <Image src="/ArrowPrev.png" alt="" width={54} height={54} className="mr-2"/>
                         </button>
-                        <button className="mr-4"> {/*onClick={toggleMenu}}*/} {/*TODO change template color*/}
-                            <Image src="/ColorPalette.png" alt="" width={54} height={54} className="mr-2"/>
-                        </button>
                         <button onClick={handlePreview} className="mr-4">
                             <Image src="/PreviewButton.png" alt="" width={54} height={54} className="mr-2"/>
                         </button>
