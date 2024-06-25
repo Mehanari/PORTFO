@@ -12,12 +12,14 @@ export default function FirstTemplatePreview({ params }: { params: { portfolioId
   const [user, loading, error] = useAuthState(auth);
   const [protfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
   const router = useRouter();
-  const { toPDF, targetRef } = usePDF({filename: `${params.portfolioId}.pdf`});
+  const [filename, setFilename] = useState<string>(`${params.portfolioId}.pdf`);
+  const { toPDF, targetRef } = usePDF({filename: filename});
 
   useEffect(() => {
     if (user) {
       getFirstTemplatePortfolioData(params.portfolioId).then((data) => {
         setPortfolioData(data);
+        setFilename(`${data?.name}.pdf`);
       });
     }
   }, [params.portfolioId, user]);

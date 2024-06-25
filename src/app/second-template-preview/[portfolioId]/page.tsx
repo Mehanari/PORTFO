@@ -22,7 +22,8 @@ const poppins = Poppins({
 export default function SecondTemplatePreview({ params }: { params: { portfolioId: string } }) {
   const [user, loading, error] = useAuthState(auth);
   const [portfolioData, setPortfolioData] = useState<PortfolioDataPreview | undefined>(undefined);
-  const { toPDF, targetRef } = usePDF({filename: `${params.portfolioId}.pdf`});
+  const [filename, setFilename] = useState<string>(`${params.portfolioId}.pdf`);
+  const { toPDF, targetRef } = usePDF({filename: filename});
   
   const router = useRouter();
 
@@ -30,6 +31,7 @@ export default function SecondTemplatePreview({ params }: { params: { portfolioI
     if (user) {
       getSecondTemplatePortfolioData(params.portfolioId).then((data) => {
         setPortfolioData(data);
+        setFilename(`${data?.name}.pdf`);
       });
     }
   }, [params.portfolioId, user]);
