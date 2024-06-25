@@ -59,8 +59,9 @@ export default function Home() {
     indexOfFirstItem = indexOfLastItem - itemsPerPage;
     currentItems = portfoliosToShow.slice(indexOfFirstItem, indexOfLastItem);
   }
-
+  
   useEffect(() => {
+    localStorage.setItem("create_clicked", "false");
     getAllPortfoliosAsSearchItems().then((data) => {
       setPortfolios(data);
       setPortfoliosToShow(data);
@@ -105,6 +106,7 @@ export default function Home() {
       }
     }
     else{
+        localStorage.setItem("create_clicked", "true");
         router.push('/sign-in');
     }
   }
@@ -114,6 +116,7 @@ export default function Home() {
       router.push('/choose-template');
     }
     else{
+      localStorage.setItem("create_clicked", "true");
       router.push('/sign-in');
     }
   }

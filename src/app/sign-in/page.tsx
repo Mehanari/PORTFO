@@ -1,9 +1,10 @@
 'use client'
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {auth} from "@/firebase/firebaseConfig";
 import { useRouter } from "next/navigation";
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import Image from "next/image";
+import {userHasPortfolios} from "@/functions/databaseAccess";
 
 
 export default function SignIn() {
@@ -11,6 +12,19 @@ export default function SignIn() {
 
   const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
 
+  useEffect(() => {
+    if (user) {
+      const createClicked = localStorage.getItem("create_clicked") === "true";
+      console.log("Create clicked: " + createClicked);
+      if (createClicked) {
+        localStorage.setItem("create_clicked", "false");
+        router.push("/choose-template");
+      } else {
+        router.push("/");
+      }
+    }
+  }, [user, router])
+  
   if (error) {
     return (
       <div>
@@ -26,9 +40,6 @@ export default function SignIn() {
           </div>
       </main>
     );
-  }
-  if (user) {
-    router.push("/portfolio-list");
   }
 
   return (
